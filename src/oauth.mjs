@@ -5,10 +5,16 @@ import { createStore } from './kv.mjs';
 
 const random = () => randomBytes(32).toString('hex');
 const STATE_TTL = 300;        // state 与登录请求的有效期（秒）
+const CONSUMED_TTL = 300;     // 已消费 state 的保留期，用于识别重放
 const EPOCH_TTL = 604800;     // logout 代号保留期，覆盖最长会话
 
 // 登录状态（待处理 state、登录会话、logout 代号）全部放进键值存储，
 // 不再放进程内存——Serverless 上 start 与 callback 可能落在不同实例。
+//
+// 单次性靠"认领"实现：回调先把 state 覆盖成已消费标记，重放即失败。
+// 取消只由 logout 承担：推进 logout 代号让在途交换与后续回调全部失效。
+// 这里刻意不记录"当前登录代号"——否则重复发起登录会让先前那次授权失效，
+// 用户完成的恰好是被作废的那次，回调必然失败（线上真实故障）。
 export class OAuth {
   constructor(env = process.env, fetcher = fetch, now = Date.now, store = null) {
     this.env = env;
@@ -21,19 +27,17 @@ export class OAuth {
 
   stateKey(state) { return `oauth:state:${state}`; }
   sessionKey(cookie) { return `oauth:session:${hash(cookie)}`; }
-  epochKey(cookie) { return `oauth:epoch:${hash(cookie)}`; }
+  logoutEpochKey(cookie) { return `oauth:logout:${hash(cookie)}`; }
 
-  async epochFor(cookie) { return Number(await this.store.get(this.epochKey(cookie))) || 0; }
+  async logoutEpoch(cookie) { return Number(await this.store.get(this.logoutEpochKey(cookie))) || 0; }
 
   // 发起登录：绑定当前匿名会话，签发一次性的随机 state。
+  // 多个待处理登录可以并存，互不影响。
   async start(cookie, projectId = null, anonymousOwner = hash(cookie)) {
     if (!this.configured) throw new AppError('OAUTH_NOT_CONFIGURED', '知乎登录尚未配置，匿名草稿仍可继续使用。', 503);
     const key = hash(cookie);
-    // 同一会话重新发起登录：作废旧 state 并推进代号，之前那次授权随即失效。
-    await this.store.delByPrefix(`oauth:state:${key}:`);
-    const epoch = await this.store.incr(this.epochKey(`${cookie}:login`), EPOCH_TTL);
-    const state = `${key}:${epoch}:${random()}`;
-    await this.store.set(this.stateKey(state), JSON.stringify({ key, projectId, anonymousOwner, generation: epoch }), STATE_TTL);
+    const state = `${key}:${random()}`;
+    await this.store.set(this.stateKey(state), JSON.stringify({ key, projectId, anonymousOwner }), STATE_TTL);
     const url = new URL('https://openapi.zhihu.com/authorize');
     for (const [k, v] of Object.entries({ app_id: this.env.ZHIHU_OAUTH_APP_ID, redirect_uri: this.env.ZHIHU_OAUTH_REDIRECT_URI, response_type: 'code', state })) url.searchParams.set(k, v);
     return url.href;
@@ -45,12 +49,12 @@ export class OAuth {
     try { return JSON.parse(raw); } catch { return null; }
   }
 
-  // 退出：清除会话、作废待处理登录、推进 logout 代号使在途交换失败。
+  // 退出：清除会话、作废本会话待处理登录、推进 logout 代号使在途交换失败。
   async logout(cookie) {
     const key = hash(cookie);
     await this.store.del(this.sessionKey(cookie));
     await this.store.delByPrefix(`oauth:state:${key}:`);
-    await this.store.incr(this.epochKey(`${cookie}:logout`), EPOCH_TTL);
+    await this.store.incr(this.logoutEpochKey(cookie), EPOCH_TTL);
   }
 
   async json(url, options) {
@@ -65,17 +69,19 @@ export class OAuth {
   async finish(cookie, params) {
     const state = params.get('state');
     const key = hash(cookie);
+    const expired = () => new AppError('OAUTH_STATE', '登录请求已失效或不匹配，请重新发起登录。', 400);
+    if (!state || !state.startsWith(`${key}:`)) throw expired();
     const raw = state ? await this.store.get(this.stateKey(state)) : null;
-    if (!raw) throw new AppError('OAUTH_STATE', '登录请求已失效或不匹配，请重新发起登录。', 400);
+    if (!raw) throw expired();
     let pending;
-    try { pending = JSON.parse(raw); } catch { throw new AppError('OAUTH_STATE', '登录请求已失效或不匹配，请重新发起登录。', 400); }
+    try { pending = JSON.parse(raw); } catch { throw expired(); }
     // state 与会话绑定：换一个浏览器带同一个 state 回来必须失败。
-    if (pending.key !== key) throw new AppError('OAUTH_STATE', '登录请求已失效或不匹配，请重新发起登录。', 400);
-    // 单次消费：先删除再交换，重放会被上面查不到拦住。
-    await this.store.del(this.stateKey(state));
-
-    const epoch = await this.store.get(this.epochKey(`${cookie}:login`));
-    if (Number(epoch) !== Number(pending.generation)) throw new AppError('OAUTH_STATE', '登录已取消。', 400);
+    if (pending.key !== key) throw expired();
+    // 认领：立刻把 state 改写成已消费标记（原子性由单键读写保证）。
+    // 并发的第二次回调会读到标记而不是原始记录，因而失败。
+    await this.store.set(this.stateKey(state), JSON.stringify({ consumed: true }), CONSUMED_TTL);
+    const recheck = await this.store.get(this.stateKey(state));
+    if (!recheck || !JSON.parse(recheck || '{}').consumed) throw expired();
 
     const code = params.get('authorization_code');
     if (!code || code.length > 4096) throw new AppError('OAUTH_CODE', '未取得有效授权码，请重新登录。');
@@ -91,10 +97,8 @@ export class OAuth {
     const uid = typeof user?.hash_id === 'string' && user.hash_id ? user.hash_id : typeof user?.uid === 'string' && /^\d+$/.test(user.uid) ? user.uid : null;
     if (!uid) throw new AppError('OAUTH_FAILED', '未取得有效用户身份。', 502);
 
-    // 交换期间发生 logout 或重新发起登录：放弃本次结果，不建立会话。
-    const logoutEpoch = await this.epochFor(`${cookie}:logout`);
-    const nowEpoch = await this.store.get(this.epochKey(`${cookie}:login`));
-    if (Number(nowEpoch) !== Number(pending.generation) || logoutEpoch > 0) throw new AppError('OAUTH_STATE', '登录已取消。', 400);
+    // 交换期间发生 logout：放弃本次结果，不建立会话。
+    if (await this.logoutEpoch(cookie) > 0) throw new AppError('OAUTH_STATE', '登录已取消。', 400);
 
     const nextCookie = random();
     const ttl = Math.min(t.expires_in, 604800);
@@ -102,7 +106,6 @@ export class OAuth {
     // 本里程碑不调用用户数据接口，取到身份后即丢弃提供方 Token。
     await this.store.set(this.sessionKey(nextCookie), JSON.stringify(session), ttl);
     await this.store.del(this.sessionKey(cookie));
-    await this.store.delByPrefix(`oauth:state:${key}:`);
     return { cookie: nextCookie, session, projectId: pending.projectId, previousOwner: pending.anonymousOwner };
   }
 }

@@ -33,7 +33,10 @@ test('OAuth exchanges exact contract, keeps int64 identity, and rotates app cook
 test('logout invalidates a login even while token exchange is in flight',async()=>{
   let release;const gate=new Promise(r=>release=r);let calls=0;
   const o=new OAuth(env,async()=>{calls++;if(calls===1){await gate;return response({access_token:'token',expires_in:60});}return response({hash_id:'user',fullname:'name'});});
-  const running=o.finish('cookie',params(await o.start('cookie')));await o.logout('cookie');release();await assert.rejects(running,/取消/);
+  const running=o.finish('cookie',params(await o.start('cookie')));await o.logout('cookie');release();
+  // logout 会先作废待处理 state，因此失败可能报"失效"或"已取消"，两者都表示登录未成立。
+  await assert.rejects(running,/失效|取消/);
+  assert.equal(await o.session('cookie'),null);
 });
 // 关键新增：start 与 callback 落在不同实例（Serverless 的常态）时登录必须成功。
 // 改造前这一条一定失败，失败原因是 OAUTH_STATE。
@@ -166,6 +169,29 @@ test('shared store accepts the variable names Vercel injects',async()=>{
   const both=storeStatus({SESSION_STORE_URL:'https://y.upstash.io',SESSION_STORE_TOKEN:'t2',KV_REST_API_URL:'https://x.upstash.io',KV_REST_API_TOKEN:'t'});
   assert.equal(both.kind,'redis');assert.equal(both.credentials,'SESSION_STORE_TOKEN');
   assert.equal(storeStatus({KV_REST_API_URL:'https://x.upstash.io'}).issue.includes('KV_REST_API_TOKEN'),true);
+});
+// 线上真实失败场景：用户重复点「知乎登录」（或第一下没反应又点一次）。
+// 两次签发的 state 都必须有效，否则用户完成的那次回调一定报 OAUTH_STATE。
+test('starting login again does not invalidate the earlier authorization',async()=>{
+  const shared=createMemoryStore();let calls=0;
+  const exchange=async()=>{calls++;return calls%2?response({access_token:'tok',expires_in:3600}):response({hash_id:'twice-user',fullname:'重复点击'});};
+  const o=new OAuth(env,exchange,Date.now,shared);
+  const first=params(await o.start('cookie-a'));
+  const second=params(await o.start('cookie-a'));
+  assert.notEqual(first.get('state'),second.get('state'));
+  // 用户完成的是「第一次」那次授权——必须成功
+  const r=await o.finish('cookie-a',first);
+  assert.equal(r.session.owner,'zhihu:'+hash('twice-user'));
+  // 已被消费的 state 不能重放
+  await assert.rejects(o.finish('cookie-a',first),/失效/);
+});
+// 取消的语义必须保留：logout 让在途交换失败，且同会话的待处理登录一并作废。
+test('logout still invalidates pending authorizations of the same session',async()=>{
+  const shared=createMemoryStore();
+  const o=new OAuth(env,async()=>response({}),Date.now,shared);
+  const p=params(await o.start('cookie-a'));
+  await o.logout('cookie-a');
+  await assert.rejects(o.finish('cookie-a',p),/失效/);
 });
 test('only selected project transfers, with completed operations and isolation',()=>{
   const s=new Store(':memory:');try{
