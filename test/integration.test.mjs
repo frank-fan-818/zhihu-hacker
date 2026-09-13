@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
 import { OAuth } from '../src/oauth.mjs';
-import { createMemoryStore, createRedisStore } from '../src/kv.mjs';
+import { createMemoryStore, createRedisStore, storeStatus } from '../src/kv.mjs';
 import { diagnose } from '../src/config.mjs';
 import { createProviders } from '../src/providers.mjs';
 import { Store } from '../src/store.mjs';
@@ -152,6 +152,20 @@ test('full login works across instances over the redis adapter',async()=>{
     await instanceA.logout(r.cookie);
     assert.equal(await instanceB.session(r.cookie),null);
   }finally{await fake.close();}
+});
+// Vercel 的 Upstash 集成注入的是 KV_REST_API_URL / KV_REST_API_TOKEN，
+// 名字不由本项目决定，必须能识别，否则线上仍会退回内存实现、登录失效。
+test('shared store accepts the variable names Vercel injects',async()=>{
+  assert.equal(storeStatus({}).kind,'memory');
+  assert.equal(storeStatus({KV_REST_API_URL:'https://x.upstash.io'}).durable,false);
+  const viaKv=storeStatus({KV_REST_API_URL:'https://x.upstash.io',KV_REST_API_TOKEN:'t'});
+  assert.equal(viaKv.kind,'redis');assert.equal(viaKv.durable,true);assert.equal(viaKv.credentials,'KV_REST_API_TOKEN');
+  const viaOwn=storeStatus({SESSION_STORE_URL:'https://y.upstash.io',SESSION_STORE_TOKEN:'t2'});
+  assert.equal(viaOwn.kind,'redis');assert.equal(viaOwn.credentials,'SESSION_STORE_TOKEN');
+  // 自定义名字优先，便于本地覆盖平台注入的值
+  const both=storeStatus({SESSION_STORE_URL:'https://y.upstash.io',SESSION_STORE_TOKEN:'t2',KV_REST_API_URL:'https://x.upstash.io',KV_REST_API_TOKEN:'t'});
+  assert.equal(both.kind,'redis');assert.equal(both.credentials,'SESSION_STORE_TOKEN');
+  assert.equal(storeStatus({KV_REST_API_URL:'https://x.upstash.io'}).issue.includes('KV_REST_API_TOKEN'),true);
 });
 test('only selected project transfers, with completed operations and isolation',()=>{
   const s=new Store(':memory:');try{

@@ -92,18 +92,35 @@ export function createRedisStore({ url, token, prefix = 'cd:', fetcher = fetch }
   };
 }
 
-// 按环境变量选择实现。未配置 Redis 时退回内存实现，并回报降级状态供诊断使用。
+// 共享存储的连接信息可以来自两种来源，按优先级取第一组齐全的：
+//   1. 本项目自定义的 SESSION_STORE_URL / SESSION_STORE_TOKEN
+//   2. Vercel Upstash 集成自动注入的 KV_REST_API_URL / KV_REST_API_TOKEN
+// 必须支持第 2 种：平台注入的名字不受本项目控制，改名字不如适配名字。
+const READ_WRITE_CREDENTIALS = [
+  ['SESSION_STORE_URL', 'SESSION_STORE_TOKEN'],
+  ['KV_REST_API_URL', 'KV_REST_API_TOKEN'],
+];
+
+function resolveCredentials(env) {
+  for (const [urlKey, tokenKey] of READ_WRITE_CREDENTIALS) {
+    if (env[urlKey] && env[tokenKey]) return { url: env[urlKey], token: env[tokenKey], urlKey, tokenKey };
+  }
+  // 记录只配了一半的情况，便于诊断给出准确提示
+  for (const [urlKey, tokenKey] of READ_WRITE_CREDENTIALS) {
+    if (env[urlKey] || env[tokenKey]) return { incomplete: `${urlKey} 与 ${tokenKey}` };
+  }
+  return {};
+}
+
 export function createStore(env = process.env, options = {}) {
-  const url = env.SESSION_STORE_URL;
-  const token = env.SESSION_STORE_TOKEN;
-  if (url && token) return createRedisStore({ url, token, prefix: env.SESSION_STORE_PREFIX || 'cd:', ...options });
+  const found = resolveCredentials(env);
+  if (found.url && found.token) return createRedisStore({ url: found.url, token: found.token, prefix: env.SESSION_STORE_PREFIX || 'cd:', ...options });
   return createMemoryStore(options.now);
 }
 
 export function storeStatus(env = process.env) {
-  const url = env.SESSION_STORE_URL;
-  const token = env.SESSION_STORE_TOKEN;
-  if (url && token) return { kind: 'redis', durable: true };
-  if (url || token) return { kind: 'memory', durable: false, issue: '键值存储配置不完整：SESSION_STORE_URL 与 SESSION_STORE_TOKEN 需要同时填写。' };
+  const found = resolveCredentials(env);
+  if (found.url && found.token) return { kind: 'redis', durable: true, credentials: found.tokenKey };
+  if (found.incomplete) return { kind: 'memory', durable: false, issue: `键值存储配置不完整：${found.incomplete} 需要同时提供。` };
   return { kind: 'memory', durable: false, issue: '未配置共享键值存储：登录状态仅在单实例内有效，Serverless 多实例下登录会失败。' };
 }

@@ -21,15 +21,20 @@ https://cognitive-debugger.vercel.app
 
 ### 2. 开通 Upstash Redis（登录必需）
 
-在 Vercel 控制台 **Storage → Create Database → Upstash Redis**，创建后拿到两个值：
-REST URL 和 REST Token。本应用直接调用它们的 REST 接口，**不需要安装任何 npm 依赖**。
+在 Vercel 控制台 **Storage → Create Database → Upstash Redis**，创建后连接到本项目。
+本应用直接调用它们的 REST 接口，**不需要安装任何 npm 依赖**。
 
-拿到的值对应本项目的两个环境变量（名字以你要填的为准，不要照抄平台默认名）：
+Vercel 的 Upstash 集成会自动注入这几个变量，**不需要手动再填**：
 
 ```text
-SESSION_STORE_URL=https://xxx-xxxx.upstash.io
-SESSION_STORE_TOKEN=xxxxxxxx
+KV_REST_API_URL      KV_REST_API_TOKEN      KV_URL
+REDIS_URL            KV_REST_API_READ_ONLY_TOKEN
 ```
+
+`src/kv.mjs` 按以下优先级读取，取第一组齐全的：
+
+1. `SESSION_STORE_URL` + `SESSION_STORE_TOKEN`（本项目自定义，便于本地覆盖）
+2. `KV_REST_API_URL` + `KV_REST_API_TOKEN`（Vercel 集成注入）
 
 只配一个、或两个都不配时，`npm run diagnose` 会明确报出降级状态：登录仍然可用，
 但只在单实例内有效，Serverless 多实例下会失败。
