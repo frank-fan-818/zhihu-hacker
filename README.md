@@ -88,11 +88,15 @@ npm.cmd run check
 - `src/domain.mjs`：原句定位、规则初筛、版本替换和来源校验。
 - `src/providers.mjs`：模型与官方检索适配。
 - `src/service.mjs`：操作编排、取消、查证、修改与保存。
-- `src/store.mjs`：SQLite 项目与操作存储。
+- `src/store.mjs`：SQLite 项目与操作存储；写操作走数据库层乐观并发控制。
+- `src/migrations.mjs`、`src/migrations/*.sql`：版本化 schema 迁移，带校验和。
+- `src/db-doctor.mjs`：`npm run db:doctor`，报告迁移状态、完整性与索引。
 - `src/kv.mjs`：登录状态用的可插拔键值存储（内存 / Upstash Redis REST）。
 - `src/server.mjs`：HTTP 接口、静态资源和会话边界；导出 `createRequestHandler` 供 Serverless 复用。
 - `api/index.mjs`、`vercel.json`：Vercel 函数入口与路由重写。
 - `test/`：行为和接口契约测试。
+- `scripts/`：手动运行的诊断、验证与部署工具，详见 [scripts/README.md](scripts/README.md)。
+- `docs/plans/`：产品 PRD、接入审查、数据层优化分析与实施记录。
 
 HTTP 路由：`/api/projects` 创建/列举，`/api/projects/:id` 读取/保存/删除，`/api/projects/:id/operations` 提交类型化操作，`/api/operations/:id` 查询，`/api/operations/:id/cancel` 取消；`/apply`、`/undo`、`/defer` 位于具体项目下。
 
