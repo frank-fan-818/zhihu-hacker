@@ -65,7 +65,7 @@ export class Service {
   async start(owner,project,args) {
     const p=await this.store.get(project,owner);
     const {type,key,findingId,wordingOnly=false}=args;
-    if(!['quick_check','review_remaining','verify_claim','suggest_revision','generate_draft'].includes(type))throw new AppError('INVALID_INPUT','未知操作。');
+    if(!['quick_check','review_remaining','verify_claim','suggest_revision','generate_draft','compare_answers'].includes(type))throw new AppError('INVALID_INPUT','未知操作。');
     bounded(key,8,100,'操作标识');
     const signature=hash(JSON.stringify({type,findingId,wordingOnly,revision:args.revision}));
     const previous=await this.store.byKey(project,key,owner);
@@ -108,7 +108,7 @@ export class Service {
         findings.forEach(f=>f.baseRevision=snapshot.revision);
         apply=p=>{
           for(const f of findings){const existing=p.findings.find(x=>x.baseRevision===p.revision && x.start===f.start && x.quote===f.quote);if(existing)Object.assign(f,{id:existing.id,status:existing.status});}
-          p.findings=findings;p.lastCheck={engine:this.providers.status.model?'model':'local_rules',at:new Date().toISOString(),revision:p.revision};
+          p.findings=findings;p.lastCheck={engine:this.providers.status.model?'model':'local_rules',at:new Date().toISOString(),revision:p.revision,phase:'draft_check'};
         };
       } else if(op.type==='verify_claim') {
         const previous=snapshot.verification[args.finding.id];
@@ -157,6 +157,26 @@ export class Service {
         }
         const suggestion={...data,id:id(),findingId:args.finding.id,baseRevision:snapshot.revision,start:args.finding.start,end:args.finding.end,quote:args.finding.quote,wordingOnly:args.wordingOnly};
         apply=p=>{p.suggestions.push(suggestion);};
+      } else if(op.type==='compare_answers') {
+        if(!this.providers.status.model)throw new AppError('MODEL_NOT_CONFIGURED','对比回答需要模型服务。请配置后再试。',503);
+        const answers=snapshot.answers||[];
+        if(!answers.length)throw new AppError('INVALID_INPUT','请先加载该问题的回答，再进行对比。',400);
+        stage('正在对比草稿与现有回答');
+        const analysis=await this.providers.model(
+          '你是回答分析师。用户草稿是针对一个知乎问题的回答。以下是该问题其他回答的摘要和用户草稿。找出：1.草稿中独特于其他回答的观点（unique_point）；2.其他回答提到但草稿未涉及的内容（answer_gap）；3.草稿与其他回答一致可互相印证的观点（reinforcement）。返回 {"items":[{"quote":"草稿中的原句","start":UTF16起点整数或-1,"kind":"unique_point|answer_gap|reinforcement","reason":"具体说明"}]}。quote必须是草稿中逐字出现的原文；start为-1时表示该观点是草稿中缺失的内容，quote用简短描述代替。items不超过6。',
+          {draft:snapshot.text,answers:answers.map(a=>a.summary.slice(0,2000))},signal);
+        if(!analysis||!Array.isArray(analysis?.items)||analysis.items.length>6)throw new AppError('INVALID_MODEL_OUTPUT','对比结果格式无效。',502);
+        const findings=analysis.items.map(item=>{
+          if(item.start===-1||item.start===undefined){
+            return{id:id(),quote:String(item.quote||'').slice(0,500),start:-1,end:-1,kind:String(item.kind||'answer_gap').slice(0,60),
+              reason:bounded(item.reason,1,700),phase:'answer_compare',engine:'model',status:'open'};
+          }
+          try{return{id:id(),...anchor(snapshot.text,String(item.quote),Number(item.start)),kind:bounded(item.kind,1,60),
+            reason:bounded(item.reason,1,700),phase:'answer_compare',engine:'model',status:'open'};}
+          catch{return{id:id(),quote:String(item.quote||'').slice(0,500),start:-1,end:-1,kind:bounded(item.kind,1,60),
+            reason:bounded(item.reason,1,700),phase:'answer_compare',engine:'model',status:'open'};}
+        });
+        apply=p=>{p.findings=findings;p.lastCheck={engine:'model',at:new Date().toISOString(),revision:p.revision,phase:'answer_compare'};};
       } else {
         await stage('正在整理候选全文');
         const data=validateSuggestion(await this.providers.model('返回 {"text":"候选全文","reason":"修改说明","sourceIds":[]}。保留用户当前稿的主张与语气，不恢复已经删掉的断言，不增加新事实。只整理输入，引用来源仅从给定ID选择，不写URL。', {text:snapshot.text,sources:snapshot.sources},signal),snapshot.sources);

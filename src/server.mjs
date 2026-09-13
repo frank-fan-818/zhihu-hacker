@@ -92,6 +92,10 @@ export function createApp({file,providers=createProviders(),oauth=new OAuth(),st
         consumeQuestionBudget(owner);
         send(200,await providers.questions(body.query,new AbortController().signal));return;
       }
+      if(url.pathname==='/api/question-url'&&req.method==='POST'){
+        consumeQuestionBudget(owner);
+        send(200,await providers.questionInfo(body.url,new AbortController().signal));return;
+      }
       if(path[1]==='status'&&req.method==='GET'){send(200,{...providers.status,storage:store.kind||'sqlite',mode:providers.status.model?'model':'local_rules'});return;}
       if(path[1]==='projects'){
         const project=path[2];
@@ -112,7 +116,9 @@ export function createApp({file,providers=createProviders(),oauth=new OAuth(),st
             await budget.consume(owner,ip);consumeQuestionBudget(owner);answerBusy.add(project);
             try{const revision=p.revision;const result=await providers.answers(p.question.url,offset,new AbortController().signal);
             const latest=await store.get(project,owner);if(latest.revision!==revision)throw new AppError('STALE_RESULT','原稿已变化，未覆盖当前内容。',409);
-            latest.answerPage={...result,at:Date.now()};if(!await store.saveIfRevision(latest,revision,{preserveRevision:true}))throw new AppError('REVISION_CONFLICT','原稿已变化，请重试。',409);send(200,result);return;
+            latest.answerPage={...result,at:Date.now()};
+            latest.answers=offset===0?result.items:[...(latest.answers||[]),...result.items];
+            if(!await store.saveIfRevision(latest,revision,{preserveRevision:true}))throw new AppError('REVISION_CONFLICT','原稿已变化，请重试。',409);send(200,result);return;
             }finally{answerBusy.delete(project);}
           }
           if(path[3]==='operations'){await store.get(project,owner);await budget.consume(owner,ip);send(202,publicOp(await service.start(owner,project,body)));return;}

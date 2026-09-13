@@ -6,7 +6,7 @@ export function checkBusiness(body){
   if(body?.Code!==0){const [code,message]=codes[body?.Code]||['PROVIDER_ERROR','知乎服务未返回有效结果。'];throw new AppError(code,message,502);}
   return body.Data;
 }
-export function questionUrl(value){try{const u=new URL(value);if(u.protocol==='https:'&&u.hostname==='www.zhihu.com'&&/^\/question\/\d+\/?$/.test(u.pathname)&&!u.username&&!u.password)return u.origin+u.pathname.replace(/\/$/,'');}catch{}throw new AppError('INVALID_INPUT','请选择有效的知乎问题链接。');}
+export function questionUrl(value){try{const u=new URL(value);if(u.protocol==='https:'&&u.hostname==='www.zhihu.com'&&!u.username&&!u.password){const m=u.pathname.match(/^\/question\/(\d+)(?:\/|$)/);if(m)return`${u.origin}/question/${m[1]}`;}}catch{}throw new AppError('INVALID_INPUT','请选择有效的知乎问题链接。');}
 
 export function createProviders(env = process.env, fetcher = fetch) {
   const configured = Boolean(env.MODEL_BASE_URL && env.MODEL_NAME && env.MODEL_API_KEY);
@@ -55,6 +55,32 @@ export function createProviders(env = process.env, fetcher = fetch) {
       return {items:d.Items.slice(0,10).filter(x=>safeUrl(x.Url)&&typeof x.Summary==='string').map(x=>({url:safeUrl(x.Url),summary:x.Summary.replace(/<[^>]*>/g,'').slice(0,5000)})),nextOffset:canMore?next:null,isEnd:d.Paging.IsEnd,warning:!d.Paging.IsEnd&&!canMore?'分页信息不完整，已停止继续加载。':''};
     },
     model,
+    async questionInfo(url,signal){
+      const validated=questionUrl(url);
+      let title='',detail='';
+      try{
+        const r=await fetcher(validated,{redirect:'error',signal:AbortSignal.any([signal,AbortSignal.timeout(8000)]),headers:{'User-Agent':'Mozilla/5.0'}});
+        if(!r.ok)throw new Error(`HTTP ${r.status}`);
+        const html=await r.text();
+        if(html.length>2000000)throw new Error('页面过大');
+        const tm=html.match(/<title[^>]*>\s*([^<]+?)\s*<\/title>/i);
+        if(tm){title=tm[1].trim().replace(/\s*[-—|]\s*知乎\s*$/,'').replace(/^知乎[:：]?\s*/,'');}
+        const dm=html.match(/<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i)
+          ||html.match(/<meta\s+content=["']([^"']+)["']\s+name=["']description["']/i);
+        if(dm){
+          let d=dm[1].trim();
+          const dashIdx=d.indexOf('—');
+          if(dashIdx>0)d=d.slice(dashIdx+1).trim();
+          detail=d.replace(/<[^>]*>/g,'').slice(0,2000);
+        }
+        if(!detail){
+          const qm=html.match(/"question"[^}]*"excerpt"[:\s]*"((?:[^"\\]|\\.)*)"/);
+          if(qm)detail=qm[1].replace(/\\n/g,'\n').replace(/\\u003c[^>]*\\u003e/g,'').replace(/<[^>]*>/g,'').slice(0,2000);
+        }
+      }catch{}
+      if(!title){const id=validated.match(/\/question\/(\d+)/);title=id?`知乎问题 ${id[1]}`:validated;}
+      return{url:validated,title:title.slice(0,300),detail:detail.slice(0,2000)};
+    },
     async search(kind,query,signal) {
       if(!env.ZHIHU_ACCESS_SECRET) throw new AppError('ZHIHU_NOT_CONFIGURED','尚未配置知乎 Access Secret，当前没有真实检索结果。',503);
       if(!['zhihu_search','global_search'].includes(kind)) throw new AppError('INVALID_INPUT','未知检索能力。');

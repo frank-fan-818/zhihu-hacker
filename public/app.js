@@ -15,21 +15,33 @@ function render(){
   count();
   const q=project?.question||questionContext;
   $('#question-context').hidden=!q;
-  $('#question-context').innerHTML=q?`正在讨论：<a href="${esc(q.url)}" target="_blank" rel="noopener noreferrer">${esc(q.title)}</a> ${button('answers','看看其他回答')}`:'';
+  $('#question-context').innerHTML=q?`正在讨论：<a href="${esc(q.url)}" target="_blank" rel="noopener noreferrer">${esc(q.title)}</a> ${button('answers','看看其他回答')}${q.detail?`<blockquote class="question-detail">${esc(q.detail)}</blockquote>`:''}`:'';
   const review=$('#review-content');
   if(operation){review.innerHTML=`<div class="progress"><p class="eyebrow">一次只把一件事想清楚</p><h3>${esc(operation.stage)}</h3><div class="progress-bar"></div><p class="fine">原稿已保存。刷新页面后可以恢复任务状态。</p>${button('cancel','取消本次操作')}</div>`;return;}
   const f=project?.findings.find(f=>f.id===selected)||project?.findings[0];selected=f?.id;
   const latest=project?.suggestions.at(-1);
   const errorHtml=error?`<p class="error" role="alert">${esc(error)}</p>`:'';
   if(!project?.lastCheck){
-    review.innerHTML=`${errorHtml}<div class="empty"><span class="empty-symbol">〞</span><h3>先从你的一句话开始。</h3><p>不急着重写全文。找到一处值得注意的地方，看看依据，再决定怎么改。</p><ol><li><b>01</b>定位原句，理解问题</li><li><b>02</b>看真实资料，不凭空下结论</li><li><b>03</b>保留你的语气，由你选择修改</li></ol></div>`;
+    const hasAnswers=project?.answers?.length>0;
+    review.innerHTML=`${errorHtml}<div class="empty"><span class="empty-symbol">〞</span><h3>先从你的一句话开始。</h3><p>不急着重写全文。找到一处值得注意的地方，看看依据，再决定怎么改。</p>${hasAnswers?'<p class="fine">已加载回答摘要，可以随时"对比回答"看看你的草稿和其他回答的关系。</p>':''}<ol><li><b>01</b>定位原句，理解问题</li><li><b>02</b>看真实资料，不凭空下结论</li><li><b>03</b>保留你的语气，由你选择修改</li></ol></div>`;
   }else{
     const stale=project.lastCheck.revision!==project.revision;
-    const engine=project.lastCheck.engine==='local_rules'?'本地规则初筛 · 未查外部资料':'模型文本初筛 · 未核对事实';
-    const list=project.findings.length>1?`<div class="item-list">${project.findings.map((x,i)=>`<button data-action="select" data-id="${x.id}" class="${x.id===selected?'selected':''}">第 ${i+1} 处${x.status==='deferred'?' · 已保留':''}</button>`).join('')}</div>`:'';
+    const isCompare=project.lastCheck.phase==='answer_compare';
+    const engine=isCompare?'回答对比分析 · 基于已有回答摘要':project.lastCheck.engine==='local_rules'?'本地规则初筛 · 未查外部资料':'模型文本初筛 · 未核对事实';
+    const kindLabels={unique_point:'独特观点',answer_gap:'可补充内容',reinforcement:'互相印证'};
+    const list=project.findings.length>1?`<div class="item-list">${project.findings.map((x,i)=>`<button data-action="select" data-id="${x.id}" class="${x.id===selected?'selected':''}">${isCompare?(kindLabels[x.kind]||x.kind):`第 ${i+1} 处`}${x.status==='deferred'?' · 已保留':''}</button>`).join('')}</div>`:'';
     const completed=project.history.length && project.history.at(-1).revision+1===project.revision;
-    const context=f?`<span class="badge">${esc(engine)}</span>${list}<h3>这句话，值得再看一眼。</h3><blockquote>${esc(f.quote)}</blockquote><p class="reason">${esc(f.reason)}</p><p class="fine">${f.status==='deferred'?'你选择暂时保留，尚不代表已核实。':'检查提示不等于事实判决。'}</p>`:`<span class="badge">${esc(engine)}</span><h3>暂未发现明显的论证问题。</h3><p class="reason">${status.model?'本次文本检查没有返回明确候选。':'本地规则只检查部分强断言，不代表全文逻辑已经通过检查。'}</p><p class="fine">没有进行外部事实核对。可编辑后重新检查。</p>`;
-    review.innerHTML=`${errorHtml}${completed?'<span class="badge">已保存你的修改</span><p class="reason">这一次修改，由你决定。可以继续检查全文，也可以带着当前稿结束。</p>':''}${context}${stale?'<p class="error">原稿已更新，以上检查属于旧版本。请重新检查后再查证或修改。</p>':''}<div class="actions">${f&&!stale?button('verify','查看依据 ↗',true)+button('suggest','帮我改准确')+button('wording','仅调整表述')+button('defer','暂时保留'):''}</div><div class="actions">${button('full','继续检查全文')}${button('compose','整理修订稿')}${button('copy','复制当前稿')}${button('download','下载 Markdown')}${completed?button('undo','撤销上次修改'):''}</div>`;
+    const hasAnswers=project?.answers?.length>0;
+    const context=f?(f.start===-1
+      ?`<span class="badge">${esc(engine)}</span>${list}<h3>${esc(kindLabels[f.kind]||f.kind)||'值得关注'}</h3><p class="reason">${esc(f.reason)}</p><p class="fine">这是其他回答中提到、你的草稿尚未涉及的内容。可以考虑补充，也可以保留自己的方向。</p>`
+      :`<span class="badge">${esc(engine)}</span>${list}<h3>${isCompare?esc(kindLabels[f.kind]||f.kind):'这句话，值得再看一眼。'}</h3><blockquote>${esc(f.quote)}</blockquote><p class="reason">${esc(f.reason)}</p><p class="fine">${f.status==='deferred'?'你选择暂时保留，尚不代表已核实。':'检查提示不等于事实判决。'}</p>`)
+      :`<span class="badge">${esc(engine)}</span><h3>${isCompare?'对比未发现明显差异。':'暂未发现明显的论证问题。'}</h3><p class="reason">${status.model?'本次检查没有返回明确候选。':'本地规则只检查部分强断言，不代表全文逻辑已经通过检查。'}</p><p class="fine">${isCompare?'你的草稿与现有回答在主要观点上没有明显冲突或遗漏。':'没有进行外部事实核对。可编辑后重新检查。'}</p>`;
+    const findingActions=f&&!stale
+      ?(isCompare
+        ?(f.start===-1?button('defer','暂时保留'):'')+button('verify','查看依据 ↗',true)+button('wording','仅调整表述')+button('defer','暂时保留')
+        :button('verify','查看依据 ↗',true)+button('suggest','帮我改准确')+button('wording','仅调整表述')+button('defer','暂时保留'))
+      :'';
+    review.innerHTML=`${errorHtml}${completed?'<span class="badge">已保存你的修改</span><p class="reason">这一次修改，由你决定。可以继续检查全文，也可以带着当前稿结束。</p>':''}${context}${stale?'<p class="error">原稿已更新，以上检查属于旧版本。请重新检查后再查证或修改。</p>':''}<div class="actions">${findingActions}</div><div class="actions">${button('full','继续检查全文')}${hasAnswers?button('compare','对比回答'):''}${button('compose','整理修订稿')}${button('copy','复制当前稿')}${button('download','下载 Markdown')}${completed?button('undo','撤销上次修改'):''}</div>`;
     if(latest && latest.baseRevision===project.revision && !latest.applied && (latest.full||latest.findingId===selected)){
       review.insertAdjacentHTML('beforeend',`<div class="suggestion"><label>修改前</label><blockquote>${esc(latest.quote)}</blockquote><label>候选修改 · ${latest.wordingOnly?'仅调整表述，未核对事实':'请核对依据与个人意图'}</label><blockquote class="new-text">${esc(latest.text)}</blockquote><p class="reason">${esc(latest.reason)}</p><div class="actions">${button('apply','采用这处修改',true,`data-id="${latest.id}"`)}${button('edit','自己编辑')}</div></div>`);
     }
@@ -170,6 +182,7 @@ document.addEventListener('click',async e=>{
     if(action==='suggest')await run('suggest_revision');
     if(action==='wording')await run('suggest_revision',{wordingOnly:true});
     if(action==='full')await run('review_remaining');
+    if(action==='compare')await run('compare_answers');
     if(action==='compose')await run('generate_draft');
     if(action==='apply'){
       await changeDraft('apply',{suggestionId:b.dataset.id});
@@ -229,6 +242,31 @@ $('#find-questions').onclick=async()=>{
   $('#question-results').textContent='正在查找真实问题…';
   try{questionChoices=await api('/questions','POST',{query:$('#topic').value});$('#question-results').innerHTML=questionChoices.map((q,i)=>`<div class="project-row"><a href="${esc(q.url)}" target="_blank" rel="noopener noreferrer">${esc(q.title)}</a><button class="quiet" data-question-index="${i}">围绕这题写</button></div>`).join('')||'<p>没有找到相关问题，可以换一个更具体的主题。</p>';}
   catch(e){$('#question-results').textContent=e.message;}finally{extraBusy=false;$('#find-questions').disabled=false;}
+};
+$('#load-question-url').onclick=async()=>{
+  if(extraBusy||operation)return;extraBusy=true;$('#load-question-url').disabled=true;
+  $('#url-results').textContent='正在加载问题信息…';
+  try{
+    const url=$('#question-url-input').value.trim();
+    if(!url){$('#url-results').textContent='请粘贴知乎问题链接。';return;}
+    const info=await api('/question-url','POST',{url});
+    if(draft.value&&!confirm('为这个问题新建草稿？当前已有草稿会先保存。'))return;
+    if(dirty)await saveDraft();
+    project=null;questionContext=info;selected=null;error='';$('#answer-results').innerHTML='';
+    draft.value=`关于"${info.title}"，我的初步看法是：
+
+我希望先弄清楚相关事实与适用条件，再形成自己的观点。`;
+    dirty=true;await saveDraft();render();draft.focus();
+    // 自动加载第一页回答
+    if(project?.id){
+      try{
+        const result=await api(`/projects/${project.id}/answers`,'POST',{offset:0});
+        $('#answer-results').innerHTML=`<div class="answer-panel"><p class="fine">知乎回答摘要 · 来自原始讨论，供参考和对比；本页不会自动写入证据或修改正文。</p>${result.items.map(x=>`<blockquote>${esc(x.summary)}<br><a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">打开回答 ↗</a></blockquote>`).join('')||'<p>本问题暂无可展示的回答摘要。</p>'}<p>${esc(result.warning)}</p>${result.nextOffset!==null?`<button class="quiet" data-answer-offset="${result.nextOffset}">加载下一页回答</button>`:''}</div>`;
+        project=await api(`/projects/${project.id}`);
+        render();
+      }catch(e){$('#answer-results').innerHTML=`<p class="fine">${esc(e.message)} 可以先写草稿，稍后再加载回答。</p>`;}
+    }
+  }catch(e){$('#url-results').textContent=e.message;}finally{extraBusy=false;$('#load-question-url').disabled=false;}
 };
 document.addEventListener('click',async e=>{
   const pick=e.target.closest('[data-question-index]'),answer=e.target.closest('[data-answer-offset]'),start=e.target.closest('[data-action="answers"]');
