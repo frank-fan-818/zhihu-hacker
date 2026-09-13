@@ -1,1 +1,7 @@
-aW1wb3J0IHsgZGlhZ25vc2UgfSBmcm9tICcuL2NvbmZpZy5tanMnOwppbXBvcnQgeyBjcmVhdGVQcm92aWRlcnMgfSBmcm9tICcuL3Byb3ZpZGVycy5tanMnOwpjb25zdCBkPWRpYWdub3NlKCk7Y29uc29sZS5sb2coSlNPTi5zdHJpbmdpZnkoZCxudWxsLDIpKTsKaWYocHJvY2Vzcy5hcmd2LmluY2x1ZGVzKCctLXF1b3RhJykpewogIHRyeXtjb25zb2xlLmxvZyhKU09OLnN0cmluZ2lmeShhd2FpdCBjcmVhdGVQcm92aWRlcnMoKS5xdW90YShuZXcgQWJvcnRDb250cm9sbGVyKCkuc2lnbmFsKSxudWxsLDIpKTt9CiAgY2F0Y2goZSl7Y29uc29sZS5lcnJvcihlLm1lc3NhZ2UpO3Byb2Nlc3MuZXhpdENvZGU9MTt9Cn0K
+import { diagnose } from './config.mjs';
+import { createProviders } from './providers.mjs';
+const d=diagnose();console.log(JSON.stringify(d,null,2));
+if(process.argv.includes('--quota')){
+  try{console.log(JSON.stringify(await createProviders().quota(new AbortController().signal),null,2));}
+  catch(e){console.error(e.message);process.exitCode=1;}
+}

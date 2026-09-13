@@ -1,1 +1,109 @@
-aW1wb3J0IHsgQXBwRXJyb3IgfSBmcm9tICcuL2RvbWFpbi5tanMnOwoKLy8g6ZSu5YC85a2Y5YKo5oq96LGh77yaT0F1dGggc3RhdGXjgIHnmbvlvZXkvJror53kuI7pmZDmtYHorqHmlbDlv4XpobvmtLvov4fljZXkuKrov5vnqIvjgIIKLy8g5pys5Zyw5byA5Y+R55So5YaF5a2Y5a6e546w77yb6YOo572y5YiwIFNlcnZlcmxlc3Mg5pe255SoIFVwc3Rhc2ggUmVkaXMgUkVTVCDlrp7njrDjgIIKLy8g5LiN5byV5YWl56ys5LiJ5pa55L6d6LWW77yMUmVkaXMg6YCC6YWN5Zmo55u05o6l6LCD55SoIFJFU1Qg5o6l5Y+j44CCCgovLyDlhoXlrZjlrp7njrDvvJrljZXov5vnqIvmnInmlYjjgILluKYgVFRMIOivreS5ie+8jOS+v+S6juacrOWcsOW8gOWPkeS4jua1i+ivleS/neaMgeS4jiBSZWRpcyDkuIDoh7TnmoTooYzkuLrjgIIKZXhwb3J0IGZ1bmN0aW9uIGNyZWF0ZU1lbW9yeVN0b3JlKG5vdyA9IERhdGUubm93KSB7CiAgY29uc3QgZGF0YSA9IG5ldyBNYXAoKTsKICBjb25zdCBhbGl2ZSA9IGVudHJ5ID0+IGVudHJ5ICYmIGVudHJ5LmV4cGlyZXMgPiBub3coKTsKICBjb25zdCByZWFkID0ga2V5ID0+IHsKICAgIGNvbnN0IGVudHJ5ID0gZGF0YS5nZXQoa2V5KTsKICAgIGlmICghYWxpdmUoZW50cnkpKSB7IGRhdGEuZGVsZXRlKGtleSk7IHJldHVybiBudWxsOyB9CiAgICByZXR1cm4gZW50cnkudmFsdWU7CiAgfTsKICByZXR1cm4gewogICAga2luZDogJ21lbW9yeScsCiAgICBhc3luYyBnZXQoa2V5KSB7IHJldHVybiByZWFkKGtleSk7IH0sCiAgICBhc3luYyBzZXQoa2V5LCB2YWx1ZSwgdHRsU2Vjb25kcykgewogICAgICBkYXRhLnNldChrZXksIHsgdmFsdWUsIGV4cGlyZXM6IG5vdygpICsgTWF0aC5tYXgoMSwgdHRsU2Vjb25kcykgKiAxMDAwIH0pOwogICAgfSwKICAgIGFzeW5jIGRlbCguLi5rZXlzKSB7IGxldCBuID0gMDsgZm9yIChjb25zdCBrZXkgb2Yga2V5cykgaWYgKGRhdGEuZGVsZXRlKGtleSkpIG4rKzsgcmV0dXJuIG47IH0sCiAgICBhc3luYyBkZWxCeVByZWZpeChwcmVmaXgpIHsKICAgICAgbGV0IG4gPSAwOwogICAgICBmb3IgKGNvbnN0IGtleSBvZiBbLi4uZGF0YS5rZXlzKCldKSBpZiAoa2V5LnN0YXJ0c1dpdGgocHJlZml4KSAmJiBkYXRhLmRlbGV0ZShrZXkpKSBuKys7CiAgICAgIHJldHVybiBuOwogICAgfSwKICAgIGFzeW5jIGluY3Ioa2V5LCB0dGxTZWNvbmRzKSB7CiAgICAgIGNvbnN0IGN1cnJlbnQgPSBOdW1iZXIocmVhZChrZXkpKSB8fCAwOwogICAgICBjb25zdCBuZXh0ID0gY3VycmVudCArIDE7CiAgICAgIGNvbnN0IGV4aXN0aW5nID0gZGF0YS5nZXQoa2V5KTsKICAgICAgY29uc3QgZXhwaXJlcyA9IGFsaXZlKGV4aXN0aW5nKSA/IGV4aXN0aW5nLmV4cGlyZXMgOiBub3coKSArIE1hdGgubWF4KDEsIHR0bFNlY29uZHMpICogMTAwMDsKICAgICAgZGF0YS5zZXQoa2V5LCB7IHZhbHVlOiBTdHJpbmcobmV4dCksIGV4cGlyZXMgfSk7CiAgICAgIHJldHVybiBuZXh0OwogICAgfSwKICAgIC8vIOS7hea1i+ivleS9v+eUqO+8mua4heepuuWFqOmDqOmUruOAggogICAgYXN5bmMgY2xlYXIoKSB7IGRhdGEuY2xlYXIoKTsgfSwKICB9Owp9CgovLyBVcHN0YXNoIFJlZGlzIFJFU1Qg5a6e546w44CC6K+35rGC5b2i5aaCIFBPU1Qge3VybH0gIGJvZHkgWyJHRVQiLCBrZXld44CCCi8vIOWPquWFgeiuuCBSZWRpcyDljZXlkb3ku6TmlbDnu4TvvIzkuI3miafooYznlKjmiLfmj5DkvpvnmoTku7vmhI/lkb3ku6TjgIIKZXhwb3J0IGZ1bmN0aW9uIGNyZWF0ZVJlZGlzU3RvcmUoeyB1cmwsIHRva2VuLCBwcmVmaXggPSAnY2Q6JywgZmV0Y2hlciA9IGZldGNoIH0gPSB7fSkgewogIGlmICghdXJsIHx8ICF0b2tlbikgdGhyb3cgbmV3IEFwcEVycm9yKCdLVl9OT1RfQ09ORklHVVJFRCcsICfplK7lgLzlrZjlgqjnvLrlsJEgVVJMIOaIliBUb2tlbuOAgicpOwogIGNvbnN0IG5hbWVzcGFjZWQgPSBrZXkgPT4gYCR7cHJlZml4fSR7a2V5fWA7CiAgY29uc3QgY29tbWFuZCA9IGFzeW5jICguLi5hcmdzKSA9PiB7CiAgICBsZXQgcmVzcG9uc2U7CiAgICB0cnkgewogICAgICByZXNwb25zZSA9IGF3YWl0IGZldGNoZXIodXJsLCB7CiAgICAgICAgbWV0aG9kOiAnUE9TVCcsCiAgICAgICAgaGVhZGVyczogeyBBdXRob3JpemF0aW9uOiBgQmVhcmVyICR7dG9rZW59YCwgJ0NvbnRlbnQtVHlwZSc6ICdhcHBsaWNhdGlvbi9qc29uJyB9LAogICAgICAgIGJvZHk6IEpTT04uc3RyaW5naWZ5KGFyZ3MubWFwKFN0cmluZykpLAogICAgICAgIHNpZ25hbDogQWJvcnRTaWduYWwudGltZW91dCgxMDAwMCksCiAgICAgIH0pOwogICAgfSBjYXRjaCB7CiAgICAgIHRocm93IG5ldyBBcHBFcnJvcignS1ZfVU5BVkFJTEFCTEUnLCAn55m75b2V54q25oCB5a2Y5YKo5pqC5pe25LiN5Y+v55So77yM6K+356iN5ZCO6YeN6K+V44CCJywgNTAzKTsKICAgIH0KICAgIGlmICghcmVzcG9uc2Uub2spIHRocm93IG5ldyBBcHBFcnJvcignS1ZfVU5BVkFJTEFCTEUnLCBg55m75b2V54q25oCB5a2Y5YKo6L+U5ZueIEhUVFAgJHtyZXNwb25zZS5zdGF0dXN944CCYCwgNTAzKTsKICAgIGNvbnN0IHBheWxvYWQgPSBhd2FpdCByZXNwb25zZS5qc29uKCkuY2F0Y2goKCkgPT4gbnVsbCk7CiAgICBpZiAoIXBheWxvYWQgfHwgdHlwZW9mIHBheWxvYWQgIT09ICdvYmplY3QnIHx8ICdlcnJvcicgaW4gcGF5bG9hZCkgdGhyb3cgbmV3IEFwcEVycm9yKCdLVl9VTkFWQUlMQUJMRScsICfnmbvlvZXnirbmgIHlrZjlgqjlk43lupTml6DmlYjjgIInLCA1MDMpOwogICAgcmV0dXJuIHBheWxvYWQucmVzdWx0OwogIH07CiAgcmV0dXJuIHsKICAgIGtpbmQ6ICdyZWRpcycsCiAgICBhc3luYyBnZXQoa2V5KSB7IGNvbnN0IHZhbHVlID0gYXdhaXQgY29tbWFuZCgnR0VUJywgbmFtZXNwYWNlZChrZXkpKTsgcmV0dXJuIHZhbHVlID09PSBudWxsIHx8IHZhbHVlID09PSB1bmRlZmluZWQgPyBudWxsIDogU3RyaW5nKHZhbHVlKTsgfSwKICAgIGFzeW5jIHNldChrZXksIHZhbHVlLCB0dGxTZWNvbmRzKSB7IGF3YWl0IGNvbW1hbmQoJ1NFVCcsIG5hbWVzcGFjZWQoa2V5KSwgU3RyaW5nKHZhbHVlKSwgJ0VYJywgTWF0aC5tYXgoMSwgTWF0aC5jZWlsKHR0bFNlY29uZHMpKSk7IH0sCiAgICBhc3luYyBkZWwoLi4ua2V5cykgewogICAgICBjb25zdCBsaXN0ID0ga2V5cy5tYXAobmFtZXNwYWNlZCk7CiAgICAgIGlmICghbGlzdC5sZW5ndGgpIHJldHVybiAwOwogICAgICByZXR1cm4gTnVtYmVyKGF3YWl0IGNvbW1hbmQoJ0RFTCcsIC4uLmxpc3QpKSB8fCAwOwogICAgfSwKICAgIGFzeW5jIGRlbEJ5UHJlZml4KHByZWZpeE1hdGNoKSB7CiAgICAgIGNvbnN0IG1hdGNoID0gYCR7cHJlZml4fSR7cHJlZml4TWF0Y2h9KmA7CiAgICAgIGxldCBjdXJzb3IgPSAnMCc7CiAgICAgIGxldCByZW1vdmVkID0gMDsKICAgICAgZG8gewogICAgICAgIGNvbnN0IHBhZ2UgPSBhd2FpdCBjb21tYW5kKCdTQ0FOJywgY3Vyc29yLCAnTUFUQ0gnLCBtYXRjaCwgJ0NPVU5UJywgMjAwKTsKICAgICAgICBpZiAoIUFycmF5LmlzQXJyYXkocGFnZSkgfHwgcGFnZS5sZW5ndGggIT09IDIpIHRocm93IG5ldyBBcHBFcnJvcignS1ZfVU5BVkFJTEFCTEUnLCAn55m75b2V54q25oCB5a2Y5YKo5omr5o+P5ZON5bqU5peg5pWI44CCJywgNTAzKTsKICAgICAgICBjdXJzb3IgPSBTdHJpbmcocGFnZVswXSk7CiAgICAgICAgY29uc3Qga2V5cyA9IEFycmF5LmlzQXJyYXkocGFnZVsxXSkgPyBwYWdlWzFdIDogW107CiAgICAgICAgLy8gU0NBTiDov5Tlm57nmoTmmK/lt7Lnu4/luKblkb3lkI3nqbrpl7TnmoTlrozmlbTplK7vvIzlv4Xpobvljp/moLfliKDpmaTvvIzkuI3og73lho3otbAgZGVsKCkg5LqM5qyh5Yqg5YmN57yA44CCCiAgICAgICAgaWYgKGtleXMubGVuZ3RoKSByZW1vdmVkICs9IE51bWJlcihhd2FpdCBjb21tYW5kKCdERUwnLCAuLi5rZXlzKSkgfHwgMDsKICAgICAgfSB3aGlsZSAoY3Vyc29yICE9PSAnMCcpOwogICAgICByZXR1cm4gcmVtb3ZlZDsKICAgIH0sCiAgICBhc3luYyBpbmNyKGtleSwgdHRsU2Vjb25kcykgewogICAgICBjb25zdCBuYW1lID0gbmFtZXNwYWNlZChrZXkpOwogICAgICBjb25zdCB2YWx1ZSA9IE51bWJlcihhd2FpdCBjb21tYW5kKCdJTkNSJywgbmFtZSkpOwogICAgICBpZiAodmFsdWUgPT09IDEpIGF3YWl0IGNvbW1hbmQoJ0VYUElSRScsIG5hbWUsIE1hdGgubWF4KDEsIE1hdGguY2VpbCh0dGxTZWNvbmRzKSkpOwogICAgICByZXR1cm4gdmFsdWU7CiAgICB9LAogIH07Cn0KCi8vIOaMieeOr+Wig+WPmOmHj+mAieaLqeWunueOsOOAguacqumFjee9riBSZWRpcyDml7bpgIDlm57lhoXlrZjlrp7njrDvvIzlubblm57miqXpmY3nuqfnirbmgIHkvpvor4rmlq3kvb/nlKjjgIIKZXhwb3J0IGZ1bmN0aW9uIGNyZWF0ZVN0b3JlKGVudiA9IHByb2Nlc3MuZW52LCBvcHRpb25zID0ge30pIHsKICBjb25zdCB1cmwgPSBlbnYuU0VTU0lPTl9TVE9SRV9VUkw7CiAgY29uc3QgdG9rZW4gPSBlbnYuU0VTU0lPTl9TVE9SRV9UT0tFTjsKICBpZiAodXJsICYmIHRva2VuKSByZXR1cm4gY3JlYXRlUmVkaXNTdG9yZSh7IHVybCwgdG9rZW4sIHByZWZpeDogZW52LlNFU1NJT05fU1RPUkVfUFJFRklYIHx8ICdjZDonLCAuLi5vcHRpb25zIH0pOwogIHJldHVybiBjcmVhdGVNZW1vcnlTdG9yZShvcHRpb25zLm5vdyk7Cn0KCmV4cG9ydCBmdW5jdGlvbiBzdG9yZVN0YXR1cyhlbnYgPSBwcm9jZXNzLmVudikgewogIGNvbnN0IHVybCA9IGVudi5TRVNTSU9OX1NUT1JFX1VSTDsKICBjb25zdCB0b2tlbiA9IGVudi5TRVNTSU9OX1NUT1JFX1RPS0VOOwogIGlmICh1cmwgJiYgdG9rZW4pIHJldHVybiB7IGtpbmQ6ICdyZWRpcycsIGR1cmFibGU6IHRydWUgfTsKICBpZiAodXJsIHx8IHRva2VuKSByZXR1cm4geyBraW5kOiAnbWVtb3J5JywgZHVyYWJsZTogZmFsc2UsIGlzc3VlOiAn6ZSu5YC85a2Y5YKo6YWN572u5LiN5a6M5pW077yaU0VTU0lPTl9TVE9SRV9VUkwg5LiOIFNFU1NJT05fU1RPUkVfVE9LRU4g6ZyA6KaB5ZCM5pe25aGr5YaZ44CCJyB9OwogIHJldHVybiB7IGtpbmQ6ICdtZW1vcnknLCBkdXJhYmxlOiBmYWxzZSwgaXNzdWU6ICfmnKrphY3nva7lhbHkuqvplK7lgLzlrZjlgqjvvJrnmbvlvZXnirbmgIHku4XlnKjljZXlrp7kvovlhoXmnInmlYjvvIxTZXJ2ZXJsZXNzIOWkmuWunuS+i+S4i+eZu+W9leS8muWksei0peOAgicgfTsKfQo=
+import { AppError } from './domain.mjs';
+
+// 键值存储抽象：OAuth state、登录会话与限流计数必须活过单个进程。
+// 本地开发用内存实现；部署到 Serverless 时用 Upstash Redis REST 实现。
+// 不引入第三方依赖，Redis 适配器直接调用 REST 接口。
+
+// 内存实现：单进程有效。带 TTL 语义，便于本地开发与测试保持与 Redis 一致的行为。
+export function createMemoryStore(now = Date.now) {
+  const data = new Map();
+  const alive = entry => entry && entry.expires > now();
+  const read = key => {
+    const entry = data.get(key);
+    if (!alive(entry)) { data.delete(key); return null; }
+    return entry.value;
+  };
+  return {
+    kind: 'memory',
+    async get(key) { return read(key); },
+    async set(key, value, ttlSeconds) {
+      data.set(key, { value, expires: now() + Math.max(1, ttlSeconds) * 1000 });
+    },
+    async del(...keys) { let n = 0; for (const key of keys) if (data.delete(key)) n++; return n; },
+    async delByPrefix(prefix) {
+      let n = 0;
+      for (const key of [...data.keys()]) if (key.startsWith(prefix) && data.delete(key)) n++;
+      return n;
+    },
+    async incr(key, ttlSeconds) {
+      const current = Number(read(key)) || 0;
+      const next = current + 1;
+      const existing = data.get(key);
+      const expires = alive(existing) ? existing.expires : now() + Math.max(1, ttlSeconds) * 1000;
+      data.set(key, { value: String(next), expires });
+      return next;
+    },
+    // 仅测试使用：清空全部键。
+    async clear() { data.clear(); },
+  };
+}
+
+// Upstash Redis REST 实现。请求形如 POST {url}  body ["GET", key]。
+// 只允许 Redis 单命令数组，不执行用户提供的任意命令。
+export function createRedisStore({ url, token, prefix = 'cd:', fetcher = fetch } = {}) {
+  if (!url || !token) throw new AppError('KV_NOT_CONFIGURED', '键值存储缺少 URL 或 Token。');
+  const namespaced = key => `${prefix}${key}`;
+  const command = async (...args) => {
+    let response;
+    try {
+      response = await fetcher(url, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(args.map(String)),
+        signal: AbortSignal.timeout(10000),
+      });
+    } catch {
+      throw new AppError('KV_UNAVAILABLE', '登录状态存储暂时不可用，请稍后重试。', 503);
+    }
+    if (!response.ok) throw new AppError('KV_UNAVAILABLE', `登录状态存储返回 HTTP ${response.status}。`, 503);
+    const payload = await response.json().catch(() => null);
+    if (!payload || typeof payload !== 'object' || 'error' in payload) throw new AppError('KV_UNAVAILABLE', '登录状态存储响应无效。', 503);
+    return payload.result;
+  };
+  return {
+    kind: 'redis',
+    async get(key) { const value = await command('GET', namespaced(key)); return value === null || value === undefined ? null : String(value); },
+    async set(key, value, ttlSeconds) { await command('SET', namespaced(key), String(value), 'EX', Math.max(1, Math.ceil(ttlSeconds))); },
+    async del(...keys) {
+      const list = keys.map(namespaced);
+      if (!list.length) return 0;
+      return Number(await command('DEL', ...list)) || 0;
+    },
+    async delByPrefix(prefixMatch) {
+      const match = `${prefix}${prefixMatch}*`;
+      let cursor = '0';
+      let removed = 0;
+      do {
+        const page = await command('SCAN', cursor, 'MATCH', match, 'COUNT', 200);
+        if (!Array.isArray(page) || page.length !== 2) throw new AppError('KV_UNAVAILABLE', '登录状态存储扫描响应无效。', 503);
+        cursor = String(page[0]);
+        const keys = Array.isArray(page[1]) ? page[1] : [];
+        // SCAN 返回的是已经带命名空间的完整键，必须原样删除，不能再走 del() 二次加前缀。
+        if (keys.length) removed += Number(await command('DEL', ...keys)) || 0;
+      } while (cursor !== '0');
+      return removed;
+    },
+    async incr(key, ttlSeconds) {
+      const name = namespaced(key);
+      const value = Number(await command('INCR', name));
+      if (value === 1) await command('EXPIRE', name, Math.max(1, Math.ceil(ttlSeconds)));
+      return value;
+    },
+  };
+}
+
+// 按环境变量选择实现。未配置 Redis 时退回内存实现，并回报降级状态供诊断使用。
+export function createStore(env = process.env, options = {}) {
+  const url = env.SESSION_STORE_URL;
+  const token = env.SESSION_STORE_TOKEN;
+  if (url && token) return createRedisStore({ url, token, prefix: env.SESSION_STORE_PREFIX || 'cd:', ...options });
+  return createMemoryStore(options.now);
+}
+
+export function storeStatus(env = process.env) {
+  const url = env.SESSION_STORE_URL;
+  const token = env.SESSION_STORE_TOKEN;
+  if (url && token) return { kind: 'redis', durable: true };
+  if (url || token) return { kind: 'memory', durable: false, issue: '键值存储配置不完整：SESSION_STORE_URL 与 SESSION_STORE_TOKEN 需要同时填写。' };
+  return { kind: 'memory', durable: false, issue: '未配置共享键值存储：登录状态仅在单实例内有效，Serverless 多实例下登录会失败。' };
+}

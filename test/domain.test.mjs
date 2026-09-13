@@ -1,1 +1,39 @@
-aW1wb3J0IHRlc3QgZnJvbSAnbm9kZTp0ZXN0JzsKaW1wb3J0IGFzc2VydCBmcm9tICdub2RlOmFzc2VydC9zdHJpY3QnOwppbXBvcnQgeyBjaGVja0RyYWZ0LCBhbmNob3IsIGFwcGx5U3VnZ2VzdGlvbiwgdmFsaWRhdGVGaW5kaW5ncywgdmFsaWRhdGVTdWdnZXN0aW9uLCBBcHBFcnJvciB9IGZyb20gJy4uL3NyYy9kb21haW4ubWpzJzsKCnRlc3QoJ2xvY2FsIGNoZWNrIGxvY2F0ZXMgYSBzdHJvbmcgYXNzZXJ0aW9uIHdpdGhvdXQgY2xhaW1pbmcgdmVyaWZpY2F0aW9uJywgKCkgPT4gewogIGNvbnN0IHRleHQgPSAn5oiR5q2j5Zyo6ICD6JmR5paw55qE5bel5L2c5pa55byP44CC6L+c56iL5Yqe5YWs5LiA5a6a6IO95o+Q6auY5omA5pyJ5Lq655qE5bel5L2c5pWI546H44CC5Zui6Zif5bqU6K+l6K6k55yf6K6o6K6644CCJzsKICBjb25zdCBpdGVtID0gY2hlY2tEcmFmdCh0ZXh0KVswXTsKICBhc3NlcnQuZXF1YWwodGV4dC5zbGljZShpdGVtLnN0YXJ0LCBpdGVtLmVuZCksIGl0ZW0ucXVvdGUpOwogIGFzc2VydC5lcXVhbChpdGVtLnBoYXNlLCAncHJlbGltaW5hcnknKTsKICBhc3NlcnQuZXF1YWwoaXRlbS5lbmdpbmUsICdsb2NhbF9ydWxlcycpOwp9KTsKdGVzdCgnbmVnYXRlZCBhc3NlcnRpb24gYW5kIHF1b3RlZCBjbGFpbXMgYXJlIG5vdCBibGluZGx5IGZsYWdnZWQnLCAoKSA9PiB7CiAgYXNzZXJ0LmVxdWFsKGNoZWNrRHJhZnQoJ+S4jeiDveivtOi/nOeoi+WKnuWFrOS4gOWumuiDveaPkOmrmOaJgOacieS6uueahOW3peS9nOaViOeOh+OAgicpLmxlbmd0aCwgMCk7CiAgYXNzZXJ0LmVxdWFsKGNoZWNrRHJhZnQoJ+acieS6uuivtOKAnOi/nOeoi+WKnuWFrOS4gOWumuabtOWlveKAne+8jOaIkeWvueatpOW5tuS4jei1nuWQjOOAgicpLmxlbmd0aCwgMCk7Cn0pOwp0ZXN0KCdyZXBlYXRlZCBzZW50ZW5jZXMgcmVxdWlyZSBvY2N1cnJlbmNlLWF3YXJlIGFuY2hvcnMnLCAoKSA9PiB7CiAgY29uc3QgdGV4dCA9ICflkIzkuIDlj6Xor53jgILlkIzkuIDlj6Xor53jgIInOwogIGNvbnN0IGEgPSBhbmNob3IodGV4dCwgJ+WQjOS4gOWPpeivneOAgicsIDUpOwogIGFzc2VydC5lcXVhbChhLnN0YXJ0LCA1KTsKICBhc3NlcnQudGhyb3dzKCgpID0+IGFuY2hvcih0ZXh0LCAn5ZCM5LiA5Y+l6K+d44CCJyksIEFwcEVycm9yKTsKfSk7CnRlc3QoJ29wZW4gcXVlc3Rpb25zIGFyZSBub3QgY2xhc3NpZmllZCBhcyBzdHJvbmcgYXNzZXJ0aW9ucycsICgpID0+IHsKICBhc3NlcnQuZXF1YWwoY2hlY2tEcmFmdCgn6L+c56iL5Yqe5YWs5piv5ZCm6IO95o+Q6auY5omA5pyJ5Lq655qE5bel5L2c5pWI546H77yfJykubGVuZ3RoLCAwKTsKfSk7CnRlc3QoJ3N0YWxlIHN1Z2dlc3Rpb24gY2Fubm90IG92ZXJ3cml0ZSBjaGFuZ2VkIGRyYWZ0JywgKCkgPT4gewogIGFzc2VydC50aHJvd3MoKCkgPT4gYXBwbHlTdWdnZXN0aW9uKHsgdGV4dDogJ+WOn+adpeeahOWPpeWtkOOAgicsIHJldmlzaW9uOiAyIH0sIHsgYmFzZVJldmlzaW9uOiAxLCBzdGFydDogMCwgZW5kOiA2LCBxdW90ZTogJ+WOn+adpeeahOWPpeWtkOOAgicsIHRleHQ6ICfmlLnlkI7nmoTlj6XlrZDjgIInIH0pLCAv54mI5pysLyk7Cn0pOwp0ZXN0KCdhcHBseSBvbmx5IHJlcGxhY2VzIGV4YWN0IGFuY2hvciByYW5nZScsICgpID0+IHsKICBjb25zdCB0ZXh0ID0gJ+esrOS4gOWPpeOAguWOn+adpeeahOWPpeWtkOOAguacq+WPpeOAgic7CiAgY29uc3QgYSA9IGFuY2hvcih0ZXh0LCAn5Y6f5p2l55qE5Y+l5a2Q44CCJyk7CiAgYXNzZXJ0LmVxdWFsKGFwcGx5U3VnZ2VzdGlvbih7dGV4dCwgcmV2aXNpb246MX0sIHsuLi5hLGJhc2VSZXZpc2lvbjoxLHRleHQ6J+aWsOeahOWPpeWtkOOAgid9KSwgJ+esrOS4gOWPpeOAguaWsOeahOWPpeWtkOOAguacq+WPpeOAgicpOwp9KTsKdGVzdCgnbW9kZWwgb3V0cHV0IHJlamVjdHMgZmFicmljYXRlZCBxdW90ZScsICgpID0+IHsKICBhc3NlcnQudGhyb3dzKCgpID0+IHZhbGlkYXRlRmluZGluZ3Moe2l0ZW1zOlt7cXVvdGU6J+S4jeWtmOWcqCcscmVhc29uOifml6AnLGtpbmQ6J3Njb3BlJ31dfSwgJ+WOn+aWhycsIDEpKTsKfSk7CnRlc3QoJ3Vua25vd24gY2l0YXRpb24gYW5kIGludmFsaWQgc3VnZ2VzdGlvbiBhcmUgcmVqZWN0ZWQnLCAoKSA9PiB7CiAgYXNzZXJ0LnRocm93cygoKSA9PiB2YWxpZGF0ZVN1Z2dlc3Rpb24oe3RleHQ6J+aWsOWPpScscmVhc29uOifnkIbnlLEnLHNvdXJjZUlkczpbJ2Zha2UnXX0sIFtdKSk7CiAgYXNzZXJ0LnRocm93cygoKSA9PiB2YWxpZGF0ZVN1Z2dlc3Rpb24oe3RleHQ6JycscmVhc29uOifnkIbnlLEnLHNvdXJjZUlkczpbXX0sIFtdKSk7Cn0pOwo=
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { checkDraft, anchor, applySuggestion, validateFindings, validateSuggestion, AppError } from '../src/domain.mjs';
+
+test('local check locates a strong assertion without claiming verification', () => {
+  const text = '我正在考虑新的工作方式。远程办公一定能提高所有人的工作效率。团队应该认真讨论。';
+  const item = checkDraft(text)[0];
+  assert.equal(text.slice(item.start, item.end), item.quote);
+  assert.equal(item.phase, 'preliminary');
+  assert.equal(item.engine, 'local_rules');
+});
+test('negated assertion and quoted claims are not blindly flagged', () => {
+  assert.equal(checkDraft('不能说远程办公一定能提高所有人的工作效率。').length, 0);
+  assert.equal(checkDraft('有人说“远程办公一定更好”，我对此并不赞同。').length, 0);
+});
+test('repeated sentences require occurrence-aware anchors', () => {
+  const text = '同一句话。同一句话。';
+  const a = anchor(text, '同一句话。', 5);
+  assert.equal(a.start, 5);
+  assert.throws(() => anchor(text, '同一句话。'), AppError);
+});
+test('open questions are not classified as strong assertions', () => {
+  assert.equal(checkDraft('远程办公是否能提高所有人的工作效率？').length, 0);
+});
+test('stale suggestion cannot overwrite changed draft', () => {
+  assert.throws(() => applySuggestion({ text: '原来的句子。', revision: 2 }, { baseRevision: 1, start: 0, end: 6, quote: '原来的句子。', text: '改后的句子。' }), /版本/);
+});
+test('apply only replaces exact anchor range', () => {
+  const text = '第一句。原来的句子。末句。';
+  const a = anchor(text, '原来的句子。');
+  assert.equal(applySuggestion({text, revision:1}, {...a,baseRevision:1,text:'新的句子。'}), '第一句。新的句子。末句。');
+});
+test('model output rejects fabricated quote', () => {
+  assert.throws(() => validateFindings({items:[{quote:'不存在',reason:'无',kind:'scope'}]}, '原文', 1));
+});
+test('unknown citation and invalid suggestion are rejected', () => {
+  assert.throws(() => validateSuggestion({text:'新句',reason:'理由',sourceIds:['fake']}, []));
+  assert.throws(() => validateSuggestion({text:'',reason:'理由',sourceIds:[]}, []));
+});

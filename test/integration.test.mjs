@@ -1,1 +1,197 @@
-aW1wb3J0IHRlc3QgZnJvbSAnbm9kZTp0ZXN0JzsKaW1wb3J0IGFzc2VydCBmcm9tICdub2RlOmFzc2VydC9zdHJpY3QnOwppbXBvcnQgaHR0cCBmcm9tICdub2RlOmh0dHAnOwppbXBvcnQgeyBPQXV0aCB9IGZyb20gJy4uL3NyYy9vYXV0aC5tanMnOwppbXBvcnQgeyBjcmVhdGVNZW1vcnlTdG9yZSwgY3JlYXRlUmVkaXNTdG9yZSB9IGZyb20gJy4uL3NyYy9rdi5tanMnOwppbXBvcnQgeyBkaWFnbm9zZSB9IGZyb20gJy4uL3NyYy9jb25maWcubWpzJzsKaW1wb3J0IHsgY3JlYXRlUHJvdmlkZXJzIH0gZnJvbSAnLi4vc3JjL3Byb3ZpZGVycy5tanMnOwppbXBvcnQgeyBTdG9yZSB9IGZyb20gJy4uL3NyYy9zdG9yZS5tanMnOwppbXBvcnQgeyBoYXNoIH0gZnJvbSAnLi4vc3JjL2RvbWFpbi5tanMnOwppbXBvcnQgeyBjcmVhdGVBcHAgfSBmcm9tICcuLi9zcmMvc2VydmVyLm1qcyc7CmNvbnN0IGVudj17WkhJSFVfT0FVVEhfQVBQX0lEOid0ZXN0LWlkJyxaSElIVV9PQVVUSF9BUFBfS0VZOid0ZXN0LXNlY3JldCcsWkhJSFVfT0FVVEhfUkVESVJFQ1RfVVJJOidodHRwczovL3Rlc3QuZXhhbXBsZS9hdXRoL3poaWh1L2NhbGxiYWNrJyxBUFBfT1JJR0lOOidodHRwczovL3Rlc3QuZXhhbXBsZSd9Owpjb25zdCByZXNwb25zZT14PT5uZXcgUmVzcG9uc2UoSlNPTi5zdHJpbmdpZnkoeCkpOwpjb25zdCBwYXJhbXM9dXJsPT5uZXcgVVJMU2VhcmNoUGFyYW1zKHtzdGF0ZTpuZXcgVVJMKHVybCkuc2VhcmNoUGFyYW1zLmdldCgnc3RhdGUnKSxhdXRob3JpemF0aW9uX2NvZGU6J3Rlc3QtY29kZSd9KTsKdGVzdCgnY29uZmlndXJhdGlvbiByZXBvcnRzIG1pc3NpbmcgcGFydHMgd2l0aG91dCByZXZlYWxpbmcgc2VjcmV0cycsKCk9PnsKICBjb25zdCBkPWRpYWdub3NlKHsuLi5lbnYsTU9ERUxfQVBJX0tFWTonbmV2ZXItZGlzcGxheSd9KTthc3NlcnQuZXF1YWwoZC5vYXV0aCx0cnVlKTthc3NlcnQuZXF1YWwoZC5tb2RlbCxmYWxzZSk7YXNzZXJ0Lm9rKGQuaXNzdWVzLmxlbmd0aCk7YXNzZXJ0LmVxdWFsKEpTT04uc3RyaW5naWZ5KGQpLmluY2x1ZGVzKCduZXZlci1kaXNwbGF5JyksZmFsc2UpOwogIGFzc2VydC5lcXVhbChkaWFnbm9zZSh7Li4uZW52LFpISUhVX09BVVRIX1JFRElSRUNUX1VSSTonaHR0cHM6Ly9vdGhlci5leGFtcGxlL2F1dGgvemhpaHUvY2FsbGJhY2snfSkub2F1dGgsZmFsc2UpOwp9KTsKdGVzdCgnT0F1dGggc3RhdGUgaXMgc2Vzc2lvbi1ib3VuZCwgZXhwaXJlcywgYW5kIGNhbm5vdCByZXBsYXknLGFzeW5jKCk9PnsKICBsZXQgbm93PTAsY2FsbHM9MDtjb25zdCBvPW5ldyBPQXV0aChlbnYsYXN5bmMoKT0+e2NhbGxzKys7cmV0dXJuIHJlc3BvbnNlKHt9KTt9LCgpPT5ub3cpOwogIGNvbnN0IHA9cGFyYW1zKGF3YWl0IG8uc3RhcnQoJ2Nvb2tpZS1hJykpO2F3YWl0IGFzc2VydC5yZWplY3RzKG8uZmluaXNoKCdjb29raWUtYicscCksL+S4jeWMuemFjS8pO2Fzc2VydC5lcXVhbChjYWxscywwKTsKICBub3c9MzAwMDAxO2F3YWl0IGFzc2VydC5yZWplY3RzKG8uZmluaXNoKCdjb29raWUtYScscCksL+WkseaViC8pO2Fzc2VydC5lcXVhbChjYWxscywwKTsKICBjb25zdCBmcmVzaD1wYXJhbXMoYXdhaXQgby5zdGFydCgnY29va2llLWEnKSk7YXdhaXQgYXNzZXJ0LnJlamVjdHMoby5maW5pc2goJ2Nvb2tpZS1hJyxmcmVzaCksL+S7pOeJjC8pO2Fzc2VydC5lcXVhbChjYWxscywxKTsKICBhd2FpdCBhc3NlcnQucmVqZWN0cyhvLmZpbmlzaCgnY29va2llLWEnLGZyZXNoKSwv5aSx5pWILyk7YXNzZXJ0LmVxdWFsKGNhbGxzLDEpOwp9KTsKdGVzdCgnT0F1dGggZXhjaGFuZ2VzIGV4YWN0IGNvbnRyYWN0LCBrZWVwcyBpbnQ2NCBpZGVudGl0eSwgYW5kIHJvdGF0ZXMgYXBwIGNvb2tpZScsYXN5bmMoKT0+ewogIGNvbnN0IGNhbGxzPVtdO2xldCBub3c9MDsKICBjb25zdCBvPW5ldyBPQXV0aChlbnYsYXN5bmModXJsLG9wdHMpPT57Y2FsbHMucHVzaCh7dXJsLG9wdHN9KTtyZXR1cm4gY2FsbHMubGVuZ3RoPT09MT9yZXNwb25zZSh7YWNjZXNzX3Rva2VuOidwcml2YXRlLXRva2VuJyxleHBpcmVzX2luOjM2MDB9KTpuZXcgUmVzcG9uc2UoJ3sidWlkIjo5Njk1NzAwNDc3MTAyMTYyMDEsImZ1bGxuYW1lIjoi5rWL6K+V55So5oi3IiwiZW1haWwiOiJ1bnVzZWQifScpO30sKCk9Pm5vdyk7CiAgY29uc3Qgcj1hd2FpdCBvLmZpbmlzaCgnb2xkLWNvb2tpZScscGFyYW1zKGF3YWl0IG8uc3RhcnQoJ29sZC1jb29raWUnLCdzZWxlY3RlZC1wcm9qZWN0JykpKTsKICBhc3NlcnQuZXF1YWwoci5wcm9qZWN0SWQsJ3NlbGVjdGVkLXByb2plY3QnKTthc3NlcnQubm90RXF1YWwoci5jb29raWUsJ29sZC1jb29raWUnKTthc3NlcnQuZXF1YWwoci5zZXNzaW9uLm93bmVyLCd6aGlodTonK2hhc2goJzk2OTU3MDA0NzcxMDIxNjIwMScpKTsKICBhc3NlcnQuZXF1YWwobmV3IFVSTFNlYXJjaFBhcmFtcyhjYWxsc1swXS5vcHRzLmJvZHkpLmdldCgnY29kZScpLCd0ZXN0LWNvZGUnKTthc3NlcnQuZXF1YWwoY2FsbHNbMV0ub3B0cy5oZWFkZXJzLkF1dGhvcml6YXRpb24sJ0JlYXJlciBwcml2YXRlLXRva2VuJyk7YXNzZXJ0LmVxdWFsKEpTT04uc3RyaW5naWZ5KHIpLmluY2x1ZGVzKCdwcml2YXRlLXRva2VuJyksZmFsc2UpOwogIGFzc2VydC5lcXVhbCgoYXdhaXQgby5zZXNzaW9uKHIuY29va2llKSkubmFtZSwn5rWL6K+V55So5oi3Jyk7bm93PTM2MDAwMDE7YXNzZXJ0LmVxdWFsKGF3YWl0IG8uc2Vzc2lvbihyLmNvb2tpZSksbnVsbCk7Cn0pOwp0ZXN0KCdsb2dvdXQgaW52YWxpZGF0ZXMgYSBsb2dpbiBldmVuIHdoaWxlIHRva2VuIGV4Y2hhbmdlIGlzIGluIGZsaWdodCcsYXN5bmMoKT0+ewogIGxldCByZWxlYXNlO2NvbnN0IGdhdGU9bmV3IFByb21pc2Uocj0+cmVsZWFzZT1yKTtsZXQgY2FsbHM9MDsKICBjb25zdCBvPW5ldyBPQXV0aChlbnYsYXN5bmMoKT0+e2NhbGxzKys7aWYoY2FsbHM9PT0xKXthd2FpdCBnYXRlO3JldHVybiByZXNwb25zZSh7YWNjZXNzX3Rva2VuOid0b2tlbicsZXhwaXJlc19pbjo2MH0pO31yZXR1cm4gcmVzcG9uc2Uoe2hhc2hfaWQ6J3VzZXInLGZ1bGxuYW1lOiduYW1lJ30pO30pOwogIGNvbnN0IHJ1bm5pbmc9by5maW5pc2goJ2Nvb2tpZScscGFyYW1zKGF3YWl0IG8uc3RhcnQoJ2Nvb2tpZScpKSk7YXdhaXQgby5sb2dvdXQoJ2Nvb2tpZScpO3JlbGVhc2UoKTthd2FpdCBhc3NlcnQucmVqZWN0cyhydW5uaW5nLC/lj5bmtogvKTsKfSk7Ci8vIOWFs+mUruaWsOWinu+8mnN0YXJ0IOS4jiBjYWxsYmFjayDokL3lnKjkuI3lkIzlrp7kvovvvIhTZXJ2ZXJsZXNzIOeahOW4uOaAge+8ieaXtueZu+W9leW/hemhu+aIkOWKn+OAggovLyDmlLnpgKDliY3ov5nkuIDmnaHkuIDlrprlpLHotKXvvIzlpLHotKXljp/lm6DmmK8gT0FVVEhfU1RBVEXjgIIKdGVzdCgnbG9naW4gY29tcGxldGVzIHdoZW4gc3RhcnQgYW5kIGNhbGxiYWNrIGxhbmQgb24gZGlmZmVyZW50IGluc3RhbmNlcycsYXN5bmMoKT0+ewogIGNvbnN0IHNoYXJlZD1jcmVhdGVNZW1vcnlTdG9yZSgpO2xldCBjYWxscz0wOwogIGNvbnN0IGV4Y2hhbmdlPWFzeW5jKCk9PntjYWxscysrO3JldHVybiBjYWxscyUyP3Jlc3BvbnNlKHthY2Nlc3NfdG9rZW46J3RvaycsZXhwaXJlc19pbjozNjAwfSk6cmVzcG9uc2Uoe2hhc2hfaWQ6J3NoYXJlZC11c2VyJyxmdWxsbmFtZTon6Leo5a6e5L6L55So5oi3J30pO307CiAgY29uc3QgaW5zdGFuY2VBPW5ldyBPQXV0aChlbnYsZXhjaGFuZ2UsRGF0ZS5ub3csc2hhcmVkKTsKICBjb25zdCBpbnN0YW5jZUI9bmV3IE9BdXRoKGVudixleGNoYW5nZSxEYXRlLm5vdyxzaGFyZWQpOwogIGNvbnN0IHN0YXJ0ZWQ9cGFyYW1zKGF3YWl0IGluc3RhbmNlQS5zdGFydCgnY29va2llLWEnLCdwcm9qLTEnKSk7CiAgY29uc3Qgcj1hd2FpdCBpbnN0YW5jZUIuZmluaXNoKCdjb29raWUtYScsc3RhcnRlZCk7CiAgYXNzZXJ0LmVxdWFsKHIuc2Vzc2lvbi5vd25lciwnemhpaHU6JytoYXNoKCdzaGFyZWQtdXNlcicpKTsKICBhc3NlcnQuZXF1YWwoci5wcm9qZWN0SWQsJ3Byb2otMScpOwogIGFzc2VydC5lcXVhbCgoYXdhaXQgaW5zdGFuY2VBLnNlc3Npb24oci5jb29raWUpKS5uYW1lLCfot6jlrp7kvovnlKjmiLcnKTsKfSk7Ci8vIGxvZ291dCDnmoTlkIrplIDkuZ/lv4Xpobvot6jlrp7kvovnlJ/mlYjvvIzlkKbliJkgU2VydmVybGVzcyDkuIrpgIDlh7rnmbvlvZXmmK/lgYfnmoTjgIIKdGVzdCgnbG9nb3V0IHJldm9rZXMgdGhlIHNlc3Npb24gYWNyb3NzIGluc3RhbmNlcycsYXN5bmMoKT0+ewogIGNvbnN0IHNoYXJlZD1jcmVhdGVNZW1vcnlTdG9yZSgpO2xldCBjYWxscz0wOwogIGNvbnN0IGV4Y2hhbmdlPWFzeW5jKCk9PntjYWxscysrO3JldHVybiBjYWxscyUyP3Jlc3BvbnNlKHthY2Nlc3NfdG9rZW46J3RvaycsZXhwaXJlc19pbjozNjAwfSk6cmVzcG9uc2Uoe2hhc2hfaWQ6J3Jldm9rZS11c2VyJyxmdWxsbmFtZTon5b6F6YCA5Ye6J30pO307CiAgY29uc3QgaW5zdGFuY2VBPW5ldyBPQXV0aChlbnYsZXhjaGFuZ2UsRGF0ZS5ub3csc2hhcmVkKTsKICBjb25zdCBpbnN0YW5jZUI9bmV3IE9BdXRoKGVudixleGNoYW5nZSxEYXRlLm5vdyxzaGFyZWQpOwogIGNvbnN0IHI9YXdhaXQgaW5zdGFuY2VBLmZpbmlzaCgnY29va2llLWEnLHBhcmFtcyhhd2FpdCBpbnN0YW5jZUEuc3RhcnQoJ2Nvb2tpZS1hJykpKTsKICBhc3NlcnQub2soYXdhaXQgaW5zdGFuY2VCLnNlc3Npb24oci5jb29raWUpKTsKICBhd2FpdCBpbnN0YW5jZUIubG9nb3V0KHIuY29va2llKTsKICBhc3NlcnQuZXF1YWwoYXdhaXQgaW5zdGFuY2VBLnNlc3Npb24oci5jb29raWUpLG51bGwpOwp9KTsKLy8g5YGHIFVwc3Rhc2ggUkVTVCDnq6/ngrnvvJrlj6rlrp7njrDpgILphY3lmajlrp7pmYXnlKjliLDnmoTlkb3ku6TvvIznlKjmnaXpqozor4EgUkVTVCDlpZHnuqbvvIwKLy8g5LiN6IGU572R44CB5LiN5raJ5Y+K55yf5a6e5Yet5o2u44CCU0NBTiDliIbpobXkuZ/mjInnnJ/lrp7or63kuYnov5Tlm57muLjmoIfjgIIKZnVuY3Rpb24gZmFrZVJlZGlzKCl7CiAgY29uc3QgbWFwPW5ldyBNYXAoKSxleHA9bmV3IE1hcCgpLGxvZz1bXTsKICBjb25zdCBzdG9yZT17CiAgICBhbGl2ZTprPT5tYXAuaGFzKGspJiYoIWV4cC5oYXMoayl8fGV4cC5nZXQoayk+RGF0ZS5ub3coKSksCiAgICB2YWx1ZTprPT57aWYoIXN0b3JlLmFsaXZlKGspKXttYXAuZGVsZXRlKGspO2V4cC5kZWxldGUoayk7cmV0dXJuIG51bGw7fXJldHVybiBtYXAuZ2V0KGspO30sCiAgfTsKICBjb25zdCBydW49YT0+ewogICAgY29uc3QgW2NtZCwuLi5hcmdzXT1hLHVwPVN0cmluZyhjbWQpLnRvVXBwZXJDYXNlKCk7CiAgICBpZih1cD09PSdHRVQnKXJldHVybiBzdG9yZS52YWx1ZShhcmdzWzBdKTsKICAgIGlmKHVwPT09J1NFVCcpe21hcC5zZXQoYXJnc1swXSxhcmdzWzFdKTtjb25zdCBleD1hcmdzLmluZGV4T2YoJ0VYJyk7aWYoZXg+LTEpZXhwLnNldChhcmdzWzBdLERhdGUubm93KCkrTnVtYmVyKGFyZ3NbZXgrMV0pKjEwMDApO2Vsc2UgZXhwLmRlbGV0ZShhcmdzWzBdKTtyZXR1cm4gJ09LJzt9CiAgICBpZih1cD09PSdERUwnKXtsZXQgbj0wO2Zvcihjb25zdCBrIG9mIGFyZ3MpaWYoc3RvcmUuYWxpdmUoaykpe21hcC5kZWxldGUoayk7ZXhwLmRlbGV0ZShrKTtuKys7fXJldHVybiBuO30KICAgIGlmKHVwPT09J0lOQ1InKXtjb25zdCBjdXI9TnVtYmVyKHN0b3JlLnZhbHVlKGFyZ3NbMF0pKXx8MDtjb25zdCBuZXh0PWN1cisxO21hcC5zZXQoYXJnc1swXSxTdHJpbmcobmV4dCkpO3JldHVybiBuZXh0O30KICAgIGlmKHVwPT09J0VYUElSRScpe2lmKCFzdG9yZS5hbGl2ZShhcmdzWzBdKSlyZXR1cm4gMDtleHAuc2V0KGFyZ3NbMF0sRGF0ZS5ub3coKStOdW1iZXIoYXJnc1sxXSkqMTAwMCk7cmV0dXJuIDE7fQogICAgaWYodXA9PT0nU0NBTicpewogICAgICAvLyDnnJ/lrp4gUmVkaXMg55qEIFNDQU4g5ri45qCH5piv5LiN6YCP5piO5YC877yb5LiA5qyh6L+U5Zue5YWo6YOo44CB5ri45qCH5b2S6Zu25Y2z5Y+v44CCCiAgICAgIC8vIOWRveS7pOW9ouWmgiBTQ0FOIDxjdXJzb3I+IE1BVENIIDxwYXR0ZXJuPiBDT1VOVCA8bj7vvIzmqKHlvI/lnKggYXJnc1syXeOAggogICAgICBjb25zdCBnbG9iPVN0cmluZyhhcmdzWzJdPz8nKicpOwogICAgICBjb25zdCBwYXR0ZXJuPWdsb2IucmVwbGFjZSgvWy4rXiR7fSgpfFtcXVxcXS9nLCdcXCQmJykucmVwbGFjZSgvXCovZywnLionKS5yZXBsYWNlKC9cPy9nLCcuJyk7CiAgICAgIGNvbnN0IHJ4PW5ldyBSZWdFeHAoYF4ke3BhdHRlcm59JGApOwogICAgICByZXR1cm4gWycwJyxbLi4ubWFwLmtleXMoKV0uZmlsdGVyKGs9PnJ4LnRlc3QoaykpXTsKICAgIH0KICAgIHRocm93IG5ldyBFcnJvcigndW5zdXBwb3J0ZWQgJyt1cCk7CiAgfTsKICByZXR1cm4ge2xvZyxtYXAscnVufTsKfQphc3luYyBmdW5jdGlvbiBzdGFydEZha2VSZWRpcyhiZWhhdmlvcj0nb2snKXsKICBjb25zdCByZWRpcz1mYWtlUmVkaXMoKTsKICBjb25zdCBzZXJ2ZXI9aHR0cC5jcmVhdGVTZXJ2ZXIoYXN5bmMocmVxLHJlcyk9PnsKICAgIGNvbnN0IGNodW5rcz1bXTtmb3IgYXdhaXQoY29uc3QgYyBvZiByZXEpY2h1bmtzLnB1c2goYyk7CiAgICBjb25zdCBib2R5PUJ1ZmZlci5jb25jYXQoY2h1bmtzKS50b1N0cmluZygpOwogICAgcmVkaXMubG9nLnB1c2goe2F1dGg6cmVxLmhlYWRlcnMuYXV0aG9yaXphdGlvbixib2R5fSk7CiAgICBpZihiZWhhdmlvcj09PSdhdXRoLWVycm9yJyl7cmVzLndyaXRlSGVhZCgyMDAseydDb250ZW50LVR5cGUnOidhcHBsaWNhdGlvbi9qc29uJ30pO3Jlcy5lbmQoSlNPTi5zdHJpbmdpZnkoe2Vycm9yOidXUk9OR1BBU1MnfSkpO3JldHVybjt9CiAgICBpZihiZWhhdmlvcj09PSdodHRwLTUwMCcpe3Jlcy53cml0ZUhlYWQoNTAwKTtyZXMuZW5kKCdib29tJyk7cmV0dXJuO30KICAgIGxldCByZXN1bHQ7dHJ5e3Jlc3VsdD1yZWRpcy5ydW4oSlNPTi5wYXJzZShib2R5KSk7fWNhdGNoKGUpe3Jlcy53cml0ZUhlYWQoMjAwLHsnQ29udGVudC1UeXBlJzonYXBwbGljYXRpb24vanNvbid9KTtyZXMuZW5kKEpTT04uc3RyaW5naWZ5KHtlcnJvcjplLm1lc3NhZ2V9KSk7cmV0dXJuO30KICAgIHJlcy53cml0ZUhlYWQoMjAwLHsnQ29udGVudC1UeXBlJzonYXBwbGljYXRpb24vanNvbid9KTtyZXMuZW5kKEpTT04uc3RyaW5naWZ5KHtyZXN1bHR9KSk7CiAgfSk7CiAgYXdhaXQgbmV3IFByb21pc2Uocj0+c2VydmVyLmxpc3RlbigwLCcxMjcuMC4wLjEnLHIpKTsKICByZXR1cm4ge3VybDpgaHR0cDovLzEyNy4wLjAuMToke3NlcnZlci5hZGRyZXNzKCkucG9ydH1gLHJlZGlzLGNsb3NlOigpPT5uZXcgUHJvbWlzZShyPT5zZXJ2ZXIuY2xvc2UocikpfTsKfQoKdGVzdCgncmVkaXMgYWRhcHRlciBzcGVha3MgdGhlIFJFU1QgY29udHJhY3Qgd2l0aCBUVEwsIGNvdW50ZXJzIGFuZCBwcmVmaXggZGVsZXRlJyxhc3luYygpPT57CiAgY29uc3QgZmFrZT1hd2FpdCBzdGFydEZha2VSZWRpcygpOwogIHRyeXsKICAgIGNvbnN0IHN0b3JlPWNyZWF0ZVJlZGlzU3RvcmUoe3VybDpmYWtlLnVybCx0b2tlbjondGVzdC10b2tlbicscHJlZml4OidjZDonLGZldGNoZXI6ZmV0Y2h9KTsKICAgIGF3YWl0IHN0b3JlLnNldCgnYScsSlNPTi5zdHJpbmdpZnkoe3Y6MX0pLDYwKTsKICAgIGFzc2VydC5lcXVhbChKU09OLnBhcnNlKGF3YWl0IHN0b3JlLmdldCgnYScpKS52LDEpOwogICAgYXNzZXJ0LmVxdWFsKGF3YWl0IHN0b3JlLmdldCgnbWlzc2luZycpLG51bGwpOwogICAgYXNzZXJ0LmVxdWFsKGF3YWl0IHN0b3JlLmluY3IoJ24nLDYwKSwxKTsKICAgIGFzc2VydC5lcXVhbChhd2FpdCBzdG9yZS5pbmNyKCduJyw2MCksMik7CiAgICBhd2FpdCBzdG9yZS5zZXQoJ3A6MScsJ3gnLDYwKTthd2FpdCBzdG9yZS5zZXQoJ3A6MicsJ3knLDYwKTthd2FpdCBzdG9yZS5zZXQoJ3E6MScsJ3onLDYwKTsKICAgIGFzc2VydC5lcXVhbChhd2FpdCBzdG9yZS5kZWxCeVByZWZpeCgncDonKSwyKTsKICAgIGFzc2VydC5lcXVhbChhd2FpdCBzdG9yZS5nZXQoJ3E6MScpLCd6Jyk7CiAgICBhc3NlcnQuZXF1YWwoYXdhaXQgc3RvcmUuZGVsKCdxOjEnKSwxKTsKICAgIC8vIOWRveWQjeepuumXtOW/hemhu+W4puS4iu+8jOmBv+WFjeWSjOWQjOS4gCBSZWRpcyDph4znmoTlhbbku5bplK7lhrLnqoEKICAgIGFzc2VydC5vayhmYWtlLnJlZGlzLm1hcC5oYXMoJ2NkOmEnKSk7CiAgICAvLyDlh63mja7otbAgQXV0aG9yaXphdGlvbiDlpLTvvIzkuI3ov5sgVVJMCiAgICBhc3NlcnQub2soZmFrZS5yZWRpcy5sb2cuZXZlcnkoeD0+eC5hdXRoPT09J0JlYXJlciB0ZXN0LXRva2VuJykpOwogICAgYXNzZXJ0Lm9rKGZha2UucmVkaXMubG9nLmV2ZXJ5KHg9PiF4LmJvZHkuaW5jbHVkZXMoJ3Rlc3QtdG9rZW4nKSkpOwogIH1maW5hbGx5e2F3YWl0IGZha2UuY2xvc2UoKTt9Cn0pOwp0ZXN0KCdyZWRpcyBUVEwgZXhwaXJlcyBhIHNlc3Npb24gaW5zdGVhZCBvZiB0cnVzdGluZyB0aGUgcHJvY2VzcyBjbG9jaycsYXN5bmMoKT0+ewogIGNvbnN0IGZha2U9YXdhaXQgc3RhcnRGYWtlUmVkaXMoKTsKICB0cnl7CiAgICBjb25zdCBzdG9yZT1jcmVhdGVSZWRpc1N0b3JlKHt1cmw6ZmFrZS51cmwsdG9rZW46J3QnLGZldGNoZXI6ZmV0Y2h9KTsKICAgIGF3YWl0IHN0b3JlLnNldCgnc2hvcnQnLCd2JywxKTsKICAgIGFzc2VydC5lcXVhbChhd2FpdCBzdG9yZS5nZXQoJ3Nob3J0JyksJ3YnKTsKICAgIGF3YWl0IG5ldyBQcm9taXNlKHI9PnNldFRpbWVvdXQociwxMTAwKSk7CiAgICBhc3NlcnQuZXF1YWwoYXdhaXQgc3RvcmUuZ2V0KCdzaG9ydCcpLG51bGwpOwogIH1maW5hbGx5e2F3YWl0IGZha2UuY2xvc2UoKTt9Cn0pOwp0ZXN0KCdyZWRpcyBzdG9yYWdlIGZhaWx1cmUgc3VyZmFjZXMgYXMgYSByZXRyeWFibGUgNTAzLCBub3QgYSBzaWxlbnQgbG9nb3V0Jyxhc3luYygpPT57CiAgY29uc3QgYnJva2VuPWF3YWl0IHN0YXJ0RmFrZVJlZGlzKCdhdXRoLWVycm9yJyk7CiAgdHJ5ewogICAgY29uc3Qgc3RvcmU9Y3JlYXRlUmVkaXNTdG9yZSh7dXJsOmJyb2tlbi51cmwsdG9rZW46J2JhZCcsZmV0Y2hlcjpmZXRjaH0pOwogICAgYXdhaXQgYXNzZXJ0LnJlamVjdHMoc3RvcmUuZ2V0KCdhJyksZT0+ZS5jb2RlPT09J0tWX1VOQVZBSUxBQkxFJyYmZS5zdGF0dXM9PT01MDMpOwogIH1maW5hbGx5e2F3YWl0IGJyb2tlbi5jbG9zZSgpO30KfSk7Ci8vIOWujOaVtOmTvui3r++8muS4pOS4qiBPQXV0aCDlrp7kvosgKyDnnJ8gUkVTVCDpgILphY3lmaggKyDlgYcgVXBzdGFzaCDnq6/ngrnjgIIKdGVzdCgnZnVsbCBsb2dpbiB3b3JrcyBhY3Jvc3MgaW5zdGFuY2VzIG92ZXIgdGhlIHJlZGlzIGFkYXB0ZXInLGFzeW5jKCk9PnsKICBjb25zdCBmYWtlPWF3YWl0IHN0YXJ0RmFrZVJlZGlzKCk7CiAgdHJ5ewogICAgY29uc3QgbWFrZVN0b3JlPSgpPT5jcmVhdGVSZWRpc1N0b3JlKHt1cmw6ZmFrZS51cmwsdG9rZW46J3QnLHByZWZpeDonY2Q6JyxmZXRjaGVyOmZldGNofSk7CiAgICBsZXQgY2FsbHM9MDtjb25zdCBleGNoYW5nZT1hc3luYygpPT57Y2FsbHMrKztyZXR1cm4gY2FsbHMlMj9yZXNwb25zZSh7YWNjZXNzX3Rva2VuOid0b2snLGV4cGlyZXNfaW46MzYwMH0pOnJlc3BvbnNlKHtoYXNoX2lkOidyZWRpcy11c2VyJyxmdWxsbmFtZTonUmVkaXMg55So5oi3J30pO307CiAgICBjb25zdCBpbnN0YW5jZUE9bmV3IE9BdXRoKGVudixleGNoYW5nZSxEYXRlLm5vdyxtYWtlU3RvcmUoKSk7CiAgICBjb25zdCBpbnN0YW5jZUI9bmV3IE9BdXRoKGVudixleGNoYW5nZSxEYXRlLm5vdyxtYWtlU3RvcmUoKSk7CiAgICBjb25zdCByPWF3YWl0IGluc3RhbmNlQi5maW5pc2goJ2Nvb2tpZS1hJyxwYXJhbXMoYXdhaXQgaW5zdGFuY2VBLnN0YXJ0KCdjb29raWUtYScpKSk7CiAgICBhc3NlcnQuZXF1YWwoKGF3YWl0IGluc3RhbmNlQS5zZXNzaW9uKHIuY29va2llKSkubmFtZSwnUmVkaXMg55So5oi3Jyk7CiAgICBhc3NlcnQuZXF1YWwoci5zZXNzaW9uLm93bmVyLCd6aGlodTonK2hhc2goJ3JlZGlzLXVzZXInKSk7CiAgICBhd2FpdCBpbnN0YW5jZUEubG9nb3V0KHIuY29va2llKTsKICAgIGFzc2VydC5lcXVhbChhd2FpdCBpbnN0YW5jZUIuc2Vzc2lvbihyLmNvb2tpZSksbnVsbCk7CiAgfWZpbmFsbHl7YXdhaXQgZmFrZS5jbG9zZSgpO30KfSk7CnRlc3QoJ29ubHkgc2VsZWN0ZWQgcHJvamVjdCB0cmFuc2ZlcnMsIHdpdGggY29tcGxldGVkIG9wZXJhdGlvbnMgYW5kIGlzb2xhdGlvbicsKCk9PnsKICBjb25zdCBzPW5ldyBTdG9yZSgnOm1lbW9yeTonKTt0cnl7CiAgICBmb3IoY29uc3QgaWQgb2YgWydhJywnYiddKXMuc2F2ZSh7aWQsb3duZXI6J2d1ZXN0Jyx0ZXh0OidkcmFmdCd9KTsKICAgIHMuc2F2ZU9wKHtpZDonb3AnLHByb2plY3Q6J2EnLG93bmVyOidndWVzdCcsa2V5OidrJyxzdGF0dXM6J3N1Y2NlZWRlZCd9KTsKICAgIHMudHJhbnNmZXIoJ2EnLCdndWVzdCcsJ3VzZXInKTthc3NlcnQuZXF1YWwocy5nZXQoJ2EnLCd1c2VyJykub3duZXIsJ3VzZXInKTthc3NlcnQudGhyb3dzKCgpPT5zLmdldCgnYScsJ2d1ZXN0JykpO2Fzc2VydC5lcXVhbChzLmdldCgnYicsJ2d1ZXN0JykuaWQsJ2InKTthc3NlcnQuZXF1YWwocy5nZXRPcCgnb3AnLCd1c2VyJykub3duZXIsJ3VzZXInKTsKICAgIHMuc2F2ZU9wKHtpZDonYnVzeScscHJvamVjdDonYicsb3duZXI6J2d1ZXN0JyxrZXk6J2syJyxzdGF0dXM6J3J1bm5pbmcnfSk7YXNzZXJ0LnRocm93cygoKT0+cy50cmFuc2ZlcignYicsJ2d1ZXN0JywndXNlcicpLC/ov5DooYwvKTthc3NlcnQuZXF1YWwocy5nZXQoJ2InLCdndWVzdCcpLm93bmVyLCdndWVzdCcpOwogIH1maW5hbGx5e3MuY2xvc2UoKTt9Cn0pOwp0ZXN0KCdwcm92aWRlciB1c2VzIGV4cGxpY2l0IHF1ZXN0aW9uIHRoZW1lIGFuZCBvcGFxdWUgbmV4dCBvZmZzZXQsIHN0b3BzIG1hbGZvcm1lZCBwYWdpbmF0aW9uJyxhc3luYygpPT57CiAgY29uc3QgY2FsbHM9W107Y29uc3QgcD1jcmVhdGVQcm92aWRlcnMoe1pISUhVX0FDQ0VTU19TRUNSRVQ6J3NlY3JldCd9LGFzeW5jKHVybCk9PntjYWxscy5wdXNoKHVybCk7cmV0dXJuIHJlc3BvbnNlKHtDb2RlOjAsRGF0YTp1cmwucGF0aG5hbWUuaW5jbHVkZXMoJ3JlY29tbWVuZGF0aW9ucycpP3tJdGVtczpbe1RpdGxlOifmtYvor5XpopgnLFVybDonaHR0cHM6Ly93d3cuemhpaHUuY29tL3F1ZXN0aW9uLzEyMyd9XX06e0l0ZW1zOltdLFBhZ2luZzp7SXNFbmQ6ZmFsc2UsTmV4dE9mZnNldDo1N319fSk7fSk7CiAgYXdhaXQgYXNzZXJ0LnJlamVjdHMocC5xdWVzdGlvbnMoJycsbmV3IEFib3J0Q29udHJvbGxlcigpLnNpZ25hbCkpO2Fzc2VydC5lcXVhbChjYWxscy5sZW5ndGgsMCk7CiAgY29uc3QgbGlzdD1hd2FpdCBwLnF1ZXN0aW9ucygn6L+c56iL5Yqe5YWsJyxuZXcgQWJvcnRDb250cm9sbGVyKCkuc2lnbmFsKTthc3NlcnQuZXF1YWwobGlzdC5sZW5ndGgsMSk7YXNzZXJ0LmVxdWFsKGNhbGxzWzBdLnNlYXJjaFBhcmFtcy5nZXQoJ1F1ZXJ5JyksJ+i/nOeoi+WKnuWFrCcpOwogIGNvbnN0IHBhZ2U9YXdhaXQgcC5hbnN3ZXJzKGxpc3RbMF0udXJsLDAsbmV3IEFib3J0Q29udHJvbGxlcigpLnNpZ25hbCk7YXNzZXJ0LmVxdWFsKHBhZ2UubmV4dE9mZnNldCw1Nyk7YXNzZXJ0LmVxdWFsKHBhZ2UuaXRlbXMubGVuZ3RoLDApOwogIGNvbnN0IGJhZD1jcmVhdGVQcm92aWRlcnMoe1pISUhVX0FDQ0VTU19TRUNSRVQ6J3NlY3JldCd9LGFzeW5jKCk9PnJlc3BvbnNlKHtDb2RlOjAsRGF0YTp7SXRlbXM6W10sUGFnaW5nOntJc0VuZDpmYWxzZX19fSkpO2Fzc2VydC5lcXVhbCgoYXdhaXQgYmFkLmFuc3dlcnMobGlzdFswXS51cmwsMCxuZXcgQWJvcnRDb250cm9sbGVyKCkuc2lnbmFsKSkubmV4dE9mZnNldCxudWxsKTsKfSk7CnRlc3QoJ3NlYXJjaCBzZXBhcmF0ZXMgYXV0aCBmYWlsdXJlIGZyb20gZW1wdHkgcmVzcG9uc2UgYW5kIHByZXNlcnZlcyBwcm92ZW5hbmNlJyxhc3luYygpPT57CiAgY29uc3Qgc2lnbmFsPW5ldyBBYm9ydENvbnRyb2xsZXIoKS5zaWduYWw7CiAgY29uc3QgYmFkPWNyZWF0ZVByb3ZpZGVycyh7WkhJSFVfQUNDRVNTX1NFQ1JFVDonc2VjcmV0J30sYXN5bmMoKT0+cmVzcG9uc2Uoe0NvZGU6MjAwMDF9KSk7YXdhaXQgYXNzZXJ0LnJlamVjdHMoYmFkLnNlYXJjaCgnemhpaHVfc2VhcmNoJywncScsc2lnbmFsKSxlPT5lLmNvZGU9PT0nUFJPVklERVJfQVVUSCcpOwogIGNvbnN0IGVtcHR5PWNyZWF0ZVByb3ZpZGVycyh7WkhJSFVfQUNDRVNTX1NFQ1JFVDonc2VjcmV0J30sYXN5bmMoKT0+cmVzcG9uc2Uoe0NvZGU6MCxEYXRhOntJdGVtczpbXSxFbXB0eVJlYXNvbjon5rKh5pyJ5Yy56YWNJ319KSk7YXNzZXJ0LmVxdWFsKChhd2FpdCBlbXB0eS5zZWFyY2goJ3poaWh1X3NlYXJjaCcsJ3EnLHNpZ25hbCkpLmVtcHR5UmVhc29uLCfmsqHmnInljLnphY0nKTsKfSk7CnRlc3QoJ0hUVFAgcXVlc3Rpb24gcHJvamVjdCBhbmQgYW5zd2VyIHBhZ2VzIHJldGFpbiBjb250ZXh0LCBuZXZlciByZXBsYWNlIGRyYWZ0Jyxhc3luYyB0PT57CiAgY29uc3QgYXBwPWNyZWF0ZUFwcCh7ZmlsZTonOm1lbW9yeTonLHByb3ZpZGVyczp7c3RhdHVzOnt9LHF1ZXN0aW9uczphc3luYygpPT5be3RpdGxlOifmtYvor5Xpl67popgnLHVybDonaHR0cHM6Ly93d3cuemhpaHUuY29tL3F1ZXN0aW9uLzEnfV0sYW5zd2Vyczphc3luYygpPT4oe2l0ZW1zOlt7c3VtbWFyeTon5rWL6K+V5pGY6KaBJyx1cmw6J2h0dHBzOi8vd3d3LnpoaWh1LmNvbS9hbnN3ZXIvMid9XSxuZXh0T2Zmc2V0OjE3LGlzRW5kOmZhbHNlLHdhcm5pbmc6Jyd9KX19KTsKICBhd2FpdCBuZXcgUHJvbWlzZShyPT5hcHAuc2VydmVyLmxpc3RlbigwLCcxMjcuMC4wLjEnLHIpKTt0LmFmdGVyKGFzeW5jKCk9Pnthd2FpdCBuZXcgUHJvbWlzZShyPT5hcHAuc2VydmVyLmNsb3NlKHIpKTthcHAuc3RvcmUuY2xvc2UoKTt9KTsKICBjb25zdCBiYXNlPWBodHRwOi8vMTI3LjAuMC4xOiR7YXBwLnNlcnZlci5hZGRyZXNzKCkucG9ydH1gOwogIGNvbnN0IHI9YXdhaXQgZmV0Y2goYmFzZSsnL2FwaS9wcm9qZWN0cycse21ldGhvZDonUE9TVCcsaGVhZGVyczp7J0NvbnRlbnQtVHlwZSc6J2FwcGxpY2F0aW9uL2pzb24nfSxib2R5OkpTT04uc3RyaW5naWZ5KHt0ZXh0Oifov5nmmK/miJHlr7nkuo7lvZPliY3orqjorrrpl67popjnmoTliJ3mraXojYnnqL/vvIzpnIDopoHnu6fnu63ooaXlhYXmnZDmlpnjgIInLHF1ZXN0aW9uOnt1cmw6J2h0dHBzOi8vd3d3LnpoaWh1LmNvbS9xdWVzdGlvbi8xJyx0aXRsZTon5rWL6K+V6Zeu6aKYJ319KX0pOwogIGNvbnN0IGNvb2tpZT1yLmhlYWRlcnMuZ2V0U2V0Q29va2llKCkubWFwKHg9Pnguc3BsaXQoJzsnKVswXSkuam9pbignOyAnKSxwPWF3YWl0IHIuanNvbigpOwogIGNvbnN0IGFuc3dlcj1hd2FpdCBmZXRjaChiYXNlK2AvYXBpL3Byb2plY3RzLyR7cC5pZH0vYW5zd2Vyc2Ase21ldGhvZDonUE9TVCcsaGVhZGVyczp7Y29va2llLCdDb250ZW50LVR5cGUnOidhcHBsaWNhdGlvbi9qc29uJ30sYm9keToneyJvZmZzZXQiOjB9J30pO2Fzc2VydC5lcXVhbChhbnN3ZXIuc3RhdHVzLDIwMCk7CiAgY29uc3QgYWZ0ZXI9YXdhaXQgKGF3YWl0IGZldGNoKGJhc2UrYC9hcGkvcHJvamVjdHMvJHtwLmlkfWAse2hlYWRlcnM6e2Nvb2tpZX19KSkuanNvbigpO2Fzc2VydC5lcXVhbChhZnRlci50ZXh0LHAudGV4dCk7YXNzZXJ0LmVxdWFsKGFmdGVyLnF1ZXN0aW9uLnVybCxwLnF1ZXN0aW9uLnVybCk7YXNzZXJ0LmVxdWFsKGFmdGVyLmFuc3dlclBhZ2UubmV4dE9mZnNldCwxNyk7YXNzZXJ0LmVxdWFsKGFmdGVyLnNvdXJjZXMubGVuZ3RoLDApOwp9KTsKdGVzdCgnSFRUUCBPQXV0aCBtb3ZlcyBvbmx5IGNob3NlbiBkcmFmdCBhbmQgbG9nb3V0IHJlc3RvcmVzIGFub255bW91cyBzcGFjZScsYXN5bmMgdD0+ewogIGNvbnN0IG9hdXRoPW5ldyBPQXV0aChlbnYsYXN5bmMgdXJsPT5yZXNwb25zZSh1cmwuZW5kc1dpdGgoJy9hY2Nlc3NfdG9rZW4nKT97YWNjZXNzX3Rva2VuOidmaXh0dXJlLXRva2VuJyxleHBpcmVzX2luOjYwfTp7aGFzaF9pZDonZml4dHVyZS11c2VyJyxmdWxsbmFtZTon5rWL6K+V6LSm5Y+3J30pKTsKICBjb25zdCBhcHA9Y3JlYXRlQXBwKHtmaWxlOic6bWVtb3J5OicscHJvdmlkZXJzOntzdGF0dXM6e319LG9hdXRofSk7YXdhaXQgbmV3IFByb21pc2Uocj0+YXBwLnNlcnZlci5saXN0ZW4oMCwnMTI3LjAuMC4xJyxyKSk7CiAgdC5hZnRlcihhc3luYygpPT57YXdhaXQgbmV3IFByb21pc2Uocj0+YXBwLnNlcnZlci5jbG9zZShyKSk7YXBwLnN0b3JlLmNsb3NlKCk7fSk7CiAgY29uc3QgYmFzZT1gaHR0cDovLzEyNy4wLjAuMToke2FwcC5zZXJ2ZXIuYWRkcmVzcygpLnBvcnR9YCxqYXI9bmV3IE1hcCgpOwogIGFzeW5jIGZ1bmN0aW9uIHJlcShwYXRoLG1ldGhvZD0nR0VUJyxib2R5KXtjb25zdCByPWF3YWl0IGZldGNoKGJhc2UrcGF0aCx7bWV0aG9kLHJlZGlyZWN0OidtYW51YWwnLGhlYWRlcnM6e2Nvb2tpZTpbLi4uamFyXS5tYXAoKFtrLHZdKT0+YCR7a309JHt2fWApLmpvaW4oJzsgJyksLi4uKG1ldGhvZD09PSdQT1NUJz97J0NvbnRlbnQtVHlwZSc6J2FwcGxpY2F0aW9uL2pzb24nfTp7fSl9LGJvZHk6bWV0aG9kPT09J1BPU1QnP0pTT04uc3RyaW5naWZ5KGJvZHkpOnVuZGVmaW5lZH0pO2Zvcihjb25zdCBjIG9mIHIuaGVhZGVycy5nZXRTZXRDb29raWUoKSl7Y29uc3QgW2ssdl09Yy5zcGxpdCgnOycpWzBdLnNwbGl0KCc9Jyk7amFyLnNldChrLHYpO31yZXR1cm4gcjt9CiAgY29uc3QgYT1hd2FpdChhd2FpdCByZXEoJy9hcGkvcHJvamVjdHMnLCdQT1NUJyx7dGV4dDon6L+Z5piv5YeG5aSH5YWz6IGU6LSm5Y+355qE5LiA56+H5rWL6K+V6I2J56i/77yM5YyF5ZCr5b+F6KaB55qE6IOM5pmv6K+05piO44CCJ30pKS5qc29uKCk7CiAgY29uc3QgYj1hd2FpdChhd2FpdCByZXEoJy9hcGkvcHJvamVjdHMnLCdQT1NUJyx7dGV4dDon6L+Z5piv55WZ5Zyo5Yy/5ZCN56m66Ze055qE5LiA56+H5rWL6K+V6I2J56i/77yM5LiN6IO96KKr6Ieq5Yqo6L+B56e744CCJ30pKS5qc29uKCk7CiAgY29uc3QgbGluaz1hd2FpdChhd2FpdCByZXEoJy9hcGkvYXV0aC9zdGFydCcsJ1BPU1QnLHtwcm9qZWN0SWQ6YS5pZH0pKS5qc29uKCk7Y29uc3QgcD1wYXJhbXMobGluay51cmwpOwogIGNvbnN0IGNhbGxiYWNrPWF3YWl0IHJlcSgnL2F1dGgvemhpaHUvY2FsbGJhY2s/JytwLnRvU3RyaW5nKCkpO2Fzc2VydC5lcXVhbChjYWxsYmFjay5zdGF0dXMsMzAzKTthc3NlcnQuZXF1YWwoY2FsbGJhY2suaGVhZGVycy5nZXQoJ2xvY2F0aW9uJyksJy8/bG9naW49c3VjY2VzcycpOwogIGFzc2VydC5lcXVhbCgoYXdhaXQoYXdhaXQgcmVxKCcvYXBpL2F1dGgnKSkuanNvbigpKS51c2VyLm5hbWUsJ+a1i+ivlei0puWPtycpO2Fzc2VydC5lcXVhbCgoYXdhaXQgcmVxKCcvYXBpL3Byb2plY3RzLycrYS5pZCkpLnN0YXR1cywyMDApO2Fzc2VydC5lcXVhbCgoYXdhaXQgcmVxKCcvYXBpL3Byb2plY3RzLycrYi5pZCkpLnN0YXR1cyw0MDQpOwogIGF3YWl0IHJlcSgnL2FwaS9hdXRoL2xvZ291dCcsJ1BPU1QnLHt9KTthc3NlcnQuZXF1YWwoKGF3YWl0IHJlcSgnL2FwaS9wcm9qZWN0cy8nK2EuaWQpKS5zdGF0dXMsNDA0KTthc3NlcnQuZXF1YWwoKGF3YWl0IHJlcSgnL2FwaS9wcm9qZWN0cy8nK2IuaWQpKS5zdGF0dXMsMjAwKTsKfSk7Cg==
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import http from 'node:http';
+import { OAuth } from '../src/oauth.mjs';
+import { createMemoryStore, createRedisStore } from '../src/kv.mjs';
+import { diagnose } from '../src/config.mjs';
+import { createProviders } from '../src/providers.mjs';
+import { Store } from '../src/store.mjs';
+import { hash } from '../src/domain.mjs';
+import { createApp } from '../src/server.mjs';
+const env={ZHIHU_OAUTH_APP_ID:'test-id',ZHIHU_OAUTH_APP_KEY:'test-secret',ZHIHU_OAUTH_REDIRECT_URI:'https://test.example/auth/zhihu/callback',APP_ORIGIN:'https://test.example'};
+const response=x=>new Response(JSON.stringify(x));
+const params=url=>new URLSearchParams({state:new URL(url).searchParams.get('state'),authorization_code:'test-code'});
+test('configuration reports missing parts without revealing secrets',()=>{
+  const d=diagnose({...env,MODEL_API_KEY:'never-display'});assert.equal(d.oauth,true);assert.equal(d.model,false);assert.ok(d.issues.length);assert.equal(JSON.stringify(d).includes('never-display'),false);
+  assert.equal(diagnose({...env,ZHIHU_OAUTH_REDIRECT_URI:'https://other.example/auth/zhihu/callback'}).oauth,false);
+});
+test('OAuth state is session-bound, expires, and cannot replay',async()=>{
+  let now=0,calls=0;const o=new OAuth(env,async()=>{calls++;return response({});},()=>now);
+  const p=params(await o.start('cookie-a'));await assert.rejects(o.finish('cookie-b',p),/不匹配/);assert.equal(calls,0);
+  now=300001;await assert.rejects(o.finish('cookie-a',p),/失效/);assert.equal(calls,0);
+  const fresh=params(await o.start('cookie-a'));await assert.rejects(o.finish('cookie-a',fresh),/令牌/);assert.equal(calls,1);
+  await assert.rejects(o.finish('cookie-a',fresh),/失效/);assert.equal(calls,1);
+});
+test('OAuth exchanges exact contract, keeps int64 identity, and rotates app cookie',async()=>{
+  const calls=[];let now=0;
+  const o=new OAuth(env,async(url,opts)=>{calls.push({url,opts});return calls.length===1?response({access_token:'private-token',expires_in:3600}):new Response('{"uid":969570047710216201,"fullname":"测试用户","email":"unused"}');},()=>now);
+  const r=await o.finish('old-cookie',params(await o.start('old-cookie','selected-project')));
+  assert.equal(r.projectId,'selected-project');assert.notEqual(r.cookie,'old-cookie');assert.equal(r.session.owner,'zhihu:'+hash('969570047710216201'));
+  assert.equal(new URLSearchParams(calls[0].opts.body).get('code'),'test-code');assert.equal(calls[1].opts.headers.Authorization,'Bearer private-token');assert.equal(JSON.stringify(r).includes('private-token'),false);
+  assert.equal((await o.session(r.cookie)).name,'测试用户');now=3600001;assert.equal(await o.session(r.cookie),null);
+});
+test('logout invalidates a login even while token exchange is in flight',async()=>{
+  let release;const gate=new Promise(r=>release=r);let calls=0;
+  const o=new OAuth(env,async()=>{calls++;if(calls===1){await gate;return response({access_token:'token',expires_in:60});}return response({hash_id:'user',fullname:'name'});});
+  const running=o.finish('cookie',params(await o.start('cookie')));await o.logout('cookie');release();await assert.rejects(running,/取消/);
+});
+// 关键新增：start 与 callback 落在不同实例（Serverless 的常态）时登录必须成功。
+// 改造前这一条一定失败，失败原因是 OAUTH_STATE。
+test('login completes when start and callback land on different instances',async()=>{
+  const shared=createMemoryStore();let calls=0;
+  const exchange=async()=>{calls++;return calls%2?response({access_token:'tok',expires_in:3600}):response({hash_id:'shared-user',fullname:'跨实例用户'});};
+  const instanceA=new OAuth(env,exchange,Date.now,shared);
+  const instanceB=new OAuth(env,exchange,Date.now,shared);
+  const started=params(await instanceA.start('cookie-a','proj-1'));
+  const r=await instanceB.finish('cookie-a',started);
+  assert.equal(r.session.owner,'zhihu:'+hash('shared-user'));
+  assert.equal(r.projectId,'proj-1');
+  assert.equal((await instanceA.session(r.cookie)).name,'跨实例用户');
+});
+// logout 的吊销也必须跨实例生效，否则 Serverless 上退出登录是假的。
+test('logout revokes the session across instances',async()=>{
+  const shared=createMemoryStore();let calls=0;
+  const exchange=async()=>{calls++;return calls%2?response({access_token:'tok',expires_in:3600}):response({hash_id:'revoke-user',fullname:'待退出'});};
+  const instanceA=new OAuth(env,exchange,Date.now,shared);
+  const instanceB=new OAuth(env,exchange,Date.now,shared);
+  const r=await instanceA.finish('cookie-a',params(await instanceA.start('cookie-a')));
+  assert.ok(await instanceB.session(r.cookie));
+  await instanceB.logout(r.cookie);
+  assert.equal(await instanceA.session(r.cookie),null);
+});
+// 假 Upstash REST 端点：只实现适配器实际用到的命令，用来验证 REST 契约，
+// 不联网、不涉及真实凭据。SCAN 分页也按真实语义返回游标。
+function fakeRedis(){
+  const map=new Map(),exp=new Map(),log=[];
+  const store={
+    alive:k=>map.has(k)&&(!exp.has(k)||exp.get(k)>Date.now()),
+    value:k=>{if(!store.alive(k)){map.delete(k);exp.delete(k);return null;}return map.get(k);},
+  };
+  const run=a=>{
+    const [cmd,...args]=a,up=String(cmd).toUpperCase();
+    if(up==='GET')return store.value(args[0]);
+    if(up==='SET'){map.set(args[0],args[1]);const ex=args.indexOf('EX');if(ex>-1)exp.set(args[0],Date.now()+Number(args[ex+1])*1000);else exp.delete(args[0]);return 'OK';}
+    if(up==='DEL'){let n=0;for(const k of args)if(store.alive(k)){map.delete(k);exp.delete(k);n++;}return n;}
+    if(up==='INCR'){const cur=Number(store.value(args[0]))||0;const next=cur+1;map.set(args[0],String(next));return next;}
+    if(up==='EXPIRE'){if(!store.alive(args[0]))return 0;exp.set(args[0],Date.now()+Number(args[1])*1000);return 1;}
+    if(up==='SCAN'){
+      // 真实 Redis 的 SCAN 游标是不透明值；一次返回全部、游标归零即可。
+      // 命令形如 SCAN <cursor> MATCH <pattern> COUNT <n>，模式在 args[2]。
+      const glob=String(args[2]??'*');
+      const pattern=glob.replace(/[.+^${}()|[\]\\]/g,'\\$&').replace(/\*/g,'.*').replace(/\?/g,'.');
+      const rx=new RegExp(`^${pattern}$`);
+      return ['0',[...map.keys()].filter(k=>rx.test(k))];
+    }
+    throw new Error('unsupported '+up);
+  };
+  return {log,map,run};
+}
+async function startFakeRedis(behavior='ok'){
+  const redis=fakeRedis();
+  const server=http.createServer(async(req,res)=>{
+    const chunks=[];for await(const c of req)chunks.push(c);
+    const body=Buffer.concat(chunks).toString();
+    redis.log.push({auth:req.headers.authorization,body});
+    if(behavior==='auth-error'){res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify({error:'WRONGPASS'}));return;}
+    if(behavior==='http-500'){res.writeHead(500);res.end('boom');return;}
+    let result;try{result=redis.run(JSON.parse(body));}catch(e){res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify({error:e.message}));return;}
+    res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify({result}));
+  });
+  await new Promise(r=>server.listen(0,'127.0.0.1',r));
+  return {url:`http://127.0.0.1:${server.address().port}`,redis,close:()=>new Promise(r=>server.close(r))};
+}
+
+test('redis adapter speaks the REST contract with TTL, counters and prefix delete',async()=>{
+  const fake=await startFakeRedis();
+  try{
+    const store=createRedisStore({url:fake.url,token:'test-token',prefix:'cd:',fetcher:fetch});
+    await store.set('a',JSON.stringify({v:1}),60);
+    assert.equal(JSON.parse(await store.get('a')).v,1);
+    assert.equal(await store.get('missing'),null);
+    assert.equal(await store.incr('n',60),1);
+    assert.equal(await store.incr('n',60),2);
+    await store.set('p:1','x',60);await store.set('p:2','y',60);await store.set('q:1','z',60);
+    assert.equal(await store.delByPrefix('p:'),2);
+    assert.equal(await store.get('q:1'),'z');
+    assert.equal(await store.del('q:1'),1);
+    // 命名空间必须带上，避免和同一 Redis 里的其他键冲突
+    assert.ok(fake.redis.map.has('cd:a'));
+    // 凭据走 Authorization 头，不进 URL
+    assert.ok(fake.redis.log.every(x=>x.auth==='Bearer test-token'));
+    assert.ok(fake.redis.log.every(x=>!x.body.includes('test-token')));
+  }finally{await fake.close();}
+});
+test('redis TTL expires a session instead of trusting the process clock',async()=>{
+  const fake=await startFakeRedis();
+  try{
+    const store=createRedisStore({url:fake.url,token:'t',fetcher:fetch});
+    await store.set('short','v',1);
+    assert.equal(await store.get('short'),'v');
+    await new Promise(r=>setTimeout(r,1100));
+    assert.equal(await store.get('short'),null);
+  }finally{await fake.close();}
+});
+test('redis storage failure surfaces as a retryable 503, not a silent logout',async()=>{
+  const broken=await startFakeRedis('auth-error');
+  try{
+    const store=createRedisStore({url:broken.url,token:'bad',fetcher:fetch});
+    await assert.rejects(store.get('a'),e=>e.code==='KV_UNAVAILABLE'&&e.status===503);
+  }finally{await broken.close();}
+});
+// 完整链路：两个 OAuth 实例 + 真 REST 适配器 + 假 Upstash 端点。
+test('full login works across instances over the redis adapter',async()=>{
+  const fake=await startFakeRedis();
+  try{
+    const makeStore=()=>createRedisStore({url:fake.url,token:'t',prefix:'cd:',fetcher:fetch});
+    let calls=0;const exchange=async()=>{calls++;return calls%2?response({access_token:'tok',expires_in:3600}):response({hash_id:'redis-user',fullname:'Redis 用户'});};
+    const instanceA=new OAuth(env,exchange,Date.now,makeStore());
+    const instanceB=new OAuth(env,exchange,Date.now,makeStore());
+    const r=await instanceB.finish('cookie-a',params(await instanceA.start('cookie-a')));
+    assert.equal((await instanceA.session(r.cookie)).name,'Redis 用户');
+    assert.equal(r.session.owner,'zhihu:'+hash('redis-user'));
+    await instanceA.logout(r.cookie);
+    assert.equal(await instanceB.session(r.cookie),null);
+  }finally{await fake.close();}
+});
+test('only selected project transfers, with completed operations and isolation',()=>{
+  const s=new Store(':memory:');try{
+    for(const id of ['a','b'])s.save({id,owner:'guest',text:'draft'});
+    s.saveOp({id:'op',project:'a',owner:'guest',key:'k',status:'succeeded'});
+    s.transfer('a','guest','user');assert.equal(s.get('a','user').owner,'user');assert.throws(()=>s.get('a','guest'));assert.equal(s.get('b','guest').id,'b');assert.equal(s.getOp('op','user').owner,'user');
+    s.saveOp({id:'busy',project:'b',owner:'guest',key:'k2',status:'running'});assert.throws(()=>s.transfer('b','guest','user'),/运行/);assert.equal(s.get('b','guest').owner,'guest');
+  }finally{s.close();}
+});
+test('provider uses explicit question theme and opaque next offset, stops malformed pagination',async()=>{
+  const calls=[];const p=createProviders({ZHIHU_ACCESS_SECRET:'secret'},async(url)=>{calls.push(url);return response({Code:0,Data:url.pathname.includes('recommendations')?{Items:[{Title:'测试题',Url:'https://www.zhihu.com/question/123'}]}:{Items:[],Paging:{IsEnd:false,NextOffset:57}}});});
+  await assert.rejects(p.questions('',new AbortController().signal));assert.equal(calls.length,0);
+  const list=await p.questions('远程办公',new AbortController().signal);assert.equal(list.length,1);assert.equal(calls[0].searchParams.get('Query'),'远程办公');
+  const page=await p.answers(list[0].url,0,new AbortController().signal);assert.equal(page.nextOffset,57);assert.equal(page.items.length,0);
+  const bad=createProviders({ZHIHU_ACCESS_SECRET:'secret'},async()=>response({Code:0,Data:{Items:[],Paging:{IsEnd:false}}}));assert.equal((await bad.answers(list[0].url,0,new AbortController().signal)).nextOffset,null);
+});
+test('search separates auth failure from empty response and preserves provenance',async()=>{
+  const signal=new AbortController().signal;
+  const bad=createProviders({ZHIHU_ACCESS_SECRET:'secret'},async()=>response({Code:20001}));await assert.rejects(bad.search('zhihu_search','q',signal),e=>e.code==='PROVIDER_AUTH');
+  const empty=createProviders({ZHIHU_ACCESS_SECRET:'secret'},async()=>response({Code:0,Data:{Items:[],EmptyReason:'没有匹配'}}));assert.equal((await empty.search('zhihu_search','q',signal)).emptyReason,'没有匹配');
+});
+test('HTTP question project and answer pages retain context, never replace draft',async t=>{
+  const app=createApp({file:':memory:',providers:{status:{},questions:async()=>[{title:'测试问题',url:'https://www.zhihu.com/question/1'}],answers:async()=>({items:[{summary:'测试摘要',url:'https://www.zhihu.com/answer/2'}],nextOffset:17,isEnd:false,warning:''})}});
+  await new Promise(r=>app.server.listen(0,'127.0.0.1',r));t.after(async()=>{await new Promise(r=>app.server.close(r));app.store.close();});
+  const base=`http://127.0.0.1:${app.server.address().port}`;
+  const r=await fetch(base+'/api/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:'这是我对于当前讨论问题的初步草稿，需要继续补充材料。',question:{url:'https://www.zhihu.com/question/1',title:'测试问题'}})});
+  const cookie=r.headers.getSetCookie().map(x=>x.split(';')[0]).join('; '),p=await r.json();
+  const answer=await fetch(base+`/api/projects/${p.id}/answers`,{method:'POST',headers:{cookie,'Content-Type':'application/json'},body:'{"offset":0}'});assert.equal(answer.status,200);
+  const after=await (await fetch(base+`/api/projects/${p.id}`,{headers:{cookie}})).json();assert.equal(after.text,p.text);assert.equal(after.question.url,p.question.url);assert.equal(after.answerPage.nextOffset,17);assert.equal(after.sources.length,0);
+});
+test('HTTP OAuth moves only chosen draft and logout restores anonymous space',async t=>{
+  const oauth=new OAuth(env,async url=>response(url.endsWith('/access_token')?{access_token:'fixture-token',expires_in:60}:{hash_id:'fixture-user',fullname:'测试账号'}));
+  const app=createApp({file:':memory:',providers:{status:{}},oauth});await new Promise(r=>app.server.listen(0,'127.0.0.1',r));
+  t.after(async()=>{await new Promise(r=>app.server.close(r));app.store.close();});
+  const base=`http://127.0.0.1:${app.server.address().port}`,jar=new Map();
+  async function req(path,method='GET',body){const r=await fetch(base+path,{method,redirect:'manual',headers:{cookie:[...jar].map(([k,v])=>`${k}=${v}`).join('; '),...(method==='POST'?{'Content-Type':'application/json'}:{})},body:method==='POST'?JSON.stringify(body):undefined});for(const c of r.headers.getSetCookie()){const [k,v]=c.split(';')[0].split('=');jar.set(k,v);}return r;}
+  const a=await(await req('/api/projects','POST',{text:'这是准备关联账号的一篇测试草稿，包含必要的背景说明。'})).json();
+  const b=await(await req('/api/projects','POST',{text:'这是留在匿名空间的一篇测试草稿，不能被自动迁移。'})).json();
+  const link=await(await req('/api/auth/start','POST',{projectId:a.id})).json();const p=params(link.url);
+  const callback=await req('/auth/zhihu/callback?'+p.toString());assert.equal(callback.status,303);assert.equal(callback.headers.get('location'),'/?login=success');
+  assert.equal((await(await req('/api/auth')).json()).user.name,'测试账号');assert.equal((await req('/api/projects/'+a.id)).status,200);assert.equal((await req('/api/projects/'+b.id)).status,404);
+  await req('/api/auth/logout','POST',{});assert.equal((await req('/api/projects/'+a.id)).status,404);assert.equal((await req('/api/projects/'+b.id)).status,200);
+});

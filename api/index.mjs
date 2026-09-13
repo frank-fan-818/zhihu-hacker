@@ -1,1 +1,8 @@
-Ly8gVmVyY2VsIOWHveaVsOWFpeWPo+OAguaVtOS4quW6lOeUqOeUsei3r+eUsemHjeWGmembhuS4rei9rOWPkeWIsOi/memHjO+8jOetieS7t+S6juWOn+adpeeahOmVv+mpu+i/m+eoi++8jAovLyDkvYbnirbmgIHkuI3lho3kvp3otZbov5vnqIvlhoXlrZjvvJpPQXV0aCDnirbmgIHlnKggUmVkaXPvvIzojYnnqL/lnKggL3RtcCDnmoQgU1FMaXRl44CCCi8vIE5vZGUg6L+Q6KGM5pe26KaB5rGCIDI077yM5Zug5Li6IG5vZGU6c3FsaXRlIOWcqOivpeeJiOacrOWPr+eUqO+8iOingSAubnZtcmPvvInjgIIKaW1wb3J0IHsgY3JlYXRlUmVxdWVzdEhhbmRsZXIgfSBmcm9tICcuLi9zcmMvc2VydmVyLm1qcyc7Cgpjb25zdCBoYW5kbGVyID0gY3JlYXRlUmVxdWVzdEhhbmRsZXIoKTsKCmV4cG9ydCBkZWZhdWx0IGhhbmRsZXI7Cg==
+// Vercel 函数入口。整个应用由路由重写集中转发到这里，等价于原来的长驻进程，
+// 但状态不再依赖进程内存：OAuth 状态在 Redis，草稿在 /tmp 的 SQLite。
+// Node 运行时要求 24，因为 node:sqlite 在该版本可用（见 .nvmrc）。
+import { createRequestHandler } from '../src/server.mjs';
+
+const handler = createRequestHandler();
+
+export default handler;

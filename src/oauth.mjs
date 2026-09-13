@@ -1,1 +1,108 @@
-aW1wb3J0IHsgcmFuZG9tQnl0ZXMgfSBmcm9tICdub2RlOmNyeXB0byc7CmltcG9ydCB7IEFwcEVycm9yLCBoYXNoIH0gZnJvbSAnLi9kb21haW4ubWpzJzsKaW1wb3J0IHsgZGlhZ25vc2UgfSBmcm9tICcuL2NvbmZpZy5tanMnOwppbXBvcnQgeyBjcmVhdGVTdG9yZSB9IGZyb20gJy4va3YubWpzJzsKCmNvbnN0IHJhbmRvbSA9ICgpID0+IHJhbmRvbUJ5dGVzKDMyKS50b1N0cmluZygnaGV4Jyk7CmNvbnN0IFNUQVRFX1RUTCA9IDMwMDsgICAgICAgIC8vIHN0YXRlIOS4jueZu+W9leivt+axgueahOacieaViOacn++8iOenku+8iQpjb25zdCBFUE9DSF9UVEwgPSA2MDQ4MDA7ICAgICAvLyBsb2dvdXQg5Luj5Y+35L+d55WZ5pyf77yM6KaG55uW5pyA6ZW/5Lya6K+dCgovLyDnmbvlvZXnirbmgIHvvIjlvoXlpITnkIYgc3RhdGXjgIHnmbvlvZXkvJror53jgIFsb2dvdXQg5Luj5Y+377yJ5YWo6YOo5pS+6L+b6ZSu5YC85a2Y5YKo77yMCi8vIOS4jeWGjeaUvui/m+eoi+WGheWtmOKAlOKAlFNlcnZlcmxlc3Mg5LiKIHN0YXJ0IOS4jiBjYWxsYmFjayDlj6/og73okL3lnKjkuI3lkIzlrp7kvovjgIIKZXhwb3J0IGNsYXNzIE9BdXRoIHsKICBjb25zdHJ1Y3RvcihlbnYgPSBwcm9jZXNzLmVudiwgZmV0Y2hlciA9IGZldGNoLCBub3cgPSBEYXRlLm5vdywgc3RvcmUgPSBudWxsKSB7CiAgICB0aGlzLmVudiA9IGVudjsKICAgIHRoaXMuZmV0Y2hlciA9IGZldGNoZXI7CiAgICB0aGlzLm5vdyA9IG5vdzsKICAgIHRoaXMuc3RvcmUgPSBzdG9yZSB8fCBjcmVhdGVTdG9yZShlbnYsIHsgbm93IH0pOwogIH0KCiAgZ2V0IGNvbmZpZ3VyZWQoKSB7IHJldHVybiBkaWFnbm9zZSh0aGlzLmVudikub2F1dGg7IH0KCiAgc3RhdGVLZXkoc3RhdGUpIHsgcmV0dXJuIGBvYXV0aDpzdGF0ZToke3N0YXRlfWA7IH0KICBzZXNzaW9uS2V5KGNvb2tpZSkgeyByZXR1cm4gYG9hdXRoOnNlc3Npb246JHtoYXNoKGNvb2tpZSl9YDsgfQogIGVwb2NoS2V5KGNvb2tpZSkgeyByZXR1cm4gYG9hdXRoOmVwb2NoOiR7aGFzaChjb29raWUpfWA7IH0KCiAgYXN5bmMgZXBvY2hGb3IoY29va2llKSB7IHJldHVybiBOdW1iZXIoYXdhaXQgdGhpcy5zdG9yZS5nZXQodGhpcy5lcG9jaEtleShjb29raWUpKSkgfHwgMDsgfQoKICAvLyDlj5HotbfnmbvlvZXvvJrnu5HlrprlvZPliY3ljL/lkI3kvJror53vvIznrb7lj5HkuIDmrKHmgKfnmoTpmo/mnLogc3RhdGXjgIIKICBhc3luYyBzdGFydChjb29raWUsIHByb2plY3RJZCA9IG51bGwsIGFub255bW91c093bmVyID0gaGFzaChjb29raWUpKSB7CiAgICBpZiAoIXRoaXMuY29uZmlndXJlZCkgdGhyb3cgbmV3IEFwcEVycm9yKCdPQVVUSF9OT1RfQ09ORklHVVJFRCcsICfnn6XkuY7nmbvlvZXlsJrmnKrphY3nva7vvIzljL/lkI3ojYnnqL/ku43lj6/nu6fnu63kvb/nlKjjgIInLCA1MDMpOwogICAgY29uc3Qga2V5ID0gaGFzaChjb29raWUpOwogICAgLy8g5ZCM5LiA5Lya6K+d6YeN5paw5Y+R6LW355m75b2V77ya5L2c5bqf5penIHN0YXRlIOW5tuaOqOi/m+S7o+WPt++8jOS5i+WJjemCo+asoeaOiOadg+maj+WNs+WkseaViOOAggogICAgYXdhaXQgdGhpcy5zdG9yZS5kZWxCeVByZWZpeChgb2F1dGg6c3RhdGU6JHtrZXl9OmApOwogICAgY29uc3QgZXBvY2ggPSBhd2FpdCB0aGlzLnN0b3JlLmluY3IodGhpcy5lcG9jaEtleShgJHtjb29raWV9OmxvZ2luYCksIEVQT0NIX1RUTCk7CiAgICBjb25zdCBzdGF0ZSA9IGAke2tleX06JHtlcG9jaH06JHtyYW5kb20oKX1gOwogICAgYXdhaXQgdGhpcy5zdG9yZS5zZXQodGhpcy5zdGF0ZUtleShzdGF0ZSksIEpTT04uc3RyaW5naWZ5KHsga2V5LCBwcm9qZWN0SWQsIGFub255bW91c093bmVyLCBnZW5lcmF0aW9uOiBlcG9jaCB9KSwgU1RBVEVfVFRMKTsKICAgIGNvbnN0IHVybCA9IG5ldyBVUkwoJ2h0dHBzOi8vb3BlbmFwaS56aGlodS5jb20vYXV0aG9yaXplJyk7CiAgICBmb3IgKGNvbnN0IFtrLCB2XSBvZiBPYmplY3QuZW50cmllcyh7IGFwcF9pZDogdGhpcy5lbnYuWkhJSFVfT0FVVEhfQVBQX0lELCByZWRpcmVjdF91cmk6IHRoaXMuZW52LlpISUhVX09BVVRIX1JFRElSRUNUX1VSSSwgcmVzcG9uc2VfdHlwZTogJ2NvZGUnLCBzdGF0ZSB9KSkgdXJsLnNlYXJjaFBhcmFtcy5zZXQoaywgdik7CiAgICByZXR1cm4gdXJsLmhyZWY7CiAgfQoKICBhc3luYyBzZXNzaW9uKGNvb2tpZSkgewogICAgY29uc3QgcmF3ID0gYXdhaXQgdGhpcy5zdG9yZS5nZXQodGhpcy5zZXNzaW9uS2V5KGNvb2tpZSkpOwogICAgaWYgKCFyYXcpIHJldHVybiBudWxsOwogICAgdHJ5IHsgcmV0dXJuIEpTT04ucGFyc2UocmF3KTsgfSBjYXRjaCB7IHJldHVybiBudWxsOyB9CiAgfQoKICAvLyDpgIDlh7rvvJrmuIXpmaTkvJror53jgIHkvZzlup/lvoXlpITnkIbnmbvlvZXjgIHmjqjov5sgbG9nb3V0IOS7o+WPt+S9v+WcqOmAlOS6pOaNouWksei0peOAggogIGFzeW5jIGxvZ291dChjb29raWUpIHsKICAgIGNvbnN0IGtleSA9IGhhc2goY29va2llKTsKICAgIGF3YWl0IHRoaXMuc3RvcmUuZGVsKHRoaXMuc2Vzc2lvbktleShjb29raWUpKTsKICAgIGF3YWl0IHRoaXMuc3RvcmUuZGVsQnlQcmVmaXgoYG9hdXRoOnN0YXRlOiR7a2V5fTpgKTsKICAgIGF3YWl0IHRoaXMuc3RvcmUuaW5jcih0aGlzLmVwb2NoS2V5KGAke2Nvb2tpZX06bG9nb3V0YCksIEVQT0NIX1RUTCk7CiAgfQoKICBhc3luYyBqc29uKHVybCwgb3B0aW9ucykgewogICAgY29uc3QgciA9IGF3YWl0IHRoaXMuZmV0Y2hlcih1cmwsIHsgLi4ub3B0aW9ucywgcmVkaXJlY3Q6ICdlcnJvcicsIHNpZ25hbDogQWJvcnRTaWduYWwudGltZW91dCgxNTAwMCkgfSk7CiAgICBpZiAoIXIub2spIHRocm93IG5ldyBBcHBFcnJvcignT0FVVEhfRkFJTEVEJywgYOefpeS5juaOiOadg+acjeWKoeivt+axguWksei0pe+8iEhUVFAgJHtyLnN0YXR1c33vvInjgIJgLCA1MDIpOwogICAgY29uc3QgdGV4dCA9IGF3YWl0IHIudGV4dCgpOwogICAgaWYgKHRleHQubGVuZ3RoID4gMTAwMDAwKSB0aHJvdyBuZXcgQXBwRXJyb3IoJ09BVVRIX0ZBSUxFRCcsICfmjojmnYPlk43lupTov4flpKfjgIInLCA1MDIpOwogICAgdHJ5IHsgcmV0dXJuIEpTT04ucGFyc2UodGV4dCwgKGtleSwgdmFsdWUsIGNvbnRleHQpID0+IGtleSA9PT0gJ3VpZCcgJiYgdHlwZW9mIHZhbHVlID09PSAnbnVtYmVyJyA/IGNvbnRleHQuc291cmNlIDogdmFsdWUpOyB9CiAgICBjYXRjaCB7IHRocm93IG5ldyBBcHBFcnJvcignT0FVVEhfRkFJTEVEJywgJ+aOiOadg+WTjeW6lOagvOW8j+aXoOaViOOAgicsIDUwMik7IH0KICB9CgogIGFzeW5jIGZpbmlzaChjb29raWUsIHBhcmFtcykgewogICAgY29uc3Qgc3RhdGUgPSBwYXJhbXMuZ2V0KCdzdGF0ZScpOwogICAgY29uc3Qga2V5ID0gaGFzaChjb29raWUpOwogICAgY29uc3QgcmF3ID0gc3RhdGUgPyBhd2FpdCB0aGlzLnN0b3JlLmdldCh0aGlzLnN0YXRlS2V5KHN0YXRlKSkgOiBudWxsOwogICAgaWYgKCFyYXcpIHRocm93IG5ldyBBcHBFcnJvcignT0FVVEhfU1RBVEUnLCAn55m75b2V6K+35rGC5bey5aSx5pWI5oiW5LiN5Yy56YWN77yM6K+36YeN5paw5Y+R6LW355m75b2V44CCJywgNDAwKTsKICAgIGxldCBwZW5kaW5nOwogICAgdHJ5IHsgcGVuZGluZyA9IEpTT04ucGFyc2UocmF3KTsgfSBjYXRjaCB7IHRocm93IG5ldyBBcHBFcnJvcignT0FVVEhfU1RBVEUnLCAn55m75b2V6K+35rGC5bey5aSx5pWI5oiW5LiN5Yy56YWN77yM6K+36YeN5paw5Y+R6LW355m75b2V44CCJywgNDAwKTsgfQogICAgLy8gc3RhdGUg5LiO5Lya6K+d57uR5a6a77ya5o2i5LiA5Liq5rWP6KeI5Zmo5bim5ZCM5LiA5LiqIHN0YXRlIOWbnuadpeW/hemhu+Wksei0peOAggogICAgaWYgKHBlbmRpbmcua2V5ICE9PSBrZXkpIHRocm93IG5ldyBBcHBFcnJvcignT0FVVEhfU1RBVEUnLCAn55m75b2V6K+35rGC5bey5aSx5pWI5oiW5LiN5Yy56YWN77yM6K+36YeN5paw5Y+R6LW355m75b2V44CCJywgNDAwKTsKICAgIC8vIOWNleasoea2iOi0ue+8muWFiOWIoOmZpOWGjeS6pOaNou+8jOmHjeaUvuS8muiiq+S4iumdouafpeS4jeWIsOaLpuS9j+OAggogICAgYXdhaXQgdGhpcy5zdG9yZS5kZWwodGhpcy5zdGF0ZUtleShzdGF0ZSkpOwoKICAgIGNvbnN0IGVwb2NoID0gYXdhaXQgdGhpcy5zdG9yZS5nZXQodGhpcy5lcG9jaEtleShgJHtjb29raWV9OmxvZ2luYCkpOwogICAgaWYgKE51bWJlcihlcG9jaCkgIT09IE51bWJlcihwZW5kaW5nLmdlbmVyYXRpb24pKSB0aHJvdyBuZXcgQXBwRXJyb3IoJ09BVVRIX1NUQVRFJywgJ+eZu+W9leW3suWPlua2iOOAgicsIDQwMCk7CgogICAgY29uc3QgY29kZSA9IHBhcmFtcy5nZXQoJ2F1dGhvcml6YXRpb25fY29kZScpOwogICAgaWYgKCFjb2RlIHx8IGNvZGUubGVuZ3RoID4gNDA5NikgdGhyb3cgbmV3IEFwcEVycm9yKCdPQVVUSF9DT0RFJywgJ+acquWPluW+l+acieaViOaOiOadg+egge+8jOivt+mHjeaWsOeZu+W9leOAgicpOwogICAgY29uc3QgdG9rZW4gPSBhd2FpdCB0aGlzLmpzb24oJ2h0dHBzOi8vb3BlbmFwaS56aGlodS5jb20vYWNjZXNzX3Rva2VuJywgewogICAgICBtZXRob2Q6ICdQT1NUJywKICAgICAgaGVhZGVyczogeyAnQ29udGVudC1UeXBlJzogJ2FwcGxpY2F0aW9uL3gtd3d3LWZvcm0tdXJsZW5jb2RlZCcgfSwKICAgICAgYm9keTogbmV3IFVSTFNlYXJjaFBhcmFtcyh7IGFwcF9pZDogdGhpcy5lbnYuWkhJSFVfT0FVVEhfQVBQX0lELCBhcHBfa2V5OiB0aGlzLmVudi5aSElIVV9PQVVUSF9BUFBfS0VZLCBncmFudF90eXBlOiAnYXV0aG9yaXphdGlvbl9jb2RlJywgcmVkaXJlY3RfdXJpOiB0aGlzLmVudi5aSElIVV9PQVVUSF9SRURJUkVDVF9VUkksIGNvZGUgfSkudG9TdHJpbmcoKSwKICAgIH0pOwogICAgY29uc3QgdCA9IHRva2VuLmFjY2Vzc190b2tlbiA/IHRva2VuIDogdG9rZW4uZGF0YTsKICAgIGlmICh0eXBlb2YgdD8uYWNjZXNzX3Rva2VuICE9PSAnc3RyaW5nJyB8fCAhdC5hY2Nlc3NfdG9rZW4gfHwgIU51bWJlci5pc0Zpbml0ZSh0LmV4cGlyZXNfaW4pIHx8IHQuZXhwaXJlc19pbiA8PSAwKSB0aHJvdyBuZXcgQXBwRXJyb3IoJ09BVVRIX0ZBSUxFRCcsICfmnKrlj5blvpfmnInmlYjnmbvlvZXku6TniYzjgIInLCA1MDIpOwogICAgY29uc3QgcmF3VXNlciA9IGF3YWl0IHRoaXMuanNvbignaHR0cHM6Ly9vcGVuYXBpLnpoaWh1LmNvbS91c2VyJywgeyBoZWFkZXJzOiB7IEF1dGhvcml6YXRpb246IGBCZWFyZXIgJHt0LmFjY2Vzc190b2tlbn1gIH0gfSk7CiAgICBjb25zdCB1c2VyID0gcmF3VXNlci5oYXNoX2lkIHx8IHJhd1VzZXIudWlkID8gcmF3VXNlciA6IHJhd1VzZXIuZGF0YTsKICAgIGNvbnN0IHVpZCA9IHR5cGVvZiB1c2VyPy5oYXNoX2lkID09PSAnc3RyaW5nJyAmJiB1c2VyLmhhc2hfaWQgPyB1c2VyLmhhc2hfaWQgOiB0eXBlb2YgdXNlcj8udWlkID09PSAnc3RyaW5nJyAmJiAvXlxkKyQvLnRlc3QodXNlci51aWQpID8gdXNlci51aWQgOiBudWxsOwogICAgaWYgKCF1aWQpIHRocm93IG5ldyBBcHBFcnJvcignT0FVVEhfRkFJTEVEJywgJ+acquWPluW+l+acieaViOeUqOaIt+i6q+S7veOAgicsIDUwMik7CgogICAgLy8g5Lqk5o2i5pyf6Ze05Y+R55SfIGxvZ291dCDmiJbph43mlrDlj5HotbfnmbvlvZXvvJrmlL7lvIPmnKzmrKHnu5PmnpzvvIzkuI3lu7rnq4vkvJror53jgIIKICAgIGNvbnN0IGxvZ291dEVwb2NoID0gYXdhaXQgdGhpcy5lcG9jaEZvcihgJHtjb29raWV9OmxvZ291dGApOwogICAgY29uc3Qgbm93RXBvY2ggPSBhd2FpdCB0aGlzLnN0b3JlLmdldCh0aGlzLmVwb2NoS2V5KGAke2Nvb2tpZX06bG9naW5gKSk7CiAgICBpZiAoTnVtYmVyKG5vd0Vwb2NoKSAhPT0gTnVtYmVyKHBlbmRpbmcuZ2VuZXJhdGlvbikgfHwgbG9nb3V0RXBvY2ggPiAwKSB0aHJvdyBuZXcgQXBwRXJyb3IoJ09BVVRIX1NUQVRFJywgJ+eZu+W9leW3suWPlua2iOOAgicsIDQwMCk7CgogICAgY29uc3QgbmV4dENvb2tpZSA9IHJhbmRvbSgpOwogICAgY29uc3QgdHRsID0gTWF0aC5taW4odC5leHBpcmVzX2luLCA2MDQ4MDApOwogICAgY29uc3Qgc2Vzc2lvbiA9IHsgb3duZXI6ICd6aGlodTonICsgaGFzaCh1aWQpLCBuYW1lOiBTdHJpbmcodXNlci5mdWxsbmFtZSB8fCAn55+l5LmO55So5oi3Jykuc2xpY2UoMCwgMTAwKSwgZXhwaXJlczogdGhpcy5ub3coKSArIHR0bCAqIDEwMDAgfTsKICAgIC8vIOacrOmHjOeoi+eikeS4jeiwg+eUqOeUqOaIt+aVsOaNruaOpeWPo++8jOWPluWIsOi6q+S7veWQjuWNs+S4ouW8g+aPkOS+m+aWuSBUb2tlbuOAggogICAgYXdhaXQgdGhpcy5zdG9yZS5zZXQodGhpcy5zZXNzaW9uS2V5KG5leHRDb29raWUpLCBKU09OLnN0cmluZ2lmeShzZXNzaW9uKSwgdHRsKTsKICAgIGF3YWl0IHRoaXMuc3RvcmUuZGVsKHRoaXMuc2Vzc2lvbktleShjb29raWUpKTsKICAgIGF3YWl0IHRoaXMuc3RvcmUuZGVsQnlQcmVmaXgoYG9hdXRoOnN0YXRlOiR7a2V5fTpgKTsKICAgIHJldHVybiB7IGNvb2tpZTogbmV4dENvb2tpZSwgc2Vzc2lvbiwgcHJvamVjdElkOiBwZW5kaW5nLnByb2plY3RJZCwgcHJldmlvdXNPd25lcjogcGVuZGluZy5hbm9ueW1vdXNPd25lciB9OwogIH0KfQo=
+import { randomBytes } from 'node:crypto';
+import { AppError, hash } from './domain.mjs';
+import { diagnose } from './config.mjs';
+import { createStore } from './kv.mjs';
+
+const random = () => randomBytes(32).toString('hex');
+const STATE_TTL = 300;        // state 与登录请求的有效期（秒）
+const EPOCH_TTL = 604800;     // logout 代号保留期，覆盖最长会话
+
+// 登录状态（待处理 state、登录会话、logout 代号）全部放进键值存储，
+// 不再放进程内存——Serverless 上 start 与 callback 可能落在不同实例。
+export class OAuth {
+  constructor(env = process.env, fetcher = fetch, now = Date.now, store = null) {
+    this.env = env;
+    this.fetcher = fetcher;
+    this.now = now;
+    this.store = store || createStore(env, { now });
+  }
+
+  get configured() { return diagnose(this.env).oauth; }
+
+  stateKey(state) { return `oauth:state:${state}`; }
+  sessionKey(cookie) { return `oauth:session:${hash(cookie)}`; }
+  epochKey(cookie) { return `oauth:epoch:${hash(cookie)}`; }
+
+  async epochFor(cookie) { return Number(await this.store.get(this.epochKey(cookie))) || 0; }
+
+  // 发起登录：绑定当前匿名会话，签发一次性的随机 state。
+  async start(cookie, projectId = null, anonymousOwner = hash(cookie)) {
+    if (!this.configured) throw new AppError('OAUTH_NOT_CONFIGURED', '知乎登录尚未配置，匿名草稿仍可继续使用。', 503);
+    const key = hash(cookie);
+    // 同一会话重新发起登录：作废旧 state 并推进代号，之前那次授权随即失效。
+    await this.store.delByPrefix(`oauth:state:${key}:`);
+    const epoch = await this.store.incr(this.epochKey(`${cookie}:login`), EPOCH_TTL);
+    const state = `${key}:${epoch}:${random()}`;
+    await this.store.set(this.stateKey(state), JSON.stringify({ key, projectId, anonymousOwner, generation: epoch }), STATE_TTL);
+    const url = new URL('https://openapi.zhihu.com/authorize');
+    for (const [k, v] of Object.entries({ app_id: this.env.ZHIHU_OAUTH_APP_ID, redirect_uri: this.env.ZHIHU_OAUTH_REDIRECT_URI, response_type: 'code', state })) url.searchParams.set(k, v);
+    return url.href;
+  }
+
+  async session(cookie) {
+    const raw = await this.store.get(this.sessionKey(cookie));
+    if (!raw) return null;
+    try { return JSON.parse(raw); } catch { return null; }
+  }
+
+  // 退出：清除会话、作废待处理登录、推进 logout 代号使在途交换失败。
+  async logout(cookie) {
+    const key = hash(cookie);
+    await this.store.del(this.sessionKey(cookie));
+    await this.store.delByPrefix(`oauth:state:${key}:`);
+    await this.store.incr(this.epochKey(`${cookie}:logout`), EPOCH_TTL);
+  }
+
+  async json(url, options) {
+    const r = await this.fetcher(url, { ...options, redirect: 'error', signal: AbortSignal.timeout(15000) });
+    if (!r.ok) throw new AppError('OAUTH_FAILED', `知乎授权服务请求失败（HTTP ${r.status}）。`, 502);
+    const text = await r.text();
+    if (text.length > 100000) throw new AppError('OAUTH_FAILED', '授权响应过大。', 502);
+    try { return JSON.parse(text, (key, value, context) => key === 'uid' && typeof value === 'number' ? context.source : value); }
+    catch { throw new AppError('OAUTH_FAILED', '授权响应格式无效。', 502); }
+  }
+
+  async finish(cookie, params) {
+    const state = params.get('state');
+    const key = hash(cookie);
+    const raw = state ? await this.store.get(this.stateKey(state)) : null;
+    if (!raw) throw new AppError('OAUTH_STATE', '登录请求已失效或不匹配，请重新发起登录。', 400);
+    let pending;
+    try { pending = JSON.parse(raw); } catch { throw new AppError('OAUTH_STATE', '登录请求已失效或不匹配，请重新发起登录。', 400); }
+    // state 与会话绑定：换一个浏览器带同一个 state 回来必须失败。
+    if (pending.key !== key) throw new AppError('OAUTH_STATE', '登录请求已失效或不匹配，请重新发起登录。', 400);
+    // 单次消费：先删除再交换，重放会被上面查不到拦住。
+    await this.store.del(this.stateKey(state));
+
+    const epoch = await this.store.get(this.epochKey(`${cookie}:login`));
+    if (Number(epoch) !== Number(pending.generation)) throw new AppError('OAUTH_STATE', '登录已取消。', 400);
+
+    const code = params.get('authorization_code');
+    if (!code || code.length > 4096) throw new AppError('OAUTH_CODE', '未取得有效授权码，请重新登录。');
+    const token = await this.json('https://openapi.zhihu.com/access_token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ app_id: this.env.ZHIHU_OAUTH_APP_ID, app_key: this.env.ZHIHU_OAUTH_APP_KEY, grant_type: 'authorization_code', redirect_uri: this.env.ZHIHU_OAUTH_REDIRECT_URI, code }).toString(),
+    });
+    const t = token.access_token ? token : token.data;
+    if (typeof t?.access_token !== 'string' || !t.access_token || !Number.isFinite(t.expires_in) || t.expires_in <= 0) throw new AppError('OAUTH_FAILED', '未取得有效登录令牌。', 502);
+    const rawUser = await this.json('https://openapi.zhihu.com/user', { headers: { Authorization: `Bearer ${t.access_token}` } });
+    const user = rawUser.hash_id || rawUser.uid ? rawUser : rawUser.data;
+    const uid = typeof user?.hash_id === 'string' && user.hash_id ? user.hash_id : typeof user?.uid === 'string' && /^\d+$/.test(user.uid) ? user.uid : null;
+    if (!uid) throw new AppError('OAUTH_FAILED', '未取得有效用户身份。', 502);
+
+    // 交换期间发生 logout 或重新发起登录：放弃本次结果，不建立会话。
+    const logoutEpoch = await this.epochFor(`${cookie}:logout`);
+    const nowEpoch = await this.store.get(this.epochKey(`${cookie}:login`));
+    if (Number(nowEpoch) !== Number(pending.generation) || logoutEpoch > 0) throw new AppError('OAUTH_STATE', '登录已取消。', 400);
+
+    const nextCookie = random();
+    const ttl = Math.min(t.expires_in, 604800);
+    const session = { owner: 'zhihu:' + hash(uid), name: String(user.fullname || '知乎用户').slice(0, 100), expires: this.now() + ttl * 1000 };
+    // 本里程碑不调用用户数据接口，取到身份后即丢弃提供方 Token。
+    await this.store.set(this.sessionKey(nextCookie), JSON.stringify(session), ttl);
+    await this.store.del(this.sessionKey(cookie));
+    await this.store.delByPrefix(`oauth:state:${key}:`);
+    return { cookie: nextCookie, session, projectId: pending.projectId, previousOwner: pending.anonymousOwner };
+  }
+}

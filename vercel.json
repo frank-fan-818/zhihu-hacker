@@ -1,1 +1,11 @@
-ewogICIkc2NoZW1hIjogImh0dHBzOi8vb3BlbmFwaS52ZXJjZWwuc2gvdmVyY2VsLmpzb24iLAogICJmcmFtZXdvcmsiOiBudWxsLAogICJyZXdyaXRlcyI6IFsKICAgIHsgImhhbmRsZSI6ICJmaWxlc3lzdGVtIiB9LAogICAgeyAic291cmNlIjogIi8oLiopIiwgImRlc3RpbmF0aW9uIjogIi9hcGkvaW5kZXgiIH0KICBdLAogICJmdW5jdGlvbnMiOiB7CiAgICAiYXBpL2luZGV4Lm1qcyI6IHsgIm1heER1cmF0aW9uIjogMzAgfQogIH0KfQo=
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "rewrites": [
+    { "handle": "filesystem" },
+    { "source": "/(.*)", "destination": "/api/index" }
+  ],
+  "functions": {
+    "api/index.mjs": { "maxDuration": 30 }
+  }
+}

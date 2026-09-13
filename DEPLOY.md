@@ -1,1 +1,114 @@
-IyDpg6jnvbLliLAgVmVyY2VsCgrmnKzlupTnlKjmmK/ljp/nlJ8gYG5vZGU6aHR0cGAg6ZW/6am75pyN5Yqh77yM5Y6f5pys5YGH5a6aIuWNlei/m+eoiyArIOaMgeS5heejgeebmCLjgIJWZXJjZWwg5piv5peg5pyN5Yqh5ZmoCuW5s+WPsO+8jOWboOatpOS7o+eggemHjOihpeS6huS4ieWkhOmAgumFje+8muivt+axguWFpeWPo++8iGBhcGkvaW5kZXgubWpzYO+8ieOAgeaVsOaNruW6k+mZjee6p++8iGAvdG1wYO+8ieOAgQrku6Xlj4rnmbvlvZXnirbmgIHlpJbnva7vvIhgc3JjL2t2Lm1qc2DvvInjgIIqKueZu+W9leeKtuaAgeWklue9ruaYr+W/hemhu+eahCoq77ya5ZCm5YiZ5Y+R6LW355m75b2V55qE5a6e5L6L5ZKMCuaOpeaUtuWbnuiwg+eahOWunuS+i+S4jeaYr+WQjOS4gOS4qu+8jOWbnuiwg+W/heeEtuaKpSBgT0FVVEhfU1RBVEVg44CCCgojIyDkuIDjgIHpg6jnvbLliY3lv4XpobvlhYjlgZrnmoTkuKTku7bkuosKCiMjIyAxLiDnoa7orqQgVVJMIOW9ouaAge+8jOW5tuWbuuWumuWfn+WQjQoKVmVyY2VsIOavj+asoemDqOe9sumDveS8mueUn+aIkOaWsOWfn+WQje+8iGDpobnnm67lkI0tPGhhc2g+Lei0puWPty52ZXJjZWwuYXBwYO+8ieOAgioq5Zue6LCD5Zyw5Z2A5Zyo55+l5LmOCuW5s+WPsOeZu+iusOWQjuW/hemhu+mAkOWtl+espuWMuemFje+8jOaJgOS7peS4jeimgeeUqOavj+asoeWPmOWMlueahOmDqOe9siBVUkwqKu+8jOimgeeUqOeos+WumueahOeUn+S6p+Wfn+WQje+8jArmiJbnu5nmn5DmrKHpg6jnvbLorr7nva7lm7rlrprliKvlkI3jgIIKCuWFiOehruWumuS9oOeahOWfn+WQje+8jOW9ouWmgu+8mgoKYGBgdGV4dApodHRwczovL2NvZ25pdGl2ZS1kZWJ1Z2dlci52ZXJjZWwuYXBwCmBgYAoKIyMjIDIuIOW8gOmAmiBVcHN0YXNoIFJlZGlz77yI55m75b2V5b+F6ZyA77yJCgrlnKggVmVyY2VsIOaOp+WItuWPsCAqKlN0b3JhZ2Ug4oaSIENyZWF0ZSBEYXRhYmFzZSDihpIgVXBzdGFzaCBSZWRpcyoq77yM5Yib5bu65ZCO5ou/5Yiw5Lik5Liq5YC877yaClJFU1QgVVJMIOWSjCBSRVNUIFRva2Vu44CC5pys5bqU55So55u05o6l6LCD55So5a6D5Lus55qEIFJFU1Qg5o6l5Y+j77yMKirkuI3pnIDopoHlronoo4Xku7vkvZUgbnBtIOS+nei1lioq44CCCgrmi7/liLDnmoTlgLzlr7nlupTmnKzpobnnm67nmoTkuKTkuKrnjq/looPlj5jph4/vvIjlkI3lrZfku6XkvaDopoHloavnmoTkuLrlh4bvvIzkuI3opoHnhafmioTlubPlj7Dpu5jorqTlkI3vvInvvJoKCmBgYHRleHQKU0VTU0lPTl9TVE9SRV9VUkw9aHR0cHM6Ly94eHgteHh4eC51cHN0YXNoLmlvClNFU1NJT05fU1RPUkVfVE9LRU49eHh4eHh4eHgKYGBgCgrlj6rphY3kuIDkuKrjgIHmiJbkuKTkuKrpg73kuI3phY3ml7bvvIxgbnBtIHJ1biBkaWFnbm9zZWAg5Lya5piO56Gu5oql5Ye66ZmN57qn54q25oCB77ya55m75b2V5LuN54S25Y+v55So77yMCuS9huWPquWcqOWNleWunuS+i+WGheacieaViO+8jFNlcnZlcmxlc3Mg5aSa5a6e5L6L5LiL5Lya5aSx6LSl44CCCgojIyDkuozjgIHlnKjnn6XkuY7lubPlj7DnmbvorrDlm57osIPlnLDlnYAKCuWcqOi1m+S6i+mhueebrumhtemdoiA8aHR0cHM6Ly93d3cuemhpaHUuY29tL2hhY2thdGhvbj9hY3Rpdml0eV9jb2RlPXpoaWh1X2hhY2thdGhvbl8yMDI2X3AyPgrnmoTjgIznn6XkuY7nmbvlvZXlm57osIPlnLDlnYDjgI3lpITloavlhpnvvJoKCmBgYHRleHQKaHR0cHM6Ly/kvaDnmoTln5/lkI0vYXV0aC96aGlodS9jYWxsYmFjawpgYGAKCuWvueW6lOeahOS4pOS4queOr+Wig+WPmOmHj+W/hemhu+aYr++8iOS4pOiAheWQjOa6kOOAgei3r+W+hOWbuuWumuOAgeaXoOWwvuaWnOadoOOAgeaXoOafpeivouWPguaVsO+8ie+8mgoKYGBgdGV4dApBUFBfT1JJR0lOPWh0dHBzOi8v5L2g55qE5Z+f5ZCNClpISUhVX09BVVRIX1JFRElSRUNUX1VSST1odHRwczovL+S9oOeahOWfn+WQjS9hdXRoL3poaWh1L2NhbGxiYWNrCmBgYAoK5bmz5Y+w55m76K6w5YC85LiOIGBaSElIVV9PQVVUSF9SRURJUkVDVF9VUklgIOW/hemhu+WujOWFqOS4gOiHtOOAguaUueWfn+WQjeaEj+WRs+edgOS4pOWkhOmDveimgeaUueOAggoKIyMg5LiJ44CB6YOo572yCgojIyMgMS4g5o6o6YCB5YiwIEdpdEh1YgoKYGNvZ25pdGl2ZS1kZWJ1Z2dlcmAg5piv54us56uL5LuT5bqT77yI5LiN5ZCrIGAuZW52YOOAgWBkYXRhL2DvvInjgILmjqjliLDkvaDnmoQgR2l0SHViIOengeacieaIluWFrOW8gOS7k+W6k+OAggoKIyMjIDIuIOWcqCBWZXJjZWwg5a+85YWl6aG555uuCgotICoqUm9vdCBEaXJlY3RvcnkqKu+8muS7k+W6k+agueebruW9le+8iOWNsyBgY29nbml0aXZlLWRlYnVnZ2VyYCDmnKzouqvvvIkKLSAqKkZyYW1ld29yayBQcmVzZXQqKu+8mmBPdGhlcmAKLSAqKkJ1aWxkIENvbW1hbmQgLyBPdXRwdXQgRGlyZWN0b3J5KirvvJrlhajpg6jnlZnnqbrvvIhgdmVyY2VsLmpzb25gIOW3suWjsOaYjiBgZnJhbWV3b3JrOiBudWxsYO+8iQotICoqTm9kZS5qcyBWZXJzaW9uKirvvJrpobnnm67orr7nva7ph4zpgIkgKioyNC54KirvvIhgbm9kZTpzcWxpdGVgIOmcgOimge+8m+S7k+W6k+W3suW4piBgLm52bXJjYO+8iQoKIyMjIDMuIOmFjee9rueOr+Wig+WPmOmHjwoK5ZyoIFZlcmNlbCDpobnnm64gKipTZXR0aW5ncyDihpIgRW52aXJvbm1lbnQgVmFyaWFibGVzKiog5re75Yqg77yIUHJvZHVjdGlvbiDkuI4gUHJldmlldyDpg73opoHvvInvvJoKCnwg5Y+Y6YePIHwg5YC8IHwKfC0tLXwtLS18CnwgYEFQUF9PUklHSU5gIHwgYGh0dHBzOi8v5L2g55qE5Z+f5ZCNYCB8CnwgYFpISUhVX09BVVRIX1JFRElSRUNUX1VSSWAgfCBgaHR0cHM6Ly/kvaDnmoTln5/lkI0vYXV0aC96aGlodS9jYWxsYmFja2AgfAp8IGBaSElIVV9PQVVUSF9BUFBfSURgIHwg5L2g55qEIEFwcCBJRCB8CnwgYFpISUhVX09BVVRIX0FQUF9LRVlgIHwg5L2g55qEIEFwcCBLZXkgfAp8IGBaSElIVV9BQ0NFU1NfU0VDUkVUYCB8IOS9oOeahCBBY2Nlc3MgU2VjcmV0IHwKfCBgTU9ERUxfQkFTRV9VUkxgIHwg5L6L5aaCIGBodHRwczovL2FwaS5kZWVwc2Vlay5jb21gIHwKfCBgTU9ERUxfTkFNRWAgfCDkvovlpoIgYGRlZXBzZWVrLWZsYXNoYCB8CnwgYE1PREVMX0FQSV9LRVlgIHwg5L2g55qE5qih5Z6L5a+G6ZKlIHwKfCBgU0VTU0lPTl9TVE9SRV9VUkxgIHwgVXBzdGFzaCBSRVNUIFVSTCB8CnwgYFNFU1NJT05fU1RPUkVfVE9LRU5gIHwgVXBzdGFzaCBSRVNUIFRva2VuIHwKCioq5LiN6KaBKirlnKggVmVyY2VsIOS4iuiuvue9riBgSE9TVGAg5oiWIGBQT1JUYO+8jOW5s+WPsOiHquihjOaOpeeuoeOAgmBTUUxJVEVfRklMRWAg5Lmf5LiN55So6K6+77yMCumDqOe9suaXtum7mOiupOi1sCBgL3RtcC9hcHAuc3FsaXRlYOOAggoKIyMjIDQuIOmDqOe9suW5tumqjOivgQoK6YOo572y5a6M5oiQ5ZCO5L6d5qyh56Gu6K6k77yaCgoxLiDmiZPlvIAgYGh0dHBzOi8v5L2g55qE5Z+f5ZCNYCDihpIg6aG16Z2i5q2j5bi45Yqg6L2977yI6K+05piOIGBub2RlOnNxbGl0ZWAg5ZyoIGAvdG1wYCDotbfmnaXkuobvvInjgIIKMi4g6L6T5YWl5LiA5q6156S65L6L6I2J56i/IOKGkiDngrnjgIzmo4Dmn6Xov5nmrrXor53jgI3ihpIg5Ye6546w5YCZ6YCJ6Zeu6aKY77yI6K+B5piO6KeE5YiZ5Yid562b5Y+v55So77yJ44CCCjMuIOeCueOAjOafpeeci+S+neaNruOAjeKGkiDov5Tlm57nnJ/lrp7nn6XkuY7mnaXmupDvvIjor4HmmI4gQWNjZXNzIFNlY3JldCDkuI7nvZHnu5zlh7rlj6Plj6/nlKjvvInjgIIKNC4g54K544CM55+l5LmO55m75b2V44CN4oaSIOaOiOadg+WQjuWbnuWIsCBgLz9sb2dpbj1zdWNjZXNzYO+8jOmhtuagj+aYvuekuuaYteensAogICDvvIjor4HmmI7ot6jlrp7kvovnmbvlvZXnirbmgIHnlJ/mlYjvvInjgILoi6Xlm57liLAgYC8/bG9naW49ZmFpbGVkYO+8jOWkmuWNiuaYr+Wbnuiwg+WcsOWdgOS4jeS4gOiHtOOAggoKIyMg5Zub44CB5b+F6aG755+l6YGT55qE6ZmQ5Yi2Cgp8IOmZkOWItiB8IOivtOaYjiB8CnwtLS18LS0tfAp8ICoq6I2J56i/5LiN5oyB5LmFKiogfCBTUUxpdGUg5ZyoIGAvdG1wYO+8jOmaj+WunuS+i+WtmOa0u+OAgeWGt+WQr+WKqOWNs+mHjee9ruOAguiNieeov+WPr+iDveS4ouWkseS4lOeVjOmdouS4jeS8muaPkOekuuOAgui/meaYryBWZXJjZWwg5peg5oyB5LmF56OB55uY55qE5b+F54S257uT5p6c77yMKirkuI3mmK/phY3nva7pl67popgqKuOAgiB8CnwgKirpmZDmtYHmmK/mr4/lrp7kvovnmoQqKiB8IOavj+S8muivnSAzMCDpobnnm67jgIHmr4/lsI/ml7YgMzAg5qyh5pON5L2c562J6K6h5pWw5LuN5Zyo6L+b56iL5YaF77yIYHNlcnZlci5tanNgIOeahCBgcXVlc3Rpb25DYWxsc2AvYGFuc3dlckJ1c3lg77yJ77yM5aSa5a6e5L6L5LiL5a6e6ZmF6aKd5bqm5Lya5pS+5a6944CC5LiN5pu/5Luj5q2j5byP572R5YWz6ZmQ5rWB44CCIHwKfCAqKueZu+W9leS8muivneS4iumZkCA3IOWkqSoqIHwg5Lya6K+d5YaZ5ZyoIFJlZGlz77yM6L+H5pyf5pe26Ze05Y+WIGBtaW4oZXhwaXJlc19pbiwgNyDlpKkpYO+8m+mAgOWHuueZu+W9leS8mui3qOWunuS+i+eri+WNs+WQiumUgOOAgiB8CnwgKirpooTop4jln5/lkI3kuI3og73lvZPlm57osIMqKiB8IOavj+asoemDqOe9suWfn+WQjemDveS8muWPmO+8jOeZu+iusOeahOWbnuiwg+WPquWcqOeUn+S6p+Wfn+WQjeS4i+WMuemFjeOAgiB8CgrlpoLmnpzojYnnqL/mjIHkuYXljJbmmK/or4TlpZblv4XpnIDpobnvvIzlupTmlLnnlKjluKbmjIHkuYXno4Hnm5jnmoTplb/pqbvmnI3liqHvvIhSYWlsd2F544CBUmVuZGVyIOetie+8ie+8jArpgqPnp43lvaLmgIHkuIvlj6rpnIDmioogYEFQUF9PUklHSU5gIOS4jiBgWkhJSFVfT0FVVEhfUkVESVJFQ1RfVVJJYCDmjIflkJHlubPlj7Dln5/lkI3vvIwK5pWw5o2u5bqT5L+d5oyB6buY6K6k55qEIGBkYXRhL2FwcC5zcWxpdGVgIOWNs+WPr++8jOaXoOmcgCBgL3RtcGAg6ZmN57qn44CCCgojIyDkupTjgIHmnKzlnLDlvIDlj5HkuI3lj5flvbHlk40KCuS4jemFjee9riBgU0VTU0lPTl9TVE9SRV9VUkxgIOaXtu+8jOeZu+W9leeKtuaAgei1sOi/m+eoi+WGheWtmOWunueOsO+8jGBucG0gc3RhcnRgIOS4juacrOWcsOa1i+ivleihjOS4ugrkuI7mraTliY3kuIDoh7TjgILmnKzlnLDku43nm5HlkKwgYDEyNy4wLjAuMTo0MzE3YO+8jOaVsOaNruW6k+S7jeaYryBgZGF0YS9hcHAuc3FsaXRlYOOAggo=
+# 部署到 Vercel
+
+本应用是原生 `node:http` 长驻服务，原本假定"单进程 + 持久磁盘"。Vercel 是无服务器
+平台，因此代码里补了三处适配：请求入口（`api/index.mjs`）、数据库降级（`/tmp`）、
+以及登录状态外置（`src/kv.mjs`）。**登录状态外置是必须的**：否则发起登录的实例和
+接收回调的实例不是同一个，回调必然报 `OAUTH_STATE`。
+
+## 一、部署前必须先做的两件事
+
+### 1. 确认 URL 形态，并固定域名
+
+Vercel 每次部署都会生成新域名（`项目名-<hash>-账号.vercel.app`）。**回调地址在知乎
+平台登记后必须逐字符匹配，所以不要用每次变化的部署 URL**，要用稳定的生产域名，
+或给某次部署设置固定别名。
+
+先确定你的域名，形如：
+
+```text
+https://cognitive-debugger.vercel.app
+```
+
+### 2. 开通 Upstash Redis（登录必需）
+
+在 Vercel 控制台 **Storage → Create Database → Upstash Redis**，创建后拿到两个值：
+REST URL 和 REST Token。本应用直接调用它们的 REST 接口，**不需要安装任何 npm 依赖**。
+
+拿到的值对应本项目的两个环境变量（名字以你要填的为准，不要照抄平台默认名）：
+
+```text
+SESSION_STORE_URL=https://xxx-xxxx.upstash.io
+SESSION_STORE_TOKEN=xxxxxxxx
+```
+
+只配一个、或两个都不配时，`npm run diagnose` 会明确报出降级状态：登录仍然可用，
+但只在单实例内有效，Serverless 多实例下会失败。
+
+## 二、在知乎平台登记回调地址
+
+在赛事项目页面 <https://www.zhihu.com/hackathon?activity_code=zhihu_hackathon_2026_p2>
+的「知乎登录回调地址」处填写：
+
+```text
+https://你的域名/auth/zhihu/callback
+```
+
+对应的两个环境变量必须是（两者同源、路径固定、无尾斜杠、无查询参数）：
+
+```text
+APP_ORIGIN=https://你的域名
+ZHIHU_OAUTH_REDIRECT_URI=https://你的域名/auth/zhihu/callback
+```
+
+平台登记值与 `ZHIHU_OAUTH_REDIRECT_URI` 必须完全一致。改域名意味着两处都要改。
+
+## 三、部署
+
+### 1. 推送到 GitHub
+
+`cognitive-debugger` 是独立仓库（不含 `.env`、`data/`）。推到你的 GitHub 私有或公开仓库。
+
+### 2. 在 Vercel 导入项目
+
+- **Root Directory**：仓库根目录（即 `cognitive-debugger` 本身）
+- **Framework Preset**：`Other`
+- **Build Command / Output Directory**：全部留空（`vercel.json` 已声明 `framework: null`）
+- **Node.js Version**：项目设置里选 **24.x**（`node:sqlite` 需要；仓库已带 `.nvmrc`）
+
+### 3. 配置环境变量
+
+在 Vercel 项目 **Settings → Environment Variables** 添加（Production 与 Preview 都要）：
+
+| 变量 | 值 |
+|---|---|
+| `APP_ORIGIN` | `https://你的域名` |
+| `ZHIHU_OAUTH_REDIRECT_URI` | `https://你的域名/auth/zhihu/callback` |
+| `ZHIHU_OAUTH_APP_ID` | 你的 App ID |
+| `ZHIHU_OAUTH_APP_KEY` | 你的 App Key |
+| `ZHIHU_ACCESS_SECRET` | 你的 Access Secret |
+| `MODEL_BASE_URL` | 例如 `https://api.deepseek.com` |
+| `MODEL_NAME` | 例如 `deepseek-flash` |
+| `MODEL_API_KEY` | 你的模型密钥 |
+| `SESSION_STORE_URL` | Upstash REST URL |
+| `SESSION_STORE_TOKEN` | Upstash REST Token |
+
+**不要**在 Vercel 上设置 `HOST` 或 `PORT`，平台自行接管。`SQLITE_FILE` 也不用设，
+部署时默认走 `/tmp/app.sqlite`。
+
+### 4. 部署并验证
+
+部署完成后依次确认：
+
+1. 打开 `https://你的域名` → 页面正常加载（说明 `node:sqlite` 在 `/tmp` 起来了）。
+2. 输入一段示例草稿 → 点「检查这段话」→ 出现候选问题（证明规则初筛可用）。
+3. 点「查看依据」→ 返回真实知乎来源（证明 Access Secret 与网络出口可用）。
+4. 点「知乎登录」→ 授权后回到 `/?login=success`，顶栏显示昵称
+   （证明跨实例登录状态生效）。若回到 `/?login=failed`，多半是回调地址不一致。
+
+## 四、必须知道的限制
+
+| 限制 | 说明 |
+|---|---|
+| **草稿不持久** | SQLite 在 `/tmp`，随实例存活、冷启动即重置。草稿可能丢失且界面不会提示。这是 Vercel 无持久磁盘的必然结果，**不是配置问题**。 |
+| **限流是每实例的** | 每会话 30 项目、每小时 30 次操作等计数仍在进程内（`server.mjs` 的 `questionCalls`/`answerBusy`），多实例下实际额度会放宽。不替代正式网关限流。 |
+| **登录会话上限 7 天** | 会话写在 Redis，过期时间取 `min(expires_in, 7 天)`；退出登录会跨实例立即吊销。 |
+| **预览域名不能当回调** | 每次部署域名都会变，登记的回调只在生产域名下匹配。 |
+
+如果草稿持久化是评奖必需项，应改用带持久磁盘的长驻服务（Railway、Render 等），
+那种形态下只需把 `APP_ORIGIN` 与 `ZHIHU_OAUTH_REDIRECT_URI` 指向平台域名，
+数据库保持默认的 `data/app.sqlite` 即可，无需 `/tmp` 降级。
+
+## 五、本地开发不受影响
+
+不配置 `SESSION_STORE_URL` 时，登录状态走进程内存实现，`npm start` 与本地测试行为
+与此前一致。本地仍监听 `127.0.0.1:4317`，数据库仍是 `data/app.sqlite`。

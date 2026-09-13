@@ -1,1 +1,8 @@
-ZGF0YS8KLmVudgouZW52LioKIS5lbnYuZXhhbXBsZQpub2RlX21vZHVsZXMvCi52ZXJjZWwvCioubG9nCi5EU19TdG9yZQo=
+data/
+.env
+.env.*
+!.env.example
+node_modules/
+.vercel/
+*.log
+.DS_Store

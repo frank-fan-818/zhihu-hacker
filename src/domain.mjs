@@ -1,1 +1,63 @@
-aW1wb3J0IHsgY3JlYXRlSGFzaCwgcmFuZG9tVVVJRCB9IGZyb20gJ25vZGU6Y3J5cHRvJzsKZXhwb3J0IGNsYXNzIEFwcEVycm9yIGV4dGVuZHMgRXJyb3IgewogIGNvbnN0cnVjdG9yKGNvZGUsIG1lc3NhZ2UsIHN0YXR1cyA9IDQwMCkgeyBzdXBlcihtZXNzYWdlKTsgdGhpcy5jb2RlID0gY29kZTsgdGhpcy5zdGF0dXMgPSBzdGF0dXM7IH0KfQpleHBvcnQgY29uc3QgaGFzaCA9IHRleHQgPT4gY3JlYXRlSGFzaCgnc2hhMjU2JykudXBkYXRlKHRleHQpLmRpZ2VzdCgnaGV4Jyk7CmV4cG9ydCBjb25zdCBpZCA9ICgpID0+IHJhbmRvbVVVSUQoKTsKZXhwb3J0IGZ1bmN0aW9uIGJvdW5kZWQodmFsdWUsIG1pbiwgbWF4LCBuYW1lID0gJ+WGheWuuScpIHsKICBpZiAodHlwZW9mIHZhbHVlICE9PSAnc3RyaW5nJyB8fCBbLi4udmFsdWUudHJpbSgpXS5sZW5ndGggPCBtaW4gfHwgWy4uLnZhbHVlXS5sZW5ndGggPiBtYXgpCiAgICB0aHJvdyBuZXcgQXBwRXJyb3IoJ0lOVkFMSURfSU5QVVQnLCBgJHtuYW1lfemcgOimgSAke21pbn3igJQke21heH0g5Liq5a2X56ym44CCYCk7CiAgcmV0dXJuIHZhbHVlOwp9CmV4cG9ydCBmdW5jdGlvbiBhbmNob3IodGV4dCwgcXVvdGUsIHByZWZlcnJlZCkgewogIGJvdW5kZWQocXVvdGUsIDEsIDEwMDAwLCAn5Y6f5Y+lJyk7CiAgbGV0IHN0YXJ0ID0gcHJlZmVycmVkOwogIGlmICghTnVtYmVyLmlzSW50ZWdlcihzdGFydCkpIHsKICAgIHN0YXJ0ID0gdGV4dC5pbmRleE9mKHF1b3RlKTsKICAgIGlmIChzdGFydCA+PSAwICYmIHRleHQuaW5kZXhPZihxdW90ZSwgc3RhcnQgKyAxKSA+PSAwKQogICAgICB0aHJvdyBuZXcgQXBwRXJyb3IoJ0lOVkFMSURfQU5DSE9SJywgJ+WOn+WPpemHjeWkje+8jOmcgOimgeWHhuehruS9jee9ruOAgicpOwogIH0KICBpZiAoc3RhcnQgPCAwIHx8IHRleHQuc2xpY2Uoc3RhcnQsIHN0YXJ0ICsgcXVvdGUubGVuZ3RoKSAhPT0gcXVvdGUpCiAgICB0aHJvdyBuZXcgQXBwRXJyb3IoJ0lOVkFMSURfQU5DSE9SJywgJ+aXoOazleWcqOWOn+eov+S4reWumuS9jei/meWPpeivne+8jOivt+mHjeaWsOajgOafpeOAgicpOwogIHJldHVybiB7IHN0YXJ0LCBlbmQ6IHN0YXJ0ICsgcXVvdGUubGVuZ3RoLCBxdW90ZSwgYW5jaG9ySGFzaDogaGFzaChxdW90ZSkgfTsKfQpleHBvcnQgZnVuY3Rpb24gY2hlY2tEcmFmdCh0ZXh0LCBsaW1pdCA9IDEpIHsKICBjb25zdCBpdGVtcyA9IFtdOwogIGZvciAoY29uc3QgbWF0Y2ggb2YgdGV4dC5tYXRjaEFsbCgvW17jgILvvIHvvJ9cbl0rW+OAgu+8ge+8n10/L2cpKSB7CiAgICBjb25zdCBxdW90ZSA9IG1hdGNoWzBdOwogICAgaWYgKC/kuI3og7185bm26Z2efOacquW/hXzkuI3kuIDlrpp85LiN5pivfOaYr+WQpnxb77yfP+KAnOKAneOAjOOAjSJdLy50ZXN0KHF1b3RlKSkgY29udGludWU7CiAgICBpZiAoIS/kuIDlrpp85b+F54S2fOW/heWumnzmiYDmnInkurp85Lu75L2V5Lq6fOWUr+S4gHznmb7liIbkuYvnmb4vLnRlc3QocXVvdGUpKSBjb250aW51ZTsKICAgIGl0ZW1zLnB1c2goe2lkOmlkKCksIC4uLmFuY2hvcih0ZXh0LCBxdW90ZSwgbWF0Y2guaW5kZXgpLCBraW5kOidzY29wZScsCiAgICAgIHJlYXNvbjon6L+Z6YeM5L2/55So5LqG6IyD5Zu05b6I5by655qE6KGo6L+w44CC5Y+v5Lul5YWI5qOA5p+l77ya546w5pyJ5L6d5o2u5piv5ZCm6KaG55uW5LqG6L+Z5Lqb5a+56LGh5LiO5p2h5Lu277yfJywKICAgICAgcGhhc2U6J3ByZWxpbWluYXJ5JywgZW5naW5lOidsb2NhbF9ydWxlcycsIHN0YXR1czonb3Blbid9KTsKICAgIGlmIChpdGVtcy5sZW5ndGggPj0gbGltaXQpIGJyZWFrOwogIH0KICByZXR1cm4gaXRlbXM7Cn0KZXhwb3J0IGZ1bmN0aW9uIHZhbGlkYXRlRmluZGluZ3MoZGF0YSwgdGV4dCwgbGltaXQpIHsKICBpZiAoIWRhdGEgfHwgIUFycmF5LmlzQXJyYXkoZGF0YS5pdGVtcykgfHwgZGF0YS5pdGVtcy5sZW5ndGggPiBsaW1pdCkKICAgIHRocm93IG5ldyBBcHBFcnJvcignSU5WQUxJRF9NT0RFTF9PVVRQVVQnLCAn5qOA5p+l57uT5p6c5qC85byP5peg5pWI44CCJywgNTAyKTsKICByZXR1cm4gZGF0YS5pdGVtcy5tYXAoaXRlbSA9PiAoe2lkOmlkKCksIC4uLmFuY2hvcih0ZXh0LCBpdGVtLnF1b3RlLCBpdGVtLnN0YXJ0KSwKICAgIGtpbmQ6IGJvdW5kZWQoaXRlbS5raW5kLDEsNjApLCByZWFzb246IGJvdW5kZWQoaXRlbS5yZWFzb24sMSw3MDApLAogICAgcGhhc2U6J3ByZWxpbWluYXJ5JywgZW5naW5lOidtb2RlbCcsIHN0YXR1czonb3Blbid9KSk7Cn0KZXhwb3J0IGZ1bmN0aW9uIHZhbGlkYXRlU3VnZ2VzdGlvbihkYXRhLCBzb3VyY2VzKSB7CiAgY29uc3QgdGV4dCA9IGJvdW5kZWQoZGF0YT8udGV4dCwgMSwgMTIwMDAsICflgJnpgInmlofmnKwnKTsKICBjb25zdCByZWFzb24gPSBib3VuZGVkKGRhdGE/LnJlYXNvbiwgMSwgMTIwMCwgJ+S/ruaUueeQhueUsScpOwogIGNvbnN0IHNvdXJjZUlkcyA9IGRhdGE/LnNvdXJjZUlkczsKICBpZiAoIUFycmF5LmlzQXJyYXkoc291cmNlSWRzKSB8fCBzb3VyY2VJZHMuc29tZSh4ID0+IHR5cGVvZiB4ICE9PSAnc3RyaW5nJyB8fCAhc291cmNlcy5zb21lKHMgPT4gcy5pZCA9PT0geCkpKQogICAgdGhyb3cgbmV3IEFwcEVycm9yKCdJTlZBTElEX0NJVEFUSU9OJywgJ+WAmemAieeov+WMheWQq+aXoOazleWbnua6r+eahOadpea6kOOAgicsIDUwMik7CiAgLy8gSURzIGFyZSBzdXBwbGllZCBzZXBhcmF0ZWx5OyBtb2RlbC1jcmVhdGVkIGh5cGVybGlua3MgYXJlIG5ldmVyIGFjY2VwdGVkLgogIGlmICgvaHR0cHM/OlwvXC8vaS50ZXN0KHRleHQpKSB0aHJvdyBuZXcgQXBwRXJyb3IoJ0lOVkFMSURfQ0lUQVRJT04nLCAn5YCZ6YCJ56i/5YyF5ZCr5pyq57uP5qC45a+555qE6ZO+5o6l44CCJywgNTAyKTsKICByZXR1cm4ge3RleHQscmVhc29uLHNvdXJjZUlkczpbLi4ubmV3IFNldChzb3VyY2VJZHMpXX07Cn0KZXhwb3J0IGZ1bmN0aW9uIGFwcGx5U3VnZ2VzdGlvbihwcm9qZWN0LCBzdWdnZXN0aW9uKSB7CiAgaWYgKHByb2plY3QucmV2aXNpb24gIT09IHN1Z2dlc3Rpb24uYmFzZVJldmlzaW9uKQogICAgdGhyb3cgbmV3IEFwcEVycm9yKCdSRVZJU0lPTl9DT05GTElDVCcsICfljp/nqL/niYjmnKzlt7Llj5jljJbvvIzor7fph43mlrDnlJ/miJDkv67mlLnlu7rorq7jgIInLCA0MDkpOwogIGNvbnN0IGEgPSBhbmNob3IocHJvamVjdC50ZXh0LCBzdWdnZXN0aW9uLnF1b3RlLCBzdWdnZXN0aW9uLnN0YXJ0KTsKICBpZiAoYS5lbmQgIT09IHN1Z2dlc3Rpb24uZW5kKSB0aHJvdyBuZXcgQXBwRXJyb3IoJ0lOVkFMSURfQU5DSE9SJywn5Y6f5Y+l5L2N572u5bey5Y+Y5YyW44CCJyw0MDkpOwogIHJldHVybiBwcm9qZWN0LnRleHQuc2xpY2UoMCxhLnN0YXJ0KSArIHN1Z2dlc3Rpb24udGV4dCArIHByb2plY3QudGV4dC5zbGljZShhLmVuZCk7Cn0KZXhwb3J0IGZ1bmN0aW9uIHNhZmVVcmwodmFsdWUpIHsKICB0cnkgeyBjb25zdCB1cmwgPSBuZXcgVVJMKHZhbHVlKTsgcmV0dXJuIFsnaHR0cHM6JywnaHR0cDonXS5pbmNsdWRlcyh1cmwucHJvdG9jb2wpID8gdXJsLmhyZWYgOiBudWxsOyB9IGNhdGNoIHtyZXR1cm4gbnVsbDt9Cn0K
+import { createHash, randomUUID } from 'node:crypto';
+export class AppError extends Error {
+  constructor(code, message, status = 400) { super(message); this.code = code; this.status = status; }
+}
+export const hash = text => createHash('sha256').update(text).digest('hex');
+export const id = () => randomUUID();
+export function bounded(value, min, max, name = '内容') {
+  if (typeof value !== 'string' || [...value.trim()].length < min || [...value].length > max)
+    throw new AppError('INVALID_INPUT', `${name}需要 ${min}—${max} 个字符。`);
+  return value;
+}
+export function anchor(text, quote, preferred) {
+  bounded(quote, 1, 10000, '原句');
+  let start = preferred;
+  if (!Number.isInteger(start)) {
+    start = text.indexOf(quote);
+    if (start >= 0 && text.indexOf(quote, start + 1) >= 0)
+      throw new AppError('INVALID_ANCHOR', '原句重复，需要准确位置。');
+  }
+  if (start < 0 || text.slice(start, start + quote.length) !== quote)
+    throw new AppError('INVALID_ANCHOR', '无法在原稿中定位这句话，请重新检查。');
+  return { start, end: start + quote.length, quote, anchorHash: hash(quote) };
+}
+export function checkDraft(text, limit = 1) {
+  const items = [];
+  for (const match of text.matchAll(/[^。！？\n]+[。！？]?/g)) {
+    const quote = match[0];
+    if (/不能|并非|未必|不一定|不是|是否|[？?“”「」"]/.test(quote)) continue;
+    if (!/一定|必然|必定|所有人|任何人|唯一|百分之百/.test(quote)) continue;
+    items.push({id:id(), ...anchor(text, quote, match.index), kind:'scope',
+      reason:'这里使用了范围很强的表述。可以先检查：现有依据是否覆盖了这些对象与条件？',
+      phase:'preliminary', engine:'local_rules', status:'open'});
+    if (items.length >= limit) break;
+  }
+  return items;
+}
+export function validateFindings(data, text, limit) {
+  if (!data || !Array.isArray(data.items) || data.items.length > limit)
+    throw new AppError('INVALID_MODEL_OUTPUT', '检查结果格式无效。', 502);
+  return data.items.map(item => ({id:id(), ...anchor(text, item.quote, item.start),
+    kind: bounded(item.kind,1,60), reason: bounded(item.reason,1,700),
+    phase:'preliminary', engine:'model', status:'open'}));
+}
+export function validateSuggestion(data, sources) {
+  const text = bounded(data?.text, 1, 12000, '候选文本');
+  const reason = bounded(data?.reason, 1, 1200, '修改理由');
+  const sourceIds = data?.sourceIds;
+  if (!Array.isArray(sourceIds) || sourceIds.some(x => typeof x !== 'string' || !sources.some(s => s.id === x)))
+    throw new AppError('INVALID_CITATION', '候选稿包含无法回溯的来源。', 502);
+  // IDs are supplied separately; model-created hyperlinks are never accepted.
+  if (/https?:\/\//i.test(text)) throw new AppError('INVALID_CITATION', '候选稿包含未经核对的链接。', 502);
+  return {text,reason,sourceIds:[...new Set(sourceIds)]};
+}
+export function applySuggestion(project, suggestion) {
+  if (project.revision !== suggestion.baseRevision)
+    throw new AppError('REVISION_CONFLICT', '原稿版本已变化，请重新生成修改建议。', 409);
+  const a = anchor(project.text, suggestion.quote, suggestion.start);
+  if (a.end !== suggestion.end) throw new AppError('INVALID_ANCHOR','原句位置已变化。',409);
+  return project.text.slice(0,a.start) + suggestion.text + project.text.slice(a.end);
+}
+export function safeUrl(value) {
+  try { const url = new URL(value); return ['https:','http:'].includes(url.protocol) ? url.href : null; } catch {return null;}
+}

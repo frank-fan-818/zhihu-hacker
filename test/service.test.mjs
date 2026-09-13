@@ -1,1 +1,105 @@
-aW1wb3J0IHRlc3QgZnJvbSAnbm9kZTp0ZXN0JzsKaW1wb3J0IGFzc2VydCBmcm9tICdub2RlOmFzc2VydC9zdHJpY3QnOwppbXBvcnQgeyBTdG9yZSB9IGZyb20gJy4uL3NyYy9zdG9yZS5tanMnOwppbXBvcnQgeyBTZXJ2aWNlIH0gZnJvbSAnLi4vc3JjL3NlcnZpY2UubWpzJzsKaW1wb3J0IHsgQXBwRXJyb3IgfSBmcm9tICcuLi9zcmMvZG9tYWluLm1qcyc7CmltcG9ydCB7IGNyZWF0ZVByb3ZpZGVycyB9IGZyb20gJy4uL3NyYy9wcm92aWRlcnMubWpzJzsKaW1wb3J0IHsgY3JlYXRlQXBwIH0gZnJvbSAnLi4vc3JjL3NlcnZlci5tanMnOwppbXBvcnQgeyBta2R0ZW1wU3luYywgcm1TeW5jIH0gZnJvbSAnbm9kZTpmcyc7CmltcG9ydCB7IHRtcGRpciB9IGZyb20gJ25vZGU6b3MnOwppbXBvcnQgeyBqb2luIH0gZnJvbSAnbm9kZTpwYXRoJzsKCmNvbnN0IHRleHQ9J+aIkeato+WcqOiAg+iZkeWmguS9leiwg+aVtOWboumYn+WuieaOkuOAgui/nOeoi+WKnuWFrOS4gOWumuiDveaPkOmrmOaJgOacieS6uueahOW3peS9nOaViOeOh+OAguS9huWFt+S9k+S7u+WKoeexu+Wei+S7jeWAvOW+l+S7lOe7huiuqOiuuuOAgic7CmNvbnN0IGZpeHR1cmVTb3VyY2U9a2luZD0+KHtpZDpraW5kLHByb3ZpZGVyOmtpbmQsdGl0bGU6J+a1i+ivleadpea6kO+8iOS7hea1i+ivleWkueWFt++8iScsdXJsOmBodHRwczovL2V4YW1wbGUub3JnLyR7a2luZH1gLHRleHQ6J+a1i+ivleaRmOimgScscmVsYXRpb246J3VucmV2aWV3ZWQnfSk7CmZ1bmN0aW9uIGZpeHR1cmUodCxvcHRpb25zPXt9KXsKICBjb25zdCBzdG9yZT1uZXcgU3RvcmUoJzptZW1vcnk6Jyk7Y29uc3QgY2FsbHM9W107CiAgY29uc3QgcHJvdmlkZXJzPXtzdGF0dXM6e21vZGVsOmZhbHNlLHpoaWh1OnRydWV9LHNlYXJjaDphc3luYyBraW5kPT57Y2FsbHMucHVzaChraW5kKTtyZXR1cm4gW2ZpeHR1cmVTb3VyY2Uoa2luZCldO30sLi4ub3B0aW9uc307CiAgY29uc3Qgc2VydmljZT1uZXcgU2VydmljZShzdG9yZSxwcm92aWRlcnMpO3QuYWZ0ZXIoKCk9PnN0b3JlLmNsb3NlKCkpOwogIHJldHVybiB7c3RvcmUsc2VydmljZSxjYWxscyxwOnNlcnZpY2UuY3JlYXRlKCdvd25lcicsdGV4dCl9Owp9CmFzeW5jIGZ1bmN0aW9uIGRvbmUoc3RvcmUsb3ApewogIGZvcihsZXQgaT0wO2k8MjAwO2krKyl7Y29uc3QgY3VycmVudD1zdG9yZS5nZXRPcChvcC5pZCxvcC5vd25lcik7aWYoIVsncXVldWVkJywncnVubmluZyddLmluY2x1ZGVzKGN1cnJlbnQuc3RhdHVzKSlyZXR1cm4gY3VycmVudDthd2FpdCBuZXcgUHJvbWlzZShyPT5zZXRUaW1lb3V0KHIsMykpO30KICB0aHJvdyBuZXcgRXJyb3IoJ29wZXJhdGlvbiB0aW1lb3V0Jyk7Cn0KYXN5bmMgZnVuY3Rpb24gY2hlY2soZil7YXdhaXQgZG9uZShmLnN0b3JlLGYuc2VydmljZS5zdGFydCgnb3duZXInLGYucC5pZCx7dHlwZToncXVpY2tfY2hlY2snLGtleTonY2hlY2sta2V5LTAxJyxyZXZpc2lvbjoxfSkpO3JldHVybiBmLnN0b3JlLmdldChmLnAuaWQsJ293bmVyJykuZmluZGluZ3NbMF07fQp0ZXN0KCdpbml0aWFsIGNoZWNrIG1ha2VzIHplcm8gc2VhcmNoIGNhbGxzLCByZXR1cm5zIGEgcmVhbCBhbmNob3InLGFzeW5jIHQ9PnsKICBjb25zdCBmPWZpeHR1cmUodCk7YXdhaXQgY2hlY2soZik7YXNzZXJ0LmVxdWFsKGYuY2FsbHMubGVuZ3RoLDApO2Fzc2VydC5lcXVhbChmLnN0b3JlLmdldChmLnAuaWQsJ293bmVyJykuZmluZGluZ3MubGVuZ3RoLDEpOwp9KTsKdGVzdCgndmVyaWZpY2F0aW9uIG1ha2VzIGF0IG1vc3Qgb25lIGNhbGwgcGVyIHNvdXJjZSBhbmQgcmVvcGVuaW5nIHVzZXMgY2FjaGUnLGFzeW5jIHQ9PnsKICBjb25zdCBmPWZpeHR1cmUodCk7Y29uc3QgaXRlbT1hd2FpdCBjaGVjayhmKTsKICBjb25zdCBhPXt0eXBlOid2ZXJpZnlfY2xhaW0nLGtleTondmVyaWZ5LWtleS0wMScscmV2aXNpb246MSxmaW5kaW5nSWQ6aXRlbS5pZH07CiAgY29uc3Qgb3A9Zi5zZXJ2aWNlLnN0YXJ0KCdvd25lcicsZi5wLmlkLGEpO2Fzc2VydC5lcXVhbChmLnNlcnZpY2Uuc3RhcnQoJ293bmVyJyxmLnAuaWQsYSkuaWQsb3AuaWQpOwogIGFzc2VydC5lcXVhbCgoYXdhaXQgZG9uZShmLnN0b3JlLG9wKSkuc3RhdHVzLCdzdWNjZWVkZWQnKTthc3NlcnQuZXF1YWwoZi5jYWxscy5sZW5ndGgsMik7CiAgYXdhaXQgZG9uZShmLnN0b3JlLGYuc2VydmljZS5zdGFydCgnb3duZXInLGYucC5pZCx7Li4uYSxrZXk6J3ZlcmlmeS1rZXktMDInfSkpO2Fzc2VydC5lcXVhbChmLmNhbGxzLmxlbmd0aCwyKTsKfSk7CnRlc3QoJ2lkZW1wb3RlbmN5IGtleSBjYW5ub3QgYmUgcmV1c2VkIGZvciBhIGRpZmZlcmVudCBwYXlsb2FkJyxhc3luYyB0PT57CiAgY29uc3QgZj1maXh0dXJlKHQpO2F3YWl0IGNoZWNrKGYpOwogIGFzc2VydC50aHJvd3MoKCk9PmYuc2VydmljZS5zdGFydCgnb3duZXInLGYucC5pZCx7dHlwZToncmV2aWV3X3JlbWFpbmluZycsa2V5OidjaGVjay1rZXktMDEnLHJldmlzaW9uOjF9KSwv5qCH6K+GLyk7Cn0pOwp0ZXN0KCdwYXJ0aWFsIHNlYXJjaCBmYWlsdXJlIHByZXNlcnZlcyByZWFsIHN1Y2Nlc3NmdWwgcmVzdWx0cycsYXN5bmMgdD0+ewogIGNvbnN0IGY9Zml4dHVyZSh0LHtzZWFyY2g6YXN5bmMga2luZD0+e2lmKGtpbmQ9PT0nZ2xvYmFsX3NlYXJjaCcpdGhyb3cgbmV3IEFwcEVycm9yKCdMSU1JVCcsJ+mZkOminScpO3JldHVybiBbZml4dHVyZVNvdXJjZShraW5kKV07fX0pO2NvbnN0IGl0ZW09YXdhaXQgY2hlY2soZik7CiAgY29uc3Qgb3A9YXdhaXQgZG9uZShmLnN0b3JlLGYuc2VydmljZS5zdGFydCgnb3duZXInLGYucC5pZCx7dHlwZTondmVyaWZ5X2NsYWltJyxrZXk6J3ZlcmlmeS1rZXktMDEnLHJldmlzaW9uOjEsZmluZGluZ0lkOml0ZW0uaWR9KSk7CiAgYXNzZXJ0LmVxdWFsKG9wLnN0YXR1cywncGFydGlhbCcpO2NvbnN0IHA9Zi5zdG9yZS5nZXQoZi5wLmlkLCdvd25lcicpO2Fzc2VydC5lcXVhbChwLnNvdXJjZXMubGVuZ3RoLDEpO2Fzc2VydC5lcXVhbChwLnZlcmlmaWNhdGlvbltpdGVtLmlkXS5lcnJvcnMubGVuZ3RoLDEpOwp9KTsKdGVzdCgnbWlzc2luZyBjcmVkZW50aWFscyBwcm9kdWNlcyBubyBpbnZlbnRlZCBldmlkZW5jZScsYXN5bmMgdD0+ewogIGNvbnN0IGY9Zml4dHVyZSh0LHtzdGF0dXM6e21vZGVsOmZhbHNlLHpoaWh1OmZhbHNlfX0pO2NvbnN0IGl0ZW09YXdhaXQgY2hlY2soZik7CiAgY29uc3Qgb3A9YXdhaXQgZG9uZShmLnN0b3JlLGYuc2VydmljZS5zdGFydCgnb3duZXInLGYucC5pZCx7dHlwZTondmVyaWZ5X2NsYWltJyxrZXk6J3ZlcmlmeS1rZXktMDEnLHJldmlzaW9uOjEsZmluZGluZ0lkOml0ZW0uaWR9KSk7CiAgYXNzZXJ0LmVxdWFsKG9wLmVycm9yLmNvZGUsJ1pISUhVX05PVF9DT05GSUdVUkVEJyk7YXNzZXJ0LmVxdWFsKGYuY2FsbHMubGVuZ3RoLDApO2Fzc2VydC5lcXVhbChmLnN0b3JlLmdldChmLnAuaWQsJ293bmVyJykuc291cmNlcy5sZW5ndGgsMCk7Cn0pOwp0ZXN0KCdjYW5jZWxsZWQgc2VhcmNoIGNhbm5vdCB3cml0ZSBsYXRlIHJlc3VsdHMnLGFzeW5jIHQ9PnsKICBsZXQgcmVsZWFzZTtjb25zdCB3YWl0PW5ldyBQcm9taXNlKHI9PnJlbGVhc2U9cik7CiAgY29uc3QgZj1maXh0dXJlKHQse3NlYXJjaDphc3luYyBraW5kPT57YXdhaXQgd2FpdDtyZXR1cm4gW2ZpeHR1cmVTb3VyY2Uoa2luZCldO319KTtjb25zdCBpdGVtPWF3YWl0IGNoZWNrKGYpOwogIGNvbnN0IG9wPWYuc2VydmljZS5zdGFydCgnb3duZXInLGYucC5pZCx7dHlwZTondmVyaWZ5X2NsYWltJyxrZXk6J3ZlcmlmeS1rZXktMDEnLHJldmlzaW9uOjEsZmluZGluZ0lkOml0ZW0uaWR9KTsKICBhd2FpdCBuZXcgUHJvbWlzZShyPT5zZXRUaW1lb3V0KHIsNSkpO2Yuc2VydmljZS5jYW5jZWwoJ293bmVyJyxvcC5pZCk7cmVsZWFzZSgpO2F3YWl0IG5ldyBQcm9taXNlKHI9PnNldFRpbWVvdXQociwxNSkpOwogIGFzc2VydC5lcXVhbChmLnN0b3JlLmdldE9wKG9wLmlkLCdvd25lcicpLnN0YXR1cywnY2FuY2VsbGVkJyk7YXNzZXJ0LmVxdWFsKGYuc3RvcmUuZ2V0KGYucC5pZCwnb3duZXInKS5zb3VyY2VzLmxlbmd0aCwwKTsKfSk7CnRlc3QoJ2RyYWZ0IGVkaXQgZHVyaW5nIHNlYXJjaCBtYWtlcyByZXN1bHRzIHN0YWxlJyxhc3luYyB0PT57CiAgbGV0IHJlbGVhc2U7Y29uc3Qgd2FpdD1uZXcgUHJvbWlzZShyPT5yZWxlYXNlPXIpOwogIGNvbnN0IGY9Zml4dHVyZSh0LHtzZWFyY2g6YXN5bmMga2luZD0+e2F3YWl0IHdhaXQ7cmV0dXJuIFtmaXh0dXJlU291cmNlKGtpbmQpXTt9fSk7Y29uc3QgaXRlbT1hd2FpdCBjaGVjayhmKTsKICBjb25zdCBvcD1mLnNlcnZpY2Uuc3RhcnQoJ293bmVyJyxmLnAuaWQse3R5cGU6J3ZlcmlmeV9jbGFpbScsa2V5Oid2ZXJpZnkta2V5LTAxJyxyZXZpc2lvbjoxLGZpbmRpbmdJZDppdGVtLmlkfSk7CiAgYXdhaXQgbmV3IFByb21pc2Uocj0+c2V0VGltZW91dChyLDUpKTtmLnNlcnZpY2UuZWRpdCgnb3duZXInLGYucC5pZCx0ZXh0KyfmiJHooaXlhYXkuobmlrDnmoTog4zmma/jgIInLDEpO3JlbGVhc2UoKTsKICBhc3NlcnQuZXF1YWwoKGF3YWl0IGRvbmUoZi5zdG9yZSxvcCkpLmVycm9yLmNvZGUsJ1NUQUxFX1JFU1VMVCcpO2Fzc2VydC5lcXVhbChmLnN0b3JlLmdldChmLnAuaWQsJ293bmVyJykuc291cmNlcy5sZW5ndGgsMCk7Cn0pOwp0ZXN0KCdkZWxldGluZyBhY3RpdmUgcHJvamVjdCBjYW5ub3QgcmVzdXJyZWN0IGRhdGEnLGFzeW5jIHQ9PnsKICBsZXQgcmVsZWFzZTtjb25zdCB3YWl0PW5ldyBQcm9taXNlKHI9PnJlbGVhc2U9cik7CiAgY29uc3QgZj1maXh0dXJlKHQse3NlYXJjaDphc3luYyBraW5kPT57YXdhaXQgd2FpdDtyZXR1cm4gW2ZpeHR1cmVTb3VyY2Uoa2luZCldO319KTtjb25zdCBpdGVtPWF3YWl0IGNoZWNrKGYpOwogIGYuc2VydmljZS5zdGFydCgnb3duZXInLGYucC5pZCx7dHlwZTondmVyaWZ5X2NsYWltJyxrZXk6J3ZlcmlmeS1rZXktMDEnLHJldmlzaW9uOjEsZmluZGluZ0lkOml0ZW0uaWR9KTsKICBhd2FpdCBuZXcgUHJvbWlzZShyPT5zZXRUaW1lb3V0KHIsNSkpO2Yuc2VydmljZS5yZW1vdmUoJ293bmVyJyxmLnAuaWQpO3JlbGVhc2UoKTthd2FpdCBuZXcgUHJvbWlzZShyPT5zZXRUaW1lb3V0KHIsMTUpKTsKICBhc3NlcnQudGhyb3dzKCgpPT5mLnN0b3JlLmdldChmLnAuaWQsJ293bmVyJykpO2Fzc2VydC5lcXVhbChmLnN0b3JlLmxpc3QoJ293bmVyJykubGVuZ3RoLDApOwp9KTsKdGVzdCgnd29yZGluZy1vbmx5IHN1Z2dlc3Rpb24gYXBwbGllcyBhbmQgc2FmZWx5IHVuZG9lcyB3aXRob3V0IHNlYXJjaCcsYXN5bmMgdD0+ewogIGNvbnN0IGY9Zml4dHVyZSh0KTtjb25zdCBpdGVtPWF3YWl0IGNoZWNrKGYpOwogIGFzc2VydC50aHJvd3MoKCk9PmYuc2VydmljZS5zdGFydCgnb3duZXInLGYucC5pZCx7dHlwZTonc3VnZ2VzdF9yZXZpc2lvbicsa2V5OidzdWdnZXN0LWtleS0wJyxyZXZpc2lvbjoxLGZpbmRpbmdJZDppdGVtLmlkfSksL+WFiOafpeeci+S+neaNri8pOwogIGF3YWl0IGRvbmUoZi5zdG9yZSxmLnNlcnZpY2Uuc3RhcnQoJ293bmVyJyxmLnAuaWQse3R5cGU6J3N1Z2dlc3RfcmV2aXNpb24nLGtleTonc3VnZ2VzdC1rZXktMScscmV2aXNpb246MSxmaW5kaW5nSWQ6aXRlbS5pZCx3b3JkaW5nT25seTp0cnVlfSkpOwogIGNvbnN0IHM9Zi5zdG9yZS5nZXQoZi5wLmlkLCdvd25lcicpLnN1Z2dlc3Rpb25zWzBdO2NvbnN0IGFwcGxpZWQ9Zi5zZXJ2aWNlLmFwcGx5KCdvd25lcicsZi5wLmlkLHMuaWQsMSk7CiAgYXNzZXJ0Lm9rKGFwcGxpZWQudGV4dC5pbmNsdWRlcygn5piv5ZCmJykpO2Fzc2VydC5lcXVhbChhcHBsaWVkLnJldmlzaW9uLDIpO2Fzc2VydC5lcXVhbChmLmNhbGxzLmxlbmd0aCwwKTsKICBhc3NlcnQuZXF1YWwoZi5zZXJ2aWNlLnVuZG8oJ293bmVyJyxmLnAuaWQsMikudGV4dCx0ZXh0KTsKfSk7CnRlc3QoJ21hbnVhbCBlZGl0IGFmdGVyIGFwcGx5IHByZXZlbnRzIGRlc3RydWN0aXZlIHVuZG8nLGFzeW5jIHQ9PnsKICBjb25zdCBmPWZpeHR1cmUodCk7Y29uc3QgaXRlbT1hd2FpdCBjaGVjayhmKTsKICBhd2FpdCBkb25lKGYuc3RvcmUsZi5zZXJ2aWNlLnN0YXJ0KCdvd25lcicsZi5wLmlkLHt0eXBlOidzdWdnZXN0X3JldmlzaW9uJyxrZXk6J3N1Z2dlc3Qta2V5LTEnLHJldmlzaW9uOjEsZmluZGluZ0lkOml0ZW0uaWQsd29yZGluZ09ubHk6dHJ1ZX0pKTsKICBjb25zdCBwPWYuc2VydmljZS5hcHBseSgnb3duZXInLGYucC5pZCxmLnN0b3JlLmdldChmLnAuaWQsJ293bmVyJykuc3VnZ2VzdGlvbnNbMF0uaWQsMSk7CiAgZi5zZXJ2aWNlLmVkaXQoJ293bmVyJyxwLmlkLHAudGV4dCsn5paw55qE57yW6L6R44CCJywyKTthc3NlcnQudGhyb3dzKCgpPT5mLnNlcnZpY2UudW5kbygnb3duZXInLHAuaWQsMyksL+WQjue7ree8lui+kS8pOwp9KTsKdGVzdCgnc3FsaXRlIHBlcnNpc3RzIGNvbnRlbnQgYW5kIGludGVycnVwdHMgdW5maW5pc2hlZCBvcGVyYXRpb24gYWZ0ZXIgcmVzdGFydCcsKCk9PnsKICBjb25zdCBkaXI9bWtkdGVtcFN5bmMoam9pbih0bXBkaXIoKSwnY29nbml0aXZlLXRlc3QtJykpO2NvbnN0IGZpbGU9am9pbihkaXIsJ3Rlc3Quc3FsaXRlJyk7CiAgdHJ5e2xldCBzdG9yZT1uZXcgU3RvcmUoZmlsZSk7c3RvcmUuc2F2ZSh7aWQ6J3AnLG93bmVyOidhJyx0ZXh0Oifkv53nlZnnmoTlhoXlrrknfSk7c3RvcmUuc2F2ZU9wKHtpZDonb3AnLHByb2plY3Q6J3AnLG93bmVyOidhJyxrZXk6J2tleScsc3RhdHVzOidydW5uaW5nJ30pO3N0b3JlLmNsb3NlKCk7CiAgICBzdG9yZT1uZXcgU3RvcmUoZmlsZSk7YXNzZXJ0LmVxdWFsKHN0b3JlLmdldCgncCcsJ2EnKS50ZXh0LCfkv53nlZnnmoTlhoXlrrknKTthc3NlcnQuZXF1YWwoc3RvcmUuZ2V0T3AoJ29wJywnYScpLmVycm9yLmNvZGUsJ0lOVEVSUlVQVEVEJyk7c3RvcmUuY2xvc2UoKTsKICB9ZmluYWxseXtybVN5bmMoZGlyLHtyZWN1cnNpdmU6dHJ1ZSxmb3JjZTp0cnVlfSk7fQp9KTsKdGVzdCgnSFRUUCBzZXNzaW9ucyBpc29sYXRlIHByb2plY3RzIGFuZCByZWplY3QgY3Jvc3Mtb3JpZ2luIG11dGF0aW9uJyxhc3luYyB0PT57CiAgY29uc3QgYXBwPWNyZWF0ZUFwcCh7ZmlsZTonOm1lbW9yeTonLHByb3ZpZGVyczp7c3RhdHVzOnttb2RlbDpmYWxzZSx6aGlodTpmYWxzZX19fSk7CiAgYXdhaXQgbmV3IFByb21pc2Uocj0+YXBwLnNlcnZlci5saXN0ZW4oMCwnMTI3LjAuMC4xJyxyKSk7dC5hZnRlcihhc3luYygpPT57YXdhaXQgbmV3IFByb21pc2Uocj0+YXBwLnNlcnZlci5jbG9zZShyKSk7YXBwLnN0b3JlLmNsb3NlKCk7fSk7CiAgY29uc3QgYmFzZT1gaHR0cDovLzEyNy4wLjAuMToke2FwcC5zZXJ2ZXIuYWRkcmVzcygpLnBvcnR9YDsKICBjb25zdCBjcmVhdGVkPWF3YWl0IGZldGNoKGAke2Jhc2V9L2FwaS9wcm9qZWN0c2Ase21ldGhvZDonUE9TVCcsaGVhZGVyczp7J0NvbnRlbnQtVHlwZSc6J2FwcGxpY2F0aW9uL2pzb24nfSxib2R5OkpTT04uc3RyaW5naWZ5KHt0ZXh0fSl9KTsKICBjb25zdCBjb29raWU9Y3JlYXRlZC5oZWFkZXJzLmdldCgnc2V0LWNvb2tpZScpLnNwbGl0KCc7JylbMF07Y29uc3QgcD1hd2FpdCBjcmVhdGVkLmpzb24oKTthc3NlcnQuZXF1YWwoY3JlYXRlZC5zdGF0dXMsMjAxKTthc3NlcnQuZXF1YWwocC5vd25lcix1bmRlZmluZWQpOwogIGFzc2VydC5lcXVhbCgoYXdhaXQgZmV0Y2goYCR7YmFzZX0vYXBpL3Byb2plY3RzLyR7cC5pZH1gKSkuc3RhdHVzLDQwNCk7CiAgYXNzZXJ0LmVxdWFsKChhd2FpdCBmZXRjaChgJHtiYXNlfS9hcGkvcHJvamVjdHMvJHtwLmlkfWAse2hlYWRlcnM6e2Nvb2tpZX19KSkuc3RhdHVzLDIwMCk7CiAgYXNzZXJ0LmVxdWFsKChhd2FpdCBmZXRjaChgJHtiYXNlfS9hcGkvcHJvamVjdHMvJHtwLmlkfWAse21ldGhvZDonUEFUQ0gnLGhlYWRlcnM6e2Nvb2tpZSxPcmlnaW46J2h0dHBzOi8vbWFsaWNpb3VzLmV4YW1wbGUnLCdDb250ZW50LVR5cGUnOidhcHBsaWNhdGlvbi9qc29uJ30sYm9keTpKU09OLnN0cmluZ2lmeSh7dGV4dCxyZXZpc2lvbjoxfSl9KSkuc3RhdHVzLDQwMyk7Cn0pOwp0ZXN0KCdwcm92aWRlciBrZWVwcyBzZWNyZXQgb24gc2VydmVyIGFuZCBub3JtYWxpemVzIHNuaXBwZXRzIHVzaW5nIGZpeHR1cmUgdHJhbnNwb3J0Jyxhc3luYygpPT57CiAgbGV0IHNlZW47CiAgY29uc3QgcD1jcmVhdGVQcm92aWRlcnMoe1pISUhVX0FDQ0VTU19TRUNSRVQ6J3Rlc3Qtb25seSd9LGFzeW5jKHVybCxvcHRzKT0+e3NlZW49e3VybCxvcHRzfTtyZXR1cm4gbmV3IFJlc3BvbnNlKEpTT04uc3RyaW5naWZ5KHtDb2RlOjAsRGF0YTp7SXRlbXM6W3tUaXRsZTon5rWL6K+VJyxDb250ZW50VGV4dDonPGVtPuaRmOimgTwvZW0+JyxVcmw6J2h0dHBzOi8vZXhhbXBsZS5vcmcvYSd9LHtDb250ZW50VGV4dDon5Z2P6ZO+5o6lJyxVcmw6J2phdmFzY3JpcHQ6YWxlcnQoMSknfV19fSkpO30pOwogIGNvbnN0IHJlc3VsdD1hd2FpdCBwLnNlYXJjaCgnemhpaHVfc2VhcmNoJywn5rWL6K+V5p+l6K+iJyxuZXcgQWJvcnRDb250cm9sbGVyKCkuc2lnbmFsKTsKICBhc3NlcnQuZXF1YWwoc2Vlbi51cmwuaG9zdG5hbWUsJ2RldmVsb3Blci56aGlodS5jb20nKTthc3NlcnQuZXF1YWwoc2Vlbi51cmwuc2VhcmNoUGFyYW1zLmdldCgnQ291bnQnKSwnNScpO2Fzc2VydC5lcXVhbChzZWVuLm9wdHMuaGVhZGVycy5BdXRob3JpemF0aW9uLCdCZWFyZXIgdGVzdC1vbmx5Jyk7YXNzZXJ0LmVxdWFsKHJlc3VsdC5sZW5ndGgsMSk7YXNzZXJ0LmVxdWFsKHJlc3VsdFswXS50ZXh0LCfmkZjopoEnKTthc3NlcnQuZXF1YWwoSlNPTi5zdHJpbmdpZnkocmVzdWx0KS5pbmNsdWRlcygndGVzdC1vbmx5JyksZmFsc2UpOwp9KTsK
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { Store } from '../src/store.mjs';
+import { Service } from '../src/service.mjs';
+import { AppError } from '../src/domain.mjs';
+import { createProviders } from '../src/providers.mjs';
+import { createApp } from '../src/server.mjs';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+const text='我正在考虑如何调整团队安排。远程办公一定能提高所有人的工作效率。但具体任务类型仍值得仔细讨论。';
+const fixtureSource=kind=>({id:kind,provider:kind,title:'测试来源（仅测试夹具）',url:`https://example.org/${kind}`,text:'测试摘要',relation:'unreviewed'});
+function fixture(t,options={}){
+  const store=new Store(':memory:');const calls=[];
+  const providers={status:{model:false,zhihu:true},search:async kind=>{calls.push(kind);return [fixtureSource(kind)];},...options};
+  const service=new Service(store,providers);t.after(()=>store.close());
+  return {store,service,calls,p:service.create('owner',text)};
+}
+async function done(store,op){
+  for(let i=0;i<200;i++){const current=store.getOp(op.id,op.owner);if(!['queued','running'].includes(current.status))return current;await new Promise(r=>setTimeout(r,3));}
+  throw new Error('operation timeout');
+}
+async function check(f){await done(f.store,f.service.start('owner',f.p.id,{type:'quick_check',key:'check-key-01',revision:1}));return f.store.get(f.p.id,'owner').findings[0];}
+test('initial check makes zero search calls, returns a real anchor',async t=>{
+  const f=fixture(t);await check(f);assert.equal(f.calls.length,0);assert.equal(f.store.get(f.p.id,'owner').findings.length,1);
+});
+test('verification makes at most one call per source and reopening uses cache',async t=>{
+  const f=fixture(t);const item=await check(f);
+  const a={type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id};
+  const op=f.service.start('owner',f.p.id,a);assert.equal(f.service.start('owner',f.p.id,a).id,op.id);
+  assert.equal((await done(f.store,op)).status,'succeeded');assert.equal(f.calls.length,2);
+  await done(f.store,f.service.start('owner',f.p.id,{...a,key:'verify-key-02'}));assert.equal(f.calls.length,2);
+});
+test('idempotency key cannot be reused for a different payload',async t=>{
+  const f=fixture(t);await check(f);
+  assert.throws(()=>f.service.start('owner',f.p.id,{type:'review_remaining',key:'check-key-01',revision:1}),/标识/);
+});
+test('partial search failure preserves real successful results',async t=>{
+  const f=fixture(t,{search:async kind=>{if(kind==='global_search')throw new AppError('LIMIT','限额');return [fixtureSource(kind)];}});const item=await check(f);
+  const op=await done(f.store,f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id}));
+  assert.equal(op.status,'partial');const p=f.store.get(f.p.id,'owner');assert.equal(p.sources.length,1);assert.equal(p.verification[item.id].errors.length,1);
+});
+test('missing credentials produces no invented evidence',async t=>{
+  const f=fixture(t,{status:{model:false,zhihu:false}});const item=await check(f);
+  const op=await done(f.store,f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id}));
+  assert.equal(op.error.code,'ZHIHU_NOT_CONFIGURED');assert.equal(f.calls.length,0);assert.equal(f.store.get(f.p.id,'owner').sources.length,0);
+});
+test('cancelled search cannot write late results',async t=>{
+  let release;const wait=new Promise(r=>release=r);
+  const f=fixture(t,{search:async kind=>{await wait;return [fixtureSource(kind)];}});const item=await check(f);
+  const op=f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id});
+  await new Promise(r=>setTimeout(r,5));f.service.cancel('owner',op.id);release();await new Promise(r=>setTimeout(r,15));
+  assert.equal(f.store.getOp(op.id,'owner').status,'cancelled');assert.equal(f.store.get(f.p.id,'owner').sources.length,0);
+});
+test('draft edit during search makes results stale',async t=>{
+  let release;const wait=new Promise(r=>release=r);
+  const f=fixture(t,{search:async kind=>{await wait;return [fixtureSource(kind)];}});const item=await check(f);
+  const op=f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id});
+  await new Promise(r=>setTimeout(r,5));f.service.edit('owner',f.p.id,text+'我补充了新的背景。',1);release();
+  assert.equal((await done(f.store,op)).error.code,'STALE_RESULT');assert.equal(f.store.get(f.p.id,'owner').sources.length,0);
+});
+test('deleting active project cannot resurrect data',async t=>{
+  let release;const wait=new Promise(r=>release=r);
+  const f=fixture(t,{search:async kind=>{await wait;return [fixtureSource(kind)];}});const item=await check(f);
+  f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id});
+  await new Promise(r=>setTimeout(r,5));f.service.remove('owner',f.p.id);release();await new Promise(r=>setTimeout(r,15));
+  assert.throws(()=>f.store.get(f.p.id,'owner'));assert.equal(f.store.list('owner').length,0);
+});
+test('wording-only suggestion applies and safely undoes without search',async t=>{
+  const f=fixture(t);const item=await check(f);
+  assert.throws(()=>f.service.start('owner',f.p.id,{type:'suggest_revision',key:'suggest-key-0',revision:1,findingId:item.id}),/先查看依据/);
+  await done(f.store,f.service.start('owner',f.p.id,{type:'suggest_revision',key:'suggest-key-1',revision:1,findingId:item.id,wordingOnly:true}));
+  const s=f.store.get(f.p.id,'owner').suggestions[0];const applied=f.service.apply('owner',f.p.id,s.id,1);
+  assert.ok(applied.text.includes('是否'));assert.equal(applied.revision,2);assert.equal(f.calls.length,0);
+  assert.equal(f.service.undo('owner',f.p.id,2).text,text);
+});
+test('manual edit after apply prevents destructive undo',async t=>{
+  const f=fixture(t);const item=await check(f);
+  await done(f.store,f.service.start('owner',f.p.id,{type:'suggest_revision',key:'suggest-key-1',revision:1,findingId:item.id,wordingOnly:true}));
+  const p=f.service.apply('owner',f.p.id,f.store.get(f.p.id,'owner').suggestions[0].id,1);
+  f.service.edit('owner',p.id,p.text+'新的编辑。',2);assert.throws(()=>f.service.undo('owner',p.id,3),/后续编辑/);
+});
+test('sqlite persists content and interrupts unfinished operation after restart',()=>{
+  const dir=mkdtempSync(join(tmpdir(),'cognitive-test-'));const file=join(dir,'test.sqlite');
+  try{let store=new Store(file);store.save({id:'p',owner:'a',text:'保留的内容'});store.saveOp({id:'op',project:'p',owner:'a',key:'key',status:'running'});store.close();
+    store=new Store(file);assert.equal(store.get('p','a').text,'保留的内容');assert.equal(store.getOp('op','a').error.code,'INTERRUPTED');store.close();
+  }finally{rmSync(dir,{recursive:true,force:true});}
+});
+test('HTTP sessions isolate projects and reject cross-origin mutation',async t=>{
+  const app=createApp({file:':memory:',providers:{status:{model:false,zhihu:false}}});
+  await new Promise(r=>app.server.listen(0,'127.0.0.1',r));t.after(async()=>{await new Promise(r=>app.server.close(r));app.store.close();});
+  const base=`http://127.0.0.1:${app.server.address().port}`;
+  const created=await fetch(`${base}/api/projects`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
+  const cookie=created.headers.get('set-cookie').split(';')[0];const p=await created.json();assert.equal(created.status,201);assert.equal(p.owner,undefined);
+  assert.equal((await fetch(`${base}/api/projects/${p.id}`)).status,404);
+  assert.equal((await fetch(`${base}/api/projects/${p.id}`,{headers:{cookie}})).status,200);
+  assert.equal((await fetch(`${base}/api/projects/${p.id}`,{method:'PATCH',headers:{cookie,Origin:'https://malicious.example','Content-Type':'application/json'},body:JSON.stringify({text,revision:1})})).status,403);
+});
+test('provider keeps secret on server and normalizes snippets using fixture transport',async()=>{
+  let seen;
+  const p=createProviders({ZHIHU_ACCESS_SECRET:'test-only'},async(url,opts)=>{seen={url,opts};return new Response(JSON.stringify({Code:0,Data:{Items:[{Title:'测试',ContentText:'<em>摘要</em>',Url:'https://example.org/a'},{ContentText:'坏链接',Url:'javascript:alert(1)'}]}}));});
+  const result=await p.search('zhihu_search','测试查询',new AbortController().signal);
+  assert.equal(seen.url.hostname,'developer.zhihu.com');assert.equal(seen.url.searchParams.get('Count'),'5');assert.equal(seen.opts.headers.Authorization,'Bearer test-only');assert.equal(result.length,1);assert.equal(result[0].text,'摘要');assert.equal(JSON.stringify(result).includes('test-only'),false);
+});

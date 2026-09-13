@@ -1,1 +1,65 @@
-aW1wb3J0IHsgRGF0YWJhc2VTeW5jIH0gZnJvbSAnbm9kZTpzcWxpdGUnOwppbXBvcnQgeyBta2RpclN5bmMgfSBmcm9tICdub2RlOmZzJzsKaW1wb3J0IHsgZGlybmFtZSB9IGZyb20gJ25vZGU6cGF0aCc7CmltcG9ydCB7IEFwcEVycm9yIH0gZnJvbSAnLi9kb21haW4ubWpzJzsKCmV4cG9ydCBjbGFzcyBTdG9yZSB7CiAgY29uc3RydWN0b3IoZmlsZSkgewogICAgaWYoZmlsZSAhPT0gJzptZW1vcnk6JykgbWtkaXJTeW5jKGRpcm5hbWUoZmlsZSksIHtyZWN1cnNpdmU6dHJ1ZX0pOwogICAgdGhpcy5kYiA9IG5ldyBEYXRhYmFzZVN5bmMoZmlsZSk7CiAgICB0aGlzLmRiLmV4ZWMoYFBSQUdNQSBqb3VybmFsX21vZGU9V0FMOwogICAgICBDUkVBVEUgVEFCTEUgSUYgTk9UIEVYSVNUUyBwcm9qZWN0cyAoaWQgVEVYVCBQUklNQVJZIEtFWSwgb3duZXIgVEVYVCBOT1QgTlVMTCwgdXBkYXRlZCBURVhUIE5PVCBOVUxMLCBkYXRhIFRFWFQgTk9UIE5VTEwpOwogICAgICBDUkVBVEUgVEFCTEUgSUYgTk9UIEVYSVNUUyBvcGVyYXRpb25zIChpZCBURVhUIFBSSU1BUlkgS0VZLCBwcm9qZWN0IFRFWFQgTk9UIE5VTEwsIG93bmVyIFRFWFQgTk9UIE5VTEwsIGtleSBURVhUIE5PVCBOVUxMLCBkYXRhIFRFWFQgTk9UIE5VTEwsIFVOSVFVRShwcm9qZWN0LGtleSkpO2ApOwogICAgZm9yKGNvbnN0IHJvdyBvZiB0aGlzLmRiLnByZXBhcmUoJ1NFTEVDVCBkYXRhIEZST00gb3BlcmF0aW9ucycpLmFsbCgpKSB7CiAgICAgIGNvbnN0IG9wID0gSlNPTi5wYXJzZShyb3cuZGF0YSk7CiAgICAgIGlmKFsncXVldWVkJywncnVubmluZyddLmluY2x1ZGVzKG9wLnN0YXR1cykpIHsKICAgICAgICBvcC5zdGF0dXM9J2ZhaWxlZCc7IG9wLmVycm9yPXtjb2RlOidJTlRFUlJVUFRFRCcsbWVzc2FnZTon5pyN5Yqh5bey6YeN5ZCv77yM5LiK5qyh5Lu75Yqh5Lit5pat44CC5bey5pyJ6LWE5paZ5bey5L+d55WZ44CCJ307CiAgICAgICAgdGhpcy5zYXZlT3Aob3ApOwogICAgICB9CiAgICB9CiAgfQogIGdldChwcm9qZWN0LCBvd25lcikgewogICAgY29uc3Qgcm93ID0gdGhpcy5kYi5wcmVwYXJlKCdTRUxFQ1QgZGF0YSBGUk9NIHByb2plY3RzIFdIRVJFIGlkPT8gQU5EIG93bmVyPT8nKS5nZXQocHJvamVjdCxvd25lcik7CiAgICBpZighcm93KSB0aHJvdyBuZXcgQXBwRXJyb3IoJ05PVF9GT1VORCcsJ+mhueebruS4jeWtmOWcqOaIluaXoOazleiuv+mXruOAgicsNDA0KTsKICAgIHJldHVybiBKU09OLnBhcnNlKHJvdy5kYXRhKTsKICB9CiAgc2F2ZShwKSB7CiAgICBwLnVwZGF0ZWQgPSBuZXcgRGF0ZSgpLnRvSVNPU3RyaW5nKCk7CiAgICB0aGlzLmRiLnByZXBhcmUoJ0lOU0VSVCBJTlRPIHByb2plY3RzIFZBTFVFUyg/LD8sPyw/KSBPTiBDT05GTElDVChpZCkgRE8gVVBEQVRFIFNFVCB1cGRhdGVkPWV4Y2x1ZGVkLnVwZGF0ZWQsZGF0YT1leGNsdWRlZC5kYXRhJykucnVuKHAuaWQscC5vd25lcixwLnVwZGF0ZWQsSlNPTi5zdHJpbmdpZnkocCkpOwogICAgcmV0dXJuIHA7CiAgfQogIGxpc3Qob3duZXIpIHsKICAgIHJldHVybiB0aGlzLmRiLnByZXBhcmUoJ1NFTEVDVCBkYXRhIEZST00gcHJvamVjdHMgV0hFUkUgb3duZXI9PyBPUkRFUiBCWSB1cGRhdGVkIERFU0MgTElNSVQgMzAnKS5hbGwob3duZXIpLm1hcChyID0+IHsKICAgICAgY29uc3QgcCA9IEpTT04ucGFyc2Uoci5kYXRhKTsgcmV0dXJuIHtpZDpwLmlkLHRpdGxlOnAudGl0bGUsdXBkYXRlZDpwLnVwZGF0ZWR9OwogICAgfSk7CiAgfQogIGRlbGV0ZShwcm9qZWN0LG93bmVyKSB7CiAgICB0aGlzLmdldChwcm9qZWN0LG93bmVyKTsKICAgIHRoaXMuZGIucHJlcGFyZSgnREVMRVRFIEZST00gcHJvamVjdHMgV0hFUkUgaWQ9PyBBTkQgb3duZXI9PycpLnJ1bihwcm9qZWN0LG93bmVyKTsKICAgIHRoaXMuZGIucHJlcGFyZSgnREVMRVRFIEZST00gb3BlcmF0aW9ucyBXSEVSRSBwcm9qZWN0PT8gQU5EIG93bmVyPT8nKS5ydW4ocHJvamVjdCxvd25lcik7CiAgfQogIHNhdmVPcChvcCkgewogICAgdGhpcy5kYi5wcmVwYXJlKCdJTlNFUlQgSU5UTyBvcGVyYXRpb25zIFZBTFVFUyg/LD8sPyw/LD8pIE9OIENPTkZMSUNUKGlkKSBETyBVUERBVEUgU0VUIGRhdGE9ZXhjbHVkZWQuZGF0YScpLnJ1bihvcC5pZCxvcC5wcm9qZWN0LG9wLm93bmVyLG9wLmtleSxKU09OLnN0cmluZ2lmeShvcCkpOwogIH0KICBnZXRPcChvcGVyYXRpb24sb3duZXIpIHsKICAgIGNvbnN0IHJvdz10aGlzLmRiLnByZXBhcmUoJ1NFTEVDVCBkYXRhIEZST00gb3BlcmF0aW9ucyBXSEVSRSBpZD0/IEFORCBvd25lcj0/JykuZ2V0KG9wZXJhdGlvbixvd25lcik7CiAgICBpZighcm93KSB0aHJvdyBuZXcgQXBwRXJyb3IoJ05PVF9GT1VORCcsJ+S7u+WKoeS4jeWtmOWcqOaIluaXoOazleiuv+mXruOAgicsNDA0KTsKICAgIHJldHVybiBKU09OLnBhcnNlKHJvdy5kYXRhKTsKICB9CiAgYnlLZXkocHJvamVjdCxrZXkpIHsKICAgIGNvbnN0IHJvdz10aGlzLmRiLnByZXBhcmUoJ1NFTEVDVCBkYXRhIEZST00gb3BlcmF0aW9ucyBXSEVSRSBwcm9qZWN0PT8gQU5EIGtleT0/JykuZ2V0KHByb2plY3Qsa2V5KTsKICAgIHJldHVybiByb3cgPyBKU09OLnBhcnNlKHJvdy5kYXRhKSA6IG51bGw7CiAgfQogIGNsb3NlKCl7dGhpcy5kYi5jbG9zZSgpO30KICB0cmFuc2Zlcihwcm9qZWN0LGZyb20sdG8pewogICAgY29uc3QgcD10aGlzLmdldChwcm9qZWN0LGZyb20pOwogICAgaWYodGhpcy5saXN0KHRvKS5sZW5ndGg+PTMwKXRocm93IG5ldyBBcHBFcnJvcignUFJPSkVDVF9MSU1JVCcsJ+i0puWPt+iNieeov+W3sui+vuS4iumZkO+8jOW9k+WJjeWMv+WQjeiNieeov+acqui/geenu+OAgicsNDI5KTsKICAgIGNvbnN0IG9wcz10aGlzLmRiLnByZXBhcmUoJ1NFTEVDVCBkYXRhIEZST00gb3BlcmF0aW9ucyBXSEVSRSBwcm9qZWN0PT8nKS5hbGwocHJvamVjdCkubWFwKHg9PkpTT04ucGFyc2UoeC5kYXRhKSk7CiAgICBpZihvcHMuc29tZSh4PT5bJ3F1ZXVlZCcsJ3J1bm5pbmcnXS5pbmNsdWRlcyh4LnN0YXR1cykpKXRocm93IG5ldyBBcHBFcnJvcignQlVTWScsJ+W9k+WJjeiNieeov+i/mOaciei/kOihjOS7u+WKoe+8jOivt+WujOaIkOWQjuWGjeWFs+iBlOi0puWPt+OAgicsNDA5KTsKICAgIHRoaXMuZGIuZXhlYygnQkVHSU4gSU1NRURJQVRFJyk7CiAgICB0cnl7cC5vd25lcj10bzt0aGlzLmRiLnByZXBhcmUoJ1VQREFURSBwcm9qZWN0cyBTRVQgb3duZXI9PyxkYXRhPT8gV0hFUkUgaWQ9PyBBTkQgb3duZXI9PycpLnJ1bih0byxKU09OLnN0cmluZ2lmeShwKSxwcm9qZWN0LGZyb20pOwogICAgICBmb3IoY29uc3Qgb3Agb2Ygb3BzKXtvcC5vd25lcj10bzt0aGlzLmRiLnByZXBhcmUoJ1VQREFURSBvcGVyYXRpb25zIFNFVCBvd25lcj0/LGRhdGE9PyBXSEVSRSBpZD0/JykucnVuKHRvLEpTT04uc3RyaW5naWZ5KG9wKSxvcC5pZCk7fQogICAgICB0aGlzLmRiLmV4ZWMoJ0NPTU1JVCcpO3JldHVybiBwOwogICAgfWNhdGNoKGUpe3RoaXMuZGIuZXhlYygnUk9MTEJBQ0snKTt0aHJvdyBlO30KICB9Cn0K
+import { DatabaseSync } from 'node:sqlite';
+import { mkdirSync } from 'node:fs';
+import { dirname } from 'node:path';
+import { AppError } from './domain.mjs';
+
+export class Store {
+  constructor(file) {
+    if(file !== ':memory:') mkdirSync(dirname(file), {recursive:true});
+    this.db = new DatabaseSync(file);
+    this.db.exec(`PRAGMA journal_mode=WAL;
+      CREATE TABLE IF NOT EXISTS projects (id TEXT PRIMARY KEY, owner TEXT NOT NULL, updated TEXT NOT NULL, data TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS operations (id TEXT PRIMARY KEY, project TEXT NOT NULL, owner TEXT NOT NULL, key TEXT NOT NULL, data TEXT NOT NULL, UNIQUE(project,key));`);
+    for(const row of this.db.prepare('SELECT data FROM operations').all()) {
+      const op = JSON.parse(row.data);
+      if(['queued','running'].includes(op.status)) {
+        op.status='failed'; op.error={code:'INTERRUPTED',message:'服务已重启，上次任务中断。已有资料已保留。'};
+        this.saveOp(op);
+      }
+    }
+  }
+  get(project, owner) {
+    const row = this.db.prepare('SELECT data FROM projects WHERE id=? AND owner=?').get(project,owner);
+    if(!row) throw new AppError('NOT_FOUND','项目不存在或无法访问。',404);
+    return JSON.parse(row.data);
+  }
+  save(p) {
+    p.updated = new Date().toISOString();
+    this.db.prepare('INSERT INTO projects VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET updated=excluded.updated,data=excluded.data').run(p.id,p.owner,p.updated,JSON.stringify(p));
+    return p;
+  }
+  list(owner) {
+    return this.db.prepare('SELECT data FROM projects WHERE owner=? ORDER BY updated DESC LIMIT 30').all(owner).map(r => {
+      const p = JSON.parse(r.data); return {id:p.id,title:p.title,updated:p.updated};
+    });
+  }
+  delete(project,owner) {
+    this.get(project,owner);
+    this.db.prepare('DELETE FROM projects WHERE id=? AND owner=?').run(project,owner);
+    this.db.prepare('DELETE FROM operations WHERE project=? AND owner=?').run(project,owner);
+  }
+  saveOp(op) {
+    this.db.prepare('INSERT INTO operations VALUES(?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET data=excluded.data').run(op.id,op.project,op.owner,op.key,JSON.stringify(op));
+  }
+  getOp(operation,owner) {
+    const row=this.db.prepare('SELECT data FROM operations WHERE id=? AND owner=?').get(operation,owner);
+    if(!row) throw new AppError('NOT_FOUND','任务不存在或无法访问。',404);
+    return JSON.parse(row.data);
+  }
+  byKey(project,key) {
+    const row=this.db.prepare('SELECT data FROM operations WHERE project=? AND key=?').get(project,key);
+    return row ? JSON.parse(row.data) : null;
+  }
+  close(){this.db.close();}
+  transfer(project,from,to){
+    const p=this.get(project,from);
+    if(this.list(to).length>=30)throw new AppError('PROJECT_LIMIT','账号草稿已达上限，当前匿名草稿未迁移。',429);
+    const ops=this.db.prepare('SELECT data FROM operations WHERE project=?').all(project).map(x=>JSON.parse(x.data));
+    if(ops.some(x=>['queued','running'].includes(x.status)))throw new AppError('BUSY','当前草稿还有运行任务，请完成后再关联账号。',409);
+    this.db.exec('BEGIN IMMEDIATE');
+    try{p.owner=to;this.db.prepare('UPDATE projects SET owner=?,data=? WHERE id=? AND owner=?').run(to,JSON.stringify(p),project,from);
+      for(const op of ops){op.owner=to;this.db.prepare('UPDATE operations SET owner=?,data=? WHERE id=?').run(to,JSON.stringify(op),op.id);}
+      this.db.exec('COMMIT');return p;
+    }catch(e){this.db.exec('ROLLBACK');throw e;}
+  }
+}
