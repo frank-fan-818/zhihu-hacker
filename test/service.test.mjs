@@ -81,6 +81,31 @@ test('manual edit after apply prevents destructive undo',async t=>{
   const p=f.service.apply('owner',f.p.id,f.store.get(f.p.id,'owner').suggestions[0].id,1);
   f.service.edit('owner',p.id,p.text+'新的编辑。',2);assert.throws(()=>f.service.undo('owner',p.id,3),/后续编辑/);
 });
+// 乐观并发控制必须在数据库层生效：两个写者各自读到同一 revision 后并发提交，
+// 只能有一个成功。仅靠应用层先读后写的比较，两次都会通过检查而丢失一次更新。
+test('concurrent writers on the same revision cannot both win',async t=>{
+  const store=new Store(':memory:');t.after(()=>store.close());
+  const service=new Service(store,{status:{model:false,zhihu:false}});
+  const p=service.create('owner',text);
+  const a=store.get(p.id,'owner'), b=store.get(p.id,'owner');   // 两个写者读到相同 revision
+  assert.equal(a.revision,b.revision);
+  const first=service.saveGuarded({...a,text:'甲写者的修改内容，长度足够通过校验。'},1,'冲突');
+  assert.equal(first.revision,2);
+  assert.throws(()=>service.saveGuarded({...b,text:'乙写者的修改内容，长度足够通过校验。'},1,'冲突'),
+    e=>e.code==='REVISION_CONFLICT');
+  // 最终内容必须是先提交那次，且 revision 只前进一格
+  const after=store.get(p.id,'owner');
+  assert.equal(after.text,'甲写者的修改内容，长度足够通过校验。');
+  assert.equal(after.revision,2);
+});
+// 生成列必须与 JSON 里的 revision 保持一致，否则条件更新会失效
+test('revision generated column tracks the document',async t=>{
+  const store=new Store(':memory:');t.after(()=>store.close());
+  const p=store.save({id:'pg',owner:'o',text:'一段用于校验生成列的草稿内容，长度足够。',revision:7});
+  assert.equal(store.db.prepare('SELECT revision FROM projects WHERE id=?').get('pg').revision,7);
+  store.save({...p,revision:8});
+  assert.equal(store.db.prepare('SELECT revision FROM projects WHERE id=?').get('pg').revision,8);
+});
 test('sqlite persists content and interrupts unfinished operation after restart',()=>{
   const dir=mkdtempSync(join(tmpdir(),'cognitive-test-'));const file=join(dir,'test.sqlite');
   try{let store=new Store(file);store.save({id:'p',owner:'a',text:'保留的内容'});store.saveOp({id:'op',project:'p',owner:'a',key:'key',status:'running'});store.close();

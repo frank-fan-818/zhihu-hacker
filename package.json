@@ -7,6 +7,7 @@
   "scripts": {
     "start": "node --env-file-if-exists=.env src/server.mjs",
     "diagnose": "node --env-file-if-exists=.env src/diagnose.mjs",
+    "db:doctor": "node --env-file-if-exists=.env src/db-doctor.mjs",
     "quota": "node --env-file-if-exists=.env src/diagnose.mjs --quota",
     "test": "node --test test/*.test.mjs",
     "check": "node --check src/server.mjs && node --check public/app.js"

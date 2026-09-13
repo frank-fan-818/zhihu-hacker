@@ -10,11 +10,20 @@ export class Service {
     return this.store.save({id:id(),owner,text,original:text,title:text.trim().slice(0,32),revision:1,
       findings:[],sources:[],verification:{},suggestions:[],history:[],created:new Date().toISOString()});
   }
+  // 乐观并发控制：应用层先读后写存在检查-使用间隙，两个并发请求可能都通过
+  // `p.revision!==revision` 检查，后写的那次会覆盖前一次。这里把比较下推到
+  // 数据库的条件 UPDATE（见 store.saveIfRevision），由写入本身决定成败。
+  saveGuarded(p,baseRevision,message) {
+    const saved=this.store.saveIfRevision(p,baseRevision);
+    if(!saved)throw new AppError('REVISION_CONFLICT',message,409);
+    return saved;
+  }
   edit(owner,project,text,revision) {
     const p=this.store.get(project,owner);bounded(text,20,10000,'草稿');
     if(p.revision!==revision) throw new AppError('REVISION_CONFLICT','其他页面已经更新原稿，请先复制本地内容再加载最新版本。',409);
     if(p.text===text)return p;
-    p.text=text;p.revision++;return this.store.save(p);
+    p.text=text;
+    return this.saveGuarded(p,revision,'其他页面已经更新原稿，请先复制本地内容再加载最新版本。');
   }
   apply(owner,project,suggestionId,revision) {
     const p=this.store.get(project,owner);
@@ -24,24 +33,25 @@ export class Service {
     const text=applySuggestion(p,s);
     bounded(text,20,10000,'修订稿');
     p.history.push({text:p.text,revision:p.revision,appliedAt:new Date().toISOString(),suggestion:s.id,reason:s.reason});
-    p.history=p.history.slice(-20);p.text=text;p.revision++;
+    p.history=p.history.slice(-20);p.text=text;
     s.applied=true;
     const item=p.findings.find(x=>x.id===s.findingId);if(item)item.status='addressed';
-    return this.store.save(p);
+    return this.saveGuarded(p,revision,'原稿版本已变化，请重新生成建议。');
   }
   undo(owner,project,revision) {
     const p=this.store.get(project,owner);const last=p.history.at(-1);
     if(p.revision!==revision || !last || p.revision!==last.revision+1)
       throw new AppError('REVISION_CONFLICT','已有后续编辑，无法安全撤销。请对照原稿自行修改。',409);
-    p.text=last.text;p.revision++;p.history.pop();
+    p.text=last.text;p.history.pop();
     p.findings.forEach(x=>{if(x.status==='addressed')x.status='open';});
-    return this.store.save(p);
+    return this.saveGuarded(p,revision,'已有后续编辑，无法安全撤销。请对照原稿自行修改。');
   }
   defer(owner,project,findingId,revision) {
     const p=this.store.get(project,owner);
     if(p.revision!==revision)throw new AppError('REVISION_CONFLICT','原稿已变化。',409);
     const f=p.findings.find(x=>x.id===findingId);if(!f)throw new AppError('NOT_FOUND','检查项不存在。',404);
-    f.status='deferred';return this.store.save(p);
+    f.status='deferred';
+    return this.saveGuarded(p,revision,'原稿已变化。');
   }
   cancel(owner,opId) {
     const op=this.store.getOp(opId,owner);
