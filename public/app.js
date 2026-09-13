@@ -58,15 +58,8 @@ async function projects(){
 async function saveDraft(){
   if(saving){await saving;if(dirty)return saveDraft();return;}
   if(!dirty && project)return;
-  // 方案 B 门禁：未登录时只允许"创建首个项目"——这一次完整体验需要它，
-  // 否则 run() 拿不到 project.id，体验根本走不通。之后的自动保存一律拦下，
-  // 因为"保留与继续"才是登录的价值所在。
-  if(!signedIn() && project){
-    dirty=false;$('#save-status').textContent='本次体验未保存';gateVisible(true);
-    if(!saveDraft.gated){saveDraft.gated=true;notice('这次检查可以直接用。要在其他设备继续，请先用知乎账号登录保存。');}
-    return;
-  }
-  if(signedIn())saveDraft.gated=false;
+  // 匿名体验也维护服务端工作副本，确保检查和修改针对当前稿。
+  // 关联账号才提供跨设备保存；不以禁止更新工作副本实现登录门禁。
   const text=draft.value;const expected=project?.revision;const pid=project?.id;
   $('#save-status').textContent='正在保存…';
   saving=(async()=>{
@@ -74,7 +67,7 @@ async function saveDraft(){
     project=p;dirty=draft.value!==text;
     // 未登录时不记录本地草稿指针：跨刷新恢复属于登录后的能力
     if(signedIn())localStorage.setItem('cognitive-project',p.id);else localStorage.removeItem('cognitive-project');
-    $('#save-status').textContent=signedIn()?(dirty?'有未保存的编辑':'已保存 '+new Date(p.updated).toLocaleTimeString()):'本次体验未保存';
+    $('#save-status').textContent=dirty?'有未保存的编辑':signedIn()?'已保存 '+new Date(p.updated).toLocaleTimeString():'本次工作副本已更新 · 登录后关联账号';
     if(signedIn())await projects();else gateVisible(true);
   })();
   try{await saving;}catch(e){$('#save-status').textContent='保存失败 · 请保留当前内容';throw e;}finally{saving=null;}
@@ -82,7 +75,10 @@ async function saveDraft(){
 async function load(id){
   if(saving)await saving;
   if(dirty && !confirm('当前有未保存的内容，确定切换吗？'))return;
-  clearTimeout(timer);project=await api(`/projects/${id}`);questionContext=project.question||null;$('#answer-results').innerHTML='';draft.value=project.text;dirty=false;selected=null;error='';
+  const before=draft.value;
+  const loaded=await api(`/projects/${id}`);
+  if(draft.value!==before){notice('加载期间有新的编辑，已保留当前稿。请保存后再切换。');return;}
+  clearTimeout(timer);project=loaded;questionContext=project.question||null;$('#answer-results').innerHTML='';draft.value=project.text;dirty=false;selected=null;error='';
   localStorage.setItem('cognitive-project',id);$('#save-status').textContent='已保存 '+new Date(project.updated).toLocaleTimeString();render();
 }
 async function poll(op){
@@ -100,20 +96,39 @@ async function poll(op){
 }
 async function run(type,extra={}){
   if(operation||extraBusy)return;
+  extraBusy=true;
+  try{
   error='';await saveDraft();
   if(dirty)throw new Error('请完成当前编辑并保存后再操作。');
   const op=await api(`/projects/${project.id}/operations`,'POST',{type,key:crypto.randomUUID(),revision:project.revision,findingId:selected,...extra});
   await poll(op);
+  }finally{extraBusy=false;}
+}
+async function changeDraft(action,body={}){
+  await saveDraft();
+  if(dirty)throw new Error('保存期间有新的编辑，请保存后再采用或撤销修改。');
+  const before=draft.value,pid=project.id;
+  const updated=await api(`/projects/${pid}/${action}`,'POST',{...body,revision:project.revision});
+  if(project?.id!==pid)return;
+  project=updated;
+  if(draft.value!==before){
+    dirty=true;$('#save-status').textContent='有未保存的编辑';
+    notice('操作已完成；请求期间的新输入已保留，请核对当前稿后保存。');
+  }else{
+    draft.value=project.text;dirty=false;$('#save-status').textContent='修改已保存';
+    notice(action==='undo'?'已安全撤销上次修改。':'已采用这处修改。');
+  }
+  render();await projects();
 }
 async function copy(){await navigator.clipboard.write(draft.value);notice('当前稿已复制。');}
 draft.addEventListener('input',()=>{
   dirty=true;count();$('#save-status').textContent='有未保存的编辑';clearTimeout(timer);
-  if(project)timer=setTimeout(()=>saveDraft().catch(e=>{error=e.message;render();}),800);
+  if(project)timer=setTimeout(()=>{if(!extraBusy)saveDraft().catch(e=>{error=e.message;render();});},800);
 });
-setInterval(()=>{if(project&&dirty&&!saving)saveDraft().catch(e=>{error=e.message;render();});},5000);
+setInterval(()=>{if(project&&dirty&&!saving&&!extraBusy)saveDraft().catch(e=>{error=e.message;render();});},5000);
 window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
 $('#check').onclick=()=>run('quick_check').catch(fail);
-$('#save').onclick=()=>saveDraft().then(render).catch(fail);
+$('#save').onclick=()=>{if(!extraBusy)saveDraft().then(render).catch(fail);};
 $('#example').onclick=()=>{
   if(operation||extraBusy)return;
   if(draft.value && !confirm('示例会替换输入框中的内容，确定继续吗？'))return;
@@ -131,11 +146,23 @@ document.addEventListener('click',async e=>{
   const b=e.target.closest('[data-action]');if(!b)return;
   const action=b.dataset.action;
   if((operation||extraBusy)&&action!=='cancel'){notice('请先完成或取消当前操作。');return;}
+  const exclusive=['open','delete','apply','undo','defer'].includes(action);
+  if(exclusive)extraBusy=true;
   try{
     if(action==='open'){await load(b.dataset.id);return;}
     if(action==='delete'){
       if(!confirm('删除这篇草稿及其记录？此操作无法撤销。'))return;
-      await api(`/projects/${b.dataset.id}`,'DELETE');if(project?.id===b.dataset.id){dirty=false;$('#new-project').click();}await projects();return;
+      if(saving)await saving;
+      const before=draft.value;
+      await api(`/projects/${b.dataset.id}`,'DELETE');
+      if(project?.id===b.dataset.id){
+        clearTimeout(timer);project=null;questionContext=null;selected=null;error='';
+        if(draft.value===before)draft.value='';
+        dirty=Boolean(draft.value);localStorage.removeItem('cognitive-project');
+        $('#answer-results').innerHTML='';$('#sources-section').hidden=true;
+        $('#save-status').textContent=dirty?'删除期间的新输入已保留 · 尚未保存':'尚未保存';render();
+      }
+      await projects();return;
     }
     if(action==='select'){selected=b.dataset.id;render();return;}
     if(action==='cancel'){await api(`/operations/${operation.id}/cancel`,'POST');return;}
@@ -145,9 +172,9 @@ document.addEventListener('click',async e=>{
     if(action==='full')await run('review_remaining');
     if(action==='compose')await run('generate_draft');
     if(action==='apply'){
-      await saveDraft();project=await api(`/projects/${project.id}/apply`,'POST',{suggestionId:b.dataset.id,revision:project.revision});draft.value=project.text;dirty=false;$('#save-status').textContent='修改已保存';notice('已采用这处修改。');render();await projects();
+      await changeDraft('apply',{suggestionId:b.dataset.id});
     }
-    if(action==='undo'){await saveDraft();project=await api(`/projects/${project.id}/undo`,'POST',{revision:project.revision});draft.value=project.text;dirty=false;render();notice('已安全撤销上次修改。');}
+    if(action==='undo')await changeDraft('undo');
     if(action==='defer'){await saveDraft();project=await api(`/projects/${project.id}/defer`,'POST',{findingId:selected,revision:project.revision});render();}
     if(action==='edit')draft.focus();
     if(action==='copy')await copy();
@@ -156,7 +183,7 @@ document.addEventListener('click',async e=>{
       const content=`${draft.value}\n\n## 研究资料（检索摘要，非逐句核验声明）\n\n${refs||'尚未检索外部资料。'}\n`;
       const url=URL.createObjectURL(new Blob([content],{type:'text/markdown;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='我的修订稿.md';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
     }
-  }catch(e){fail(e);}
+  }catch(e){fail(e);}finally{if(exclusive)extraBusy=false;}
 });
 async function init(){
   await accountStatus();
@@ -165,12 +192,12 @@ async function init(){
   status=await api('/status');
   $('#connection-status').textContent=`${status.model?'模型服务已配置':'当前为本地规则初筛'} · ${status.zhihu?'知乎检索已配置':'知乎检索未配置'}`;
   render();await projects();
-  // 登录返回后，把跳转前暂存的文字放回输入框；有服务端草稿时以草稿为准。
+  // 先恢复关联项目，再恢复登录跳转期间尚未进入工作副本的文字。
   const pending=localStorage.getItem('cognitive-pending');
-  if(pending){localStorage.removeItem('cognitive-pending');if(!project&&!draft.value){draft.value=pending;dirty=true;$('#save-status').textContent='尚未保存';count();}}
   // 未登录时不自动恢复上次草稿：跨刷新保留正是登录的意义所在。
   // 那一次完整体验在同一次访问里照常可用。
   const last=signedIn()?localStorage.getItem('cognitive-project'):null;if(last){try{await load(last);}catch{localStorage.removeItem('cognitive-project');}}
+  if(pending){if(!draft.value||draft.value===project?.text){draft.value=pending;dirty=pending!==project?.text;$('#save-status').textContent=dirty?'有未保存的编辑':'已恢复关联草稿';count();}localStorage.removeItem('cognitive-pending');}
   const op=localStorage.getItem('cognitive-operation');if(op){try{await poll(await api(`/operations/${op}`));}catch{operation=null;localStorage.removeItem('cognitive-operation');render();}}
 }
 init().catch(fail);
@@ -178,14 +205,15 @@ init().catch(fail);
 async function accountStatus(){const a=await api('/auth');account=a.user;oauthConfigured=a.configured;$('#account-label').textContent=account?account.name:'匿名创作';$('#account-action').textContent=account?'退出登录':'知乎登录';$('#account-action').title=a.configured?'':'待开发者配置 OAuth，匿名体验可继续使用';gateVisible(Boolean(project?.lastCheck));}
 // 提示条上的登录按钮与顶栏共用同一段逻辑
 $('#login-gate-action').onclick=()=>$('#account-action').click();
-// 登录跳转前把手头这段文字暂存到本机：未登录时不写服务端，
-// 若不暂存，用户点登录再回来，那一次体验的输入就白费了。
+// 登录跳转前保留本机文字，作为工作副本之外的恢复备份。
 function stashDraft(){try{if(draft.value)localStorage.setItem('cognitive-pending',draft.value);}catch{/* 隐私模式忽略 */}}
 async function startLogin(){
   if(dirty)await saveDraft();
   stashDraft();
-  const link=project&&signedIn()&&confirm('登录后将当前这篇草稿关联到知乎账号？取消则只登录，草稿保留在匿名空间。');
-  const r=await api('/auth/start','POST',{projectId:link?project.id:null});location.assign(r.url);
+  const link=project&&confirm('登录后将当前这篇草稿及研究记录关联到知乎账号？取消则只登录，草稿保留在匿名空间。');
+  const r=await api('/auth/start','POST',{projectId:link?project.id:null});
+  if(link)localStorage.setItem('cognitive-project',project.id);else localStorage.removeItem('cognitive-project');
+  stashDraft();location.assign(r.url);
 }
 $('#account-action').onclick=async()=>{
   if(!account&&!oauthConfigured){notice('知乎登录尚未配置，匿名草稿仍可继续使用。');return;}
@@ -210,6 +238,7 @@ document.addEventListener('click',async e=>{
     if(pick){
       if(draft.value&&!confirm('为这个问题新建草稿？当前已有草稿会先保存。'))return;
       if(dirty)await saveDraft();
+      if(dirty)throw new Error('保存期间有新的编辑，已保留当前稿。请保存后再新建。');
       const q=questionChoices[Number(pick.dataset.questionIndex)];if(!q)return;
       project=null;questionContext=q;selected=null;error='';draft.value=`关于“${q.title}”，我的初步看法是：
 

@@ -72,6 +72,18 @@ function fakeRedis(){
   };
   const run=a=>{
     const [cmd,...args]=a,up=String(cmd).toUpperCase();
+    if(up==='EVAL'){
+      const [script,n,...values]=args,keys=values.slice(0,Number(n)),argv=values.slice(Number(n));
+      if(script.startsWith('-- oauth-consume')){const value=store.value(keys[0]);run(['DEL',keys[0]]);return value;}
+      if(script.startsWith('-- oauth-commit')){
+        if(Number(store.value(keys[0]))>0)return 0;
+        run(['SET',keys[1],argv[0],'EX',argv[1]]);run(['DEL',keys[2]]);return 1;
+      }
+      if(script.startsWith('-- oauth-revoke')){
+        const epoch=run(['INCR',keys[0]]);run(['EXPIRE',keys[0],argv[0]]);run(['DEL',keys[1]]);return epoch;
+      }
+      throw new Error('unsupported Lua fixture');
+    }
     if(up==='GET')return store.value(args[0]);
     if(up==='SET'){map.set(args[0],args[1]);const ex=args.indexOf('EX');if(ex>-1)exp.set(args[0],Date.now()+Number(args[ex+1])*1000);else exp.delete(args[0]);return 'OK';}
     if(up==='DEL'){let n=0;for(const k of args)if(store.alive(k)){map.delete(k);exp.delete(k);n++;}return n;}
@@ -154,6 +166,28 @@ test('full login works across instances over the redis adapter',async()=>{
     assert.equal(r.session.owner,'zhihu:'+hash('redis-user'));
     await instanceA.logout(r.cookie);
     assert.equal(await instanceB.session(r.cookie),null);
+  }finally{await fake.close();}
+});
+
+test('Redis atomic state consumption and rotated-session revocation work across clients',async()=>{
+  const fake=await startFakeRedis();
+  try{
+    const first=createRedisStore({url:fake.url,token:'t',prefix:'audit:'});
+    const second=createRedisStore({url:fake.url,token:'t',prefix:'audit:'});
+    await first.set('state','pending',60);
+    const claims=await Promise.all([first.consume('state'),second.consume('state')]);
+    assert.deepEqual(claims.sort(),['pending',null].sort());
+    await first.revokeSession('epoch','old-session',3600);
+    assert.equal(await second.commitSession('epoch','new-session','old-session','value',60),false);
+    assert.equal(await first.get('new-session'),null);
+    const a=new OAuth(env,async url=>response(url.endsWith('/access_token')?{access_token:'t',expires_in:60}:{hash_id:'u'}),Date.now,first);
+    const b=new OAuth(env,a.fetcher,Date.now,second);
+    const result=await a.finish('late-cookie',params(await b.start('late-cookie')));
+    await b.logout('late-cookie');
+    assert.equal(await a.session(result.cookie),null);
+    const commands=fake.redis.log.map(x=>JSON.parse(x.body)).filter(x=>x[0]==='EVAL');
+    assert.ok(commands.length>0);
+    assert.ok(commands.every(c=>c.slice(3,3+Number(c[2])).every(k=>k.startsWith('audit:'))));
   }finally{await fake.close();}
 });
 // Vercel 的 Upstash 集成注入的是 KV_REST_API_URL / KV_REST_API_TOKEN，

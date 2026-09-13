@@ -74,10 +74,10 @@ test('vercel handler rejects an unrelated host',async t=>{
   const blocked=await run(handler,{url:'/',host:'evil.example.com'});
   assert.equal(blocked.statusCode,403);
 });
-test('vercel handler accepts the www form of the registered origin',async t=>{
+test('vercel handler redirects www to the canonical origin',async t=>{
   const handler=vercelHandler({file:tmpFile(t),providers:fixtureProviders});
   const ok=await run(handler,{url:'/',host:'www.demo.vercel.app'});
-  assert.equal(ok.statusCode,200);
+  assert.equal(ok.statusCode,308);assert.equal(ok.headers.location,'https://demo.vercel.app/');
 });
 // 部署形态下的登录：start 与 callback 由不同函数实例处理，共享同一份键值存储。
 test('login survives across two separate vercel handler instances',async t=>{

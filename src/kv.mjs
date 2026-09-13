@@ -1,5 +1,20 @@
 import { AppError } from './domain.mjs';
 
+export const CONSUME_SCRIPT = `-- oauth-consume
+local value = redis.call('GET', KEYS[1])
+if value then redis.call('DEL', KEYS[1]) end
+return value`;
+export const COMMIT_SESSION_SCRIPT = `-- oauth-commit
+if tonumber(redis.call('GET', KEYS[1]) or '0') > 0 then return 0 end
+redis.call('SET', KEYS[2], ARGV[1], 'EX', ARGV[2])
+redis.call('DEL', KEYS[3])
+return 1`;
+export const REVOKE_SESSION_SCRIPT = `-- oauth-revoke
+local epoch = redis.call('INCR', KEYS[1])
+redis.call('EXPIRE', KEYS[1], ARGV[1])
+redis.call('DEL', KEYS[2])
+return epoch`;
+
 // 键值存储抽象：OAuth state、登录会话与限流计数必须活过单个进程。
 // 本地开发用内存实现；部署到 Serverless 时用 Upstash Redis REST 实现。
 // 不引入第三方依赖，Redis 适配器直接调用 REST 接口。
@@ -18,6 +33,19 @@ export function createMemoryStore(now = Date.now) {
     async get(key) { return read(key); },
     async set(key, value, ttlSeconds) {
       data.set(key, { value, expires: now() + Math.max(1, ttlSeconds) * 1000 });
+    },
+    async consume(key) { const value = read(key); data.delete(key); return value; },
+    async commitSession(epochKey, newKey, oldKey, value, ttlSeconds) {
+      if (Number(read(epochKey)) > 0) return false;
+      data.set(newKey, { value, expires: now() + Math.max(1, ttlSeconds) * 1000 });
+      data.delete(oldKey);
+      return true;
+    },
+    async revokeSession(epochKey, sessionKey, ttlSeconds) {
+      const epoch = (Number(read(epochKey)) || 0) + 1;
+      data.set(epochKey, { value: String(epoch), expires: now() + Math.max(1, ttlSeconds) * 1000 });
+      data.delete(sessionKey);
+      return epoch;
     },
     async del(...keys) { let n = 0; for (const key of keys) if (data.delete(key)) n++; return n; },
     async delByPrefix(prefix) {
@@ -50,6 +78,7 @@ export function createRedisStore({ url, token, prefix = 'cd:', fetcher = fetch }
         method: 'POST',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify(args.map(String)),
+        redirect: 'error',
         signal: AbortSignal.timeout(10000),
       });
     } catch {
@@ -60,8 +89,17 @@ export function createRedisStore({ url, token, prefix = 'cd:', fetcher = fetch }
     if (!payload || typeof payload !== 'object' || 'error' in payload) throw new AppError('KV_UNAVAILABLE', '登录状态存储响应无效。', 503);
     return payload.result;
   };
+  const evaluate = (script, keys = [], args = []) => command('EVAL', script, keys.length, ...keys.map(namespaced), ...args);
   return {
     kind: 'redis',
+    eval: evaluate,
+    async consume(key) { return await evaluate(CONSUME_SCRIPT, [key]); },
+    async commitSession(epochKey, newKey, oldKey, value, ttlSeconds) {
+      return Number(await evaluate(COMMIT_SESSION_SCRIPT, [epochKey, newKey, oldKey], [value, Math.max(1, Math.ceil(ttlSeconds))])) === 1;
+    },
+    async revokeSession(epochKey, sessionKey, ttlSeconds) {
+      return Number(await evaluate(REVOKE_SESSION_SCRIPT, [epochKey, sessionKey], [Math.max(1, Math.ceil(ttlSeconds))]));
+    },
     async get(key) { const value = await command('GET', namespaced(key)); return value === null || value === undefined ? null : String(value); },
     async set(key, value, ttlSeconds) { await command('SET', namespaced(key), String(value), 'EX', Math.max(1, Math.ceil(ttlSeconds))); },
     async del(...keys) {

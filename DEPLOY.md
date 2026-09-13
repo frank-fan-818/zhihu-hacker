@@ -1,119 +1,51 @@
-# 部署到 Vercel
+# Vercel 部署与数据保护
 
-本应用是原生 `node:http` 长驻服务，原本假定"单进程 + 持久磁盘"。Vercel 是无服务器
-平台，因此代码里补了三处适配：请求入口（`api/index.mjs`）、数据库降级（`/tmp`）、
-以及登录状态外置（`src/kv.mjs`）。**登录状态外置是必须的**：否则发起登录的实例和
-接收回调的实例不是同一个，回调必然报 `OAUTH_STATE`。
+应用使用 Node.js 24；`api/index.mjs` 统一处理请求，`@vercel/functions` 的 `waitUntil` 维持异步任务。草稿、研究记录、任务和登录状态使用共享 Upstash Redis，**不再使用 `/tmp` SQLite**。缺少 Redis 配置时拒绝启动。
 
-## 一、部署前必须先做的两件事
+## 部署配置
 
-### 1. 确认 URL 形态，并固定域名
+1. Vercel 导入仓库，Framework 选择 Other，Root Directory 为仓库根目录，Node 选择 24.x。安装命令使用 `npm ci`，无需构建静态产物。
+2. 连接 Upstash Redis。支持 `SESSION_STORE_URL` / `SESSION_STORE_TOKEN`，或平台注入的 `KV_REST_API_URL` / `KV_REST_API_TOKEN`；需要读写权限和 EVAL 支持。
+3. 在 Redis 管理设置中保持 **eviction 关闭**，并按服务计划配置备份。文档键不设置 TTL，因此数据库不能采用淘汰缓存策略；容量耗尽时应拒绝写入。Redis 持久化不代替备份恢复演练。
+4. 设置稳定域名 `APP_ORIGIN=https://你的域名`，知乎后台登记 `https://你的域名/auth/zhihu/callback`，对应 `ZHIHU_OAUTH_REDIRECT_URI` 必须相同。www 请求会 308 跳转到规范域名。
+5. 填写 `ZHIHU_OAUTH_APP_ID`、`ZHIHU_OAUTH_APP_KEY`、`ZHIHU_ACCESS_SECRET`；模型使用 `MODEL_BASE_URL`、`MODEL_NAME`、`MODEL_API_KEY`。
+6. Production 与 Preview 使用不同 Redis 或不同 `SESSION_STORE_PREFIX`，例如 `cd:production:` / `cd:preview:`，避免预览修改正式草稿。前缀发布后不可随意更换，否则原数据将暂时不可见。
 
-Vercel 每次部署都会生成新域名（`项目名-<hash>-账号.vercel.app`）。**回调地址在知乎
-平台登记后必须逐字符匹配，所以不要用每次变化的部署 URL**，要用稳定的生产域名，
-或给某次部署设置固定别名。
+不要在 Vercel 设置 HOST、PORT、SQLITE_FILE。`vercel.json` 将函数最大时长设为 120 秒；业务任务截止时间为 60 秒，超时不回写数据。waitUntil 延长单次执行生命周期，不是持久任务队列；崩溃后查询返回中断状态，由用户重新发起，不会自动重试付费调用。
 
-先确定你的域名，形如：
+## 预算
 
-```text
-https://cognitive-debugger.vercel.app
+- `IP_HOURLY_LIMIT` 默认 20：每 IP 每小时查询/操作请求数。
+- `GLOBAL_HOURLY_LIMIT` 默认 200：同一命名空间的全站每小时查询/操作请求数。
+- 同时限制每 owner 每小时 30 次；创建项目和发起登录有独立写入预算。
+- Redis 原子计数让跨实例和替换 cookie 无法重置 IP/全局预算。Vercel 仅信任平台提供的 `x-vercel-forwarded-for`，本地使用 socket 地址。
+- 这是请求预算，不是金额上限；一次查证可能调用两个检索接口与一次模型。服务商后台仍应设费用上限。达到容量/预算时明确失败，保留当前输入。
+
+## 升级与旧数据
+
+升级不会删除本地 `data/app.sqlite`。本地仍默认 SQLite；仅设置 `PROJECT_STORE=redis` 时才切换本地项目存储，OAuth 的 Redis 配置不会隐式切换本地项目库。
+
+旧 Vercel `/tmp` 草稿无法通过新实例自动取回。**部署前导出需要保留的旧草稿**；若有完整 SQLite 备份，应单独规划迁移与核对 owner/操作记录，不能把未知用户归属的草稿批量关联到当前账号。本次代码修复不运行生产数据迁移。
+
+## 验收
+
+```powershell
+npm.cmd ci
+npm.cmd run check
+# 指向专用测试 Redis；测试只使用随机 namespace，不清空数据库
+$env:TEST_REDIS_URL='redis://127.0.0.1:6398'
+npm.cmd test
 ```
 
-### 2. 开通 Upstash Redis（登录必需）
+CI 启动独立 Redis 服务并强制运行真实 Lua 测试。未设置 TEST_REDIS_URL 的本地测试会明确跳过真实 Redis 场景。
 
-在 Vercel 控制台 **Storage → Create Database → Upstash Redis**，创建后连接到本项目。
-本应用直接调用它们的 REST 接口，**不需要安装任何 npm 依赖**。
+上线验收需确认：同一账号跨实例/重新登录可读取草稿；匿名修改后检查引用新原句；采用修改期间输入不丢失；state 重放被拒绝；退出阻止迟到登录；取消/删除拒绝迟到结果；服务不可用时不显示假保存成功。
 
-Vercel 的 Upstash 集成会自动注入这几个变量，**不需要手动再填**：
+`npm run db:doctor` 在本地使用只读 SQLite 连接；Vercel/PROJECT_STORE=redis 时只读检查 Redis 可达性及任务索引规模，不中断运行任务。
 
-```text
-KV_REST_API_URL      KV_REST_API_TOKEN      KV_URL
-REDIS_URL            KV_REST_API_READ_ONLY_TOKEN
-```
+## 官方契约
 
-`src/kv.mjs` 按以下优先级读取，取第一组齐全的：
-
-1. `SESSION_STORE_URL` + `SESSION_STORE_TOKEN`（本项目自定义，便于本地覆盖）
-2. `KV_REST_API_URL` + `KV_REST_API_TOKEN`（Vercel 集成注入）
-
-只配一个、或两个都不配时，`npm run diagnose` 会明确报出降级状态：登录仍然可用，
-但只在单实例内有效，Serverless 多实例下会失败。
-
-## 二、在知乎平台登记回调地址
-
-在赛事项目页面 <https://www.zhihu.com/hackathon?activity_code=zhihu_hackathon_2026_p2>
-的「知乎登录回调地址」处填写：
-
-```text
-https://你的域名/auth/zhihu/callback
-```
-
-对应的两个环境变量必须是（两者同源、路径固定、无尾斜杠、无查询参数）：
-
-```text
-APP_ORIGIN=https://你的域名
-ZHIHU_OAUTH_REDIRECT_URI=https://你的域名/auth/zhihu/callback
-```
-
-平台登记值与 `ZHIHU_OAUTH_REDIRECT_URI` 必须完全一致。改域名意味着两处都要改。
-
-## 三、部署
-
-### 1. 推送到 GitHub
-
-`cognitive-debugger` 是独立仓库（不含 `.env`、`data/`）。推到你的 GitHub 私有或公开仓库。
-
-### 2. 在 Vercel 导入项目
-
-- **Root Directory**：仓库根目录（即 `cognitive-debugger` 本身）
-- **Framework Preset**：`Other`
-- **Build Command / Output Directory**：全部留空（`vercel.json` 已声明 `framework: null`）
-- **Node.js Version**：项目设置里选 **24.x**（`node:sqlite` 需要；仓库已带 `.nvmrc`）
-
-### 3. 配置环境变量
-
-在 Vercel 项目 **Settings → Environment Variables** 添加（Production 与 Preview 都要）：
-
-| 变量 | 值 |
-|---|---|
-| `APP_ORIGIN` | `https://你的域名` |
-| `ZHIHU_OAUTH_REDIRECT_URI` | `https://你的域名/auth/zhihu/callback` |
-| `ZHIHU_OAUTH_APP_ID` | 你的 App ID |
-| `ZHIHU_OAUTH_APP_KEY` | 你的 App Key |
-| `ZHIHU_ACCESS_SECRET` | 你的 Access Secret |
-| `MODEL_BASE_URL` | 例如 `https://api.deepseek.com` |
-| `MODEL_NAME` | 例如 `deepseek-flash` |
-| `MODEL_API_KEY` | 你的模型密钥 |
-| `SESSION_STORE_URL` | Upstash REST URL |
-| `SESSION_STORE_TOKEN` | Upstash REST Token |
-
-**不要**在 Vercel 上设置 `HOST` 或 `PORT`，平台自行接管。`SQLITE_FILE` 也不用设，
-部署时默认走 `/tmp/app.sqlite`。
-
-### 4. 部署并验证
-
-部署完成后依次确认：
-
-1. 打开 `https://你的域名` → 页面正常加载（说明 `node:sqlite` 在 `/tmp` 起来了）。
-2. 输入一段示例草稿 → 点「检查这段话」→ 出现候选问题（证明规则初筛可用）。
-3. 点「查看依据」→ 返回真实知乎来源（证明 Access Secret 与网络出口可用）。
-4. 点「知乎登录」→ 授权后回到 `/?login=success`，顶栏显示昵称
-   （证明跨实例登录状态生效）。若回到 `/?login=failed`，多半是回调地址不一致。
-
-## 四、必须知道的限制
-
-| 限制 | 说明 |
-|---|---|
-| **草稿不持久** | SQLite 在 `/tmp`，随实例存活、冷启动即重置。草稿可能丢失且界面不会提示。这是 Vercel 无持久磁盘的必然结果，**不是配置问题**。 |
-| **限流是每实例的** | 每会话 30 项目、每小时 30 次操作等计数仍在进程内（`server.mjs` 的 `questionCalls`/`answerBusy`），多实例下实际额度会放宽。不替代正式网关限流。 |
-| **登录会话上限 7 天** | 会话写在 Redis，过期时间取 `min(expires_in, 7 天)`；退出登录会跨实例立即吊销。 |
-| **预览域名不能当回调** | 每次部署域名都会变，登记的回调只在生产域名下匹配。 |
-
-如果草稿持久化是评奖必需项，应改用带持久磁盘的长驻服务（Railway、Render 等），
-那种形态下只需把 `APP_ORIGIN` 与 `ZHIHU_OAUTH_REDIRECT_URI` 指向平台域名，
-数据库保持默认的 `data/app.sqlite` 即可，无需 `/tmp` 降级。
-
-## 五、本地开发不受影响
-
-不配置 `SESSION_STORE_URL` 时，登录状态走进程内存实现，`npm start` 与本地测试行为
-与此前一致。本地仍监听 `127.0.0.1:4317`，数据库仍是 `data/app.sqlite`。
+- [Vercel waitUntil](https://vercel.com/docs/functions/functions-api-reference/vercel-functions-package)
+- [Vercel 最大执行时间](https://vercel.com/docs/functions/configuring-functions/duration)
+- [Upstash 淘汰策略](https://upstash.com/docs/redis/features/eviction)
+- [Upstash EVAL 键隔离](https://upstash.com/docs/redis/features/key-locking)

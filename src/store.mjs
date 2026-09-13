@@ -15,30 +15,31 @@ const PRAGMAS = [
 ];
 
 export class Store {
-  constructor(file) {
-    if (file !== ':memory:') mkdirSync(dirname(file), { recursive: true });
-    this.db = new DatabaseSync(file);
-    for (const pragma of PRAGMAS) this.db.exec(pragma);
+  constructor(file, { readOnly = false } = {}) {
+    this.readOnly = readOnly;
+    if (!readOnly && file !== ':memory:') mkdirSync(dirname(file), { recursive: true });
+    this.db = new DatabaseSync(file, { readOnly });
+    for (const pragma of readOnly ? ['PRAGMA busy_timeout=5000;', 'PRAGMA foreign_keys=ON;'] : PRAGMAS) this.db.exec(pragma);
     try {
-      migrate(this.db);
+      if (!readOnly) migrate(this.db);
     } catch (e) {
       // 迁移失败必须让服务起不来，而不是带着半套 schema 继续跑
       this.db.close();
       throw e instanceof AppError ? e : new AppError('MIGRATION_FAILED', `数据库迁移失败：${e.message}`, 500);
     }
-    this.#interruptStaleOperations();
   }
 
   // 服务重启后，上次未结束的操作标记为中断，保留已有资料，不静默续跑。
   // 只扫未完成的行（有部分索引 idx_operations_unfinished 支撑）。
-  #interruptStaleOperations() {
+  recoverInterruptedOperations({ exclusive = false } = {}) {
+    if (!exclusive) throw new AppError('EXCLUSIVE_REQUIRED', '恢复操作前必须确认没有其他服务实例运行。', 409);
     const rows = this.db.prepare("SELECT data FROM operations WHERE status IN ('queued','running')").all();
     for (const row of rows) {
       const op = JSON.parse(row.data);
       if (['queued', 'running'].includes(op.status)) {
         op.status = 'failed';
         op.error = { code: 'INTERRUPTED', message: '服务已重启，上次任务中断。已有资料已保留。' };
-        this.saveOp(op);
+        this.updateOp(op);
       }
     }
   }
@@ -56,17 +57,28 @@ export class Store {
     return p;
   }
 
+  create(p) {
+    this.db.exec('BEGIN IMMEDIATE');
+    try {
+      if (this.list(p.owner).length >= 30) throw new AppError('PROJECT_LIMIT', '最多保留 30 个项目，请先删除不需要的项目。', 429);
+      const next = { ...p, version: 1, updated: new Date().toISOString() };
+      this.db.prepare('INSERT INTO projects (id,owner,updated,data) VALUES(?,?,?,?)').run(next.id,next.owner,next.updated,JSON.stringify(next));
+      this.db.exec('COMMIT');
+      return next;
+    } catch (e) { this.db.exec('ROLLBACK'); throw e; }
+  }
+
   // 乐观并发控制下推到数据库：用一条带 revision 条件的 UPDATE 做原子比较并写入。
   // 应用层的先读后写存在检查-使用间隙，两个并发请求可能都通过检查。
   // 返回 null 表示 revision 已变化（谁都没改），由调用方转成 409。
   //
   // 注意：revision 是虚拟生成列，不能直接写入——它由 data 的 $.revision 派生。
   // 所以这里只写 data，revision 列会自动跟随。
-  saveIfRevision(p, baseRevision) {
-    const next = { ...p, revision: baseRevision + 1, updated: new Date().toISOString() };
+  saveIfRevision(p, baseRevision, { preserveRevision = false } = {}) {
+    const next = { ...p, revision: baseRevision + (preserveRevision ? 0 : 1), version: (p.version ?? 0) + 1, updated: new Date().toISOString() };
     const result = this.db.prepare(
-      "UPDATE projects SET data=?, updated=? WHERE id=? AND owner=? AND json_extract(data,'$.revision')=?"
-    ).run(JSON.stringify(next), next.updated, next.id, next.owner, baseRevision);
+      "UPDATE projects SET data=?, updated=? WHERE id=? AND owner=? AND json_extract(data,'$.revision')=? AND COALESCE(json_extract(data,'$.version'),0)=?"
+    ).run(JSON.stringify(next), next.updated, next.id, next.owner, baseRevision, p.version ?? 0);
     return Number(result.changes) > 0 ? next : null;
   }
 
@@ -107,27 +119,77 @@ export class Store {
     ).run(op.id, op.project, op.owner, op.key, op.type ?? null, op.status ?? null, JSON.stringify(op));
   }
 
+  createOp(op) {
+    this.db.exec('BEGIN IMMEDIATE');
+    try {
+      const p = this.get(op.project, op.owner);
+      const previous = this.byKey(op.project, op.key, op.owner);
+      if (previous) {
+        if (previous.signature !== op.signature) throw new AppError('IDEMPOTENCY_CONFLICT', '请求标识不能用于不同操作。', 409);
+        this.db.exec('COMMIT');
+        return previous;
+      }
+      if (p.revision !== op.baseRevision) throw new AppError('REVISION_CONFLICT', '原稿已变化，请重新检查。', 409);
+      this.saveOp(op);
+      this.db.exec('COMMIT');
+      return op;
+    } catch (e) { this.db.exec('ROLLBACK'); throw e; }
+  }
+
+  updateOp(op) {
+    const result = this.db.prepare("UPDATE operations SET status=?,data=? WHERE id=? AND owner=? AND status IN ('queued','running')")
+      .run(op.status,JSON.stringify(op),op.id,op.owner);
+    return Number(result.changes) > 0;
+  }
+
+  // Commit both the derived document and operation terminal state under one lock.
+  // A version-only conflict may be merged/retried; deleted, cancelled or edited
+  // input must never be retried against the old model result.
+  commitResult(p, op, expectedVersion) {
+    this.db.exec('BEGIN IMMEDIATE');
+    try {
+      const current = this.get(p.id, p.owner);
+      const operation = this.getOp(op.id, op.owner);
+      if (!['queued','running'].includes(operation.status)) throw new AppError('CANCELLED', '操作已经结束。', 409);
+      if (operation.project !== p.id || current.revision !== op.baseRevision) throw new AppError('STALE_RESULT', '原稿已改变，本次结果没有覆盖新稿。', 409);
+      if ((current.version ?? 0) !== expectedVersion) { this.db.exec('ROLLBACK'); return null; }
+      const next = { ...p, version: expectedVersion + 1, updated: new Date().toISOString() };
+      this.db.prepare('UPDATE projects SET updated=?,data=? WHERE id=? AND owner=?').run(next.updated,JSON.stringify(next),next.id,next.owner);
+      this.updateOp(op);
+      this.db.exec('COMMIT');
+      return next;
+    } catch (e) { this.db.exec('ROLLBACK'); throw e; }
+  }
+
   getOp(operation, owner) {
     const row = this.db.prepare('SELECT data FROM operations WHERE id=? AND owner=?').get(operation, owner);
     if (!row) throw new AppError('NOT_FOUND', '任务不存在或无法访问。', 404);
-    return JSON.parse(row.data);
+    const op = JSON.parse(row.data);
+    const deadline=op.deadline??(Date.parse(op.created)+60000);
+    if (['queued','running'].includes(op.status) && Number.isFinite(deadline) && deadline < Date.now()) {
+      op.status = 'failed';
+      op.error = { code:'INTERRUPTED', message:'操作已超过执行期限，请重试。已有原稿已保留。' };
+      if (!this.readOnly) this.updateOp(op);
+    }
+    return op;
   }
 
-  byKey(project, key) {
-    const row = this.db.prepare('SELECT data FROM operations WHERE project=? AND key=?').get(project, key);
+  byKey(project, key, owner) {
+    const row = owner===undefined?this.db.prepare('SELECT data FROM operations WHERE project=? AND key=?').get(project,key):this.db.prepare('SELECT data FROM operations WHERE project=? AND key=? AND owner=?').get(project,key,owner);
     return row ? JSON.parse(row.data) : null;
   }
 
   close() { this.db.close(); }
 
   transfer(project, from, to) {
-    const p = this.get(project, from);
-    if (this.list(to).length >= 30) throw new AppError('PROJECT_LIMIT', '账号草稿已达上限，当前匿名草稿未迁移。', 429);
-    const ops = this.db.prepare('SELECT data FROM operations WHERE project=?').all(project).map(x => JSON.parse(x.data));
-    if (ops.some(x => ['queued', 'running'].includes(x.status))) throw new AppError('BUSY', '当前草稿还有运行任务，请完成后再关联账号。', 409);
     this.db.exec('BEGIN IMMEDIATE');
     try {
+      const p = this.get(project, from);
+      if (this.list(to).length >= 30) throw new AppError('PROJECT_LIMIT', '账号草稿已达上限，当前匿名草稿未迁移。', 429);
+      const ops = this.db.prepare('SELECT data FROM operations WHERE project=?').all(project).map(x => this.getOp(JSON.parse(x.data).id,from));
+      if (ops.some(x => ['queued', 'running'].includes(x.status))) throw new AppError('BUSY', '当前草稿还有运行任务，请完成后再关联账号。', 409);
       p.owner = to;
+      p.version = (p.version ?? 0) + 1;
       this.db.prepare('UPDATE projects SET owner=?,data=? WHERE id=? AND owner=?').run(to, JSON.stringify(p), project, from);
       for (const op of ops) {
         op.owner = to;

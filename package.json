@@ -3,13 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=24.0.0" },
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "scripts": {
     "start": "node --env-file-if-exists=.env src/server.mjs",
     "diagnose": "node --env-file-if-exists=.env src/diagnose.mjs",
     "db:doctor": "node --env-file-if-exists=.env src/db-doctor.mjs",
     "quota": "node --env-file-if-exists=.env src/diagnose.mjs --quota",
     "test": "node --test test/*.test.mjs",
-    "check": "node --check src/server.mjs && node --check public/app.js"
+    "check": "node scripts/check.mjs"
+  },
+  "dependencies": {
+    "@vercel/functions": "^3.9.7"
+  },
+  "devDependencies": {
+    "redis": "^6.2.1"
   }
 }

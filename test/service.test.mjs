@@ -11,87 +11,88 @@ import { join } from 'node:path';
 
 const text='我正在考虑如何调整团队安排。远程办公一定能提高所有人的工作效率。但具体任务类型仍值得仔细讨论。';
 const fixtureSource=kind=>({id:kind,provider:kind,title:'测试来源（仅测试夹具）',url:`https://example.org/${kind}`,text:'测试摘要',relation:'unreviewed'});
-function fixture(t,options={}){
+async function fixture(t,options={}){
   const store=new Store(':memory:');const calls=[];
   const providers={status:{model:false,zhihu:true},search:async kind=>{calls.push(kind);return [fixtureSource(kind)];},...options};
   const service=new Service(store,providers);t.after(()=>store.close());
-  return {store,service,calls,p:service.create('owner',text)};
+  return {store,service,calls,p:await service.create('owner',text)};
 }
 async function done(store,op){
+  op=await op;
   for(let i=0;i<200;i++){const current=store.getOp(op.id,op.owner);if(!['queued','running'].includes(current.status))return current;await new Promise(r=>setTimeout(r,3));}
   throw new Error('operation timeout');
 }
-async function check(f){await done(f.store,f.service.start('owner',f.p.id,{type:'quick_check',key:'check-key-01',revision:1}));return f.store.get(f.p.id,'owner').findings[0];}
+async function check(f){await done(f.store,await f.service.start('owner',f.p.id,{type:'quick_check',key:'check-key-01',revision:1}));return f.store.get(f.p.id,'owner').findings[0];}
 test('initial check makes zero search calls, returns a real anchor',async t=>{
-  const f=fixture(t);await check(f);assert.equal(f.calls.length,0);assert.equal(f.store.get(f.p.id,'owner').findings.length,1);
+  const f=await fixture(t);await check(f);assert.equal(f.calls.length,0);assert.equal(f.store.get(f.p.id,'owner').findings.length,1);
 });
 test('verification makes at most one call per source and reopening uses cache',async t=>{
-  const f=fixture(t);const item=await check(f);
+  const f=await fixture(t);const item=await check(f);
   const a={type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id};
-  const op=f.service.start('owner',f.p.id,a);assert.equal(f.service.start('owner',f.p.id,a).id,op.id);
+  const op=await f.service.start('owner',f.p.id,a);assert.equal((await f.service.start('owner',f.p.id,a)).id,op.id);
   assert.equal((await done(f.store,op)).status,'succeeded');assert.equal(f.calls.length,2);
-  await done(f.store,f.service.start('owner',f.p.id,{...a,key:'verify-key-02'}));assert.equal(f.calls.length,2);
+  await done(f.store,await f.service.start('owner',f.p.id,{...a,key:'verify-key-02'}));assert.equal(f.calls.length,2);
 });
 test('idempotency key cannot be reused for a different payload',async t=>{
-  const f=fixture(t);await check(f);
-  assert.throws(()=>f.service.start('owner',f.p.id,{type:'review_remaining',key:'check-key-01',revision:1}),/标识/);
+  const f=await fixture(t);await check(f);
+  await assert.rejects(async()=>await f.service.start('owner',f.p.id,{type:'review_remaining',key:'check-key-01',revision:1}),/标识/);
 });
 test('partial search failure preserves real successful results',async t=>{
-  const f=fixture(t,{search:async kind=>{if(kind==='global_search')throw new AppError('LIMIT','限额');return [fixtureSource(kind)];}});const item=await check(f);
-  const op=await done(f.store,f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id}));
+  const f=await fixture(t,{search:async kind=>{if(kind==='global_search')throw new AppError('LIMIT','限额');return [fixtureSource(kind)];}});const item=await check(f);
+  const op=await done(f.store,await f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id}));
   assert.equal(op.status,'partial');const p=f.store.get(f.p.id,'owner');assert.equal(p.sources.length,1);assert.equal(p.verification[item.id].errors.length,1);
 });
 test('missing credentials produces no invented evidence',async t=>{
-  const f=fixture(t,{status:{model:false,zhihu:false}});const item=await check(f);
-  const op=await done(f.store,f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id}));
+  const f=await fixture(t,{status:{model:false,zhihu:false}});const item=await check(f);
+  const op=await done(f.store,await f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id}));
   assert.equal(op.error.code,'ZHIHU_NOT_CONFIGURED');assert.equal(f.calls.length,0);assert.equal(f.store.get(f.p.id,'owner').sources.length,0);
 });
 test('cancelled search cannot write late results',async t=>{
   let release;const wait=new Promise(r=>release=r);
-  const f=fixture(t,{search:async kind=>{await wait;return [fixtureSource(kind)];}});const item=await check(f);
-  const op=f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id});
-  await new Promise(r=>setTimeout(r,5));f.service.cancel('owner',op.id);release();await new Promise(r=>setTimeout(r,15));
+  const f=await fixture(t,{search:async kind=>{await wait;return [fixtureSource(kind)];}});const item=await check(f);
+  const op=await f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id});
+  await new Promise(r=>setTimeout(r,5));await f.service.cancel('owner',op.id);release();await new Promise(r=>setTimeout(r,15));
   assert.equal(f.store.getOp(op.id,'owner').status,'cancelled');assert.equal(f.store.get(f.p.id,'owner').sources.length,0);
 });
 test('draft edit during search makes results stale',async t=>{
   let release;const wait=new Promise(r=>release=r);
-  const f=fixture(t,{search:async kind=>{await wait;return [fixtureSource(kind)];}});const item=await check(f);
-  const op=f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id});
-  await new Promise(r=>setTimeout(r,5));f.service.edit('owner',f.p.id,text+'我补充了新的背景。',1);release();
+  const f=await fixture(t,{search:async kind=>{await wait;return [fixtureSource(kind)];}});const item=await check(f);
+  const op=await f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id});
+  await new Promise(r=>setTimeout(r,5));await f.service.edit('owner',f.p.id,text+'我补充了新的背景。',1);release();
   assert.equal((await done(f.store,op)).error.code,'STALE_RESULT');assert.equal(f.store.get(f.p.id,'owner').sources.length,0);
 });
 test('deleting active project cannot resurrect data',async t=>{
   let release;const wait=new Promise(r=>release=r);
-  const f=fixture(t,{search:async kind=>{await wait;return [fixtureSource(kind)];}});const item=await check(f);
-  f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id});
-  await new Promise(r=>setTimeout(r,5));f.service.remove('owner',f.p.id);release();await new Promise(r=>setTimeout(r,15));
+  const f=await fixture(t,{search:async kind=>{await wait;return [fixtureSource(kind)];}});const item=await check(f);
+  await f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id});
+  await new Promise(r=>setTimeout(r,5));await f.service.remove('owner',f.p.id);release();await new Promise(r=>setTimeout(r,15));
   assert.throws(()=>f.store.get(f.p.id,'owner'));assert.equal(f.store.list('owner').length,0);
 });
 test('wording-only suggestion applies and safely undoes without search',async t=>{
-  const f=fixture(t);const item=await check(f);
-  assert.throws(()=>f.service.start('owner',f.p.id,{type:'suggest_revision',key:'suggest-key-0',revision:1,findingId:item.id}),/先查看依据/);
-  await done(f.store,f.service.start('owner',f.p.id,{type:'suggest_revision',key:'suggest-key-1',revision:1,findingId:item.id,wordingOnly:true}));
-  const s=f.store.get(f.p.id,'owner').suggestions[0];const applied=f.service.apply('owner',f.p.id,s.id,1);
+  const f=await fixture(t);const item=await check(f);
+  await assert.rejects(async()=>await f.service.start('owner',f.p.id,{type:'suggest_revision',key:'suggest-key-0',revision:1,findingId:item.id}),/先查看依据/);
+  await done(f.store,await f.service.start('owner',f.p.id,{type:'suggest_revision',key:'suggest-key-1',revision:1,findingId:item.id,wordingOnly:true}));
+  const s=f.store.get(f.p.id,'owner').suggestions[0];const applied=await f.service.apply('owner',f.p.id,s.id,1);
   assert.ok(applied.text.includes('是否'));assert.equal(applied.revision,2);assert.equal(f.calls.length,0);
-  assert.equal(f.service.undo('owner',f.p.id,2).text,text);
+  assert.equal((await f.service.undo('owner',f.p.id,2)).text,text);
 });
 test('manual edit after apply prevents destructive undo',async t=>{
-  const f=fixture(t);const item=await check(f);
-  await done(f.store,f.service.start('owner',f.p.id,{type:'suggest_revision',key:'suggest-key-1',revision:1,findingId:item.id,wordingOnly:true}));
-  const p=f.service.apply('owner',f.p.id,f.store.get(f.p.id,'owner').suggestions[0].id,1);
-  f.service.edit('owner',p.id,p.text+'新的编辑。',2);assert.throws(()=>f.service.undo('owner',p.id,3),/后续编辑/);
+  const f=await fixture(t);const item=await check(f);
+  await done(f.store,await f.service.start('owner',f.p.id,{type:'suggest_revision',key:'suggest-key-1',revision:1,findingId:item.id,wordingOnly:true}));
+  const p=await f.service.apply('owner',f.p.id,f.store.get(f.p.id,'owner').suggestions[0].id,1);
+  await f.service.edit('owner',p.id,p.text+'新的编辑。',2);await assert.rejects(async()=>await f.service.undo('owner',p.id,3),/后续编辑/);
 });
 // 乐观并发控制必须在数据库层生效：两个写者各自读到同一 revision 后并发提交，
 // 只能有一个成功。仅靠应用层先读后写的比较，两次都会通过检查而丢失一次更新。
 test('concurrent writers on the same revision cannot both win',async t=>{
   const store=new Store(':memory:');t.after(()=>store.close());
   const service=new Service(store,{status:{model:false,zhihu:false}});
-  const p=service.create('owner',text);
+  const p=await service.create('owner',text);
   const a=store.get(p.id,'owner'), b=store.get(p.id,'owner');   // 两个写者读到相同 revision
   assert.equal(a.revision,b.revision);
-  const first=service.saveGuarded({...a,text:'甲写者的修改内容，长度足够通过校验。'},1,'冲突');
+  const first=await service.saveGuarded({...a,text:'甲写者的修改内容，长度足够通过校验。'},1,'冲突');
   assert.equal(first.revision,2);
-  assert.throws(()=>service.saveGuarded({...b,text:'乙写者的修改内容，长度足够通过校验。'},1,'冲突'),
+  await assert.rejects(async()=>await service.saveGuarded({...b,text:'乙写者的修改内容，长度足够通过校验。'},1,'冲突'),
     e=>e.code==='REVISION_CONFLICT');
   // 最终内容必须是先提交那次，且 revision 只前进一格
   const after=store.get(p.id,'owner');
@@ -109,7 +110,7 @@ test('revision generated column tracks the document',async t=>{
 test('sqlite persists content and interrupts unfinished operation after restart',()=>{
   const dir=mkdtempSync(join(tmpdir(),'cognitive-test-'));const file=join(dir,'test.sqlite');
   try{let store=new Store(file);store.save({id:'p',owner:'a',text:'保留的内容'});store.saveOp({id:'op',project:'p',owner:'a',key:'key',status:'running'});store.close();
-    store=new Store(file);assert.equal(store.get('p','a').text,'保留的内容');assert.equal(store.getOp('op','a').error.code,'INTERRUPTED');store.close();
+    store=new Store(file);store.recoverInterruptedOperations({exclusive:true});assert.equal(store.get('p','a').text,'保留的内容');assert.equal(store.getOp('op','a').error.code,'INTERRUPTED');store.close();
   }finally{rmSync(dir,{recursive:true,force:true});}
 });
 test('HTTP sessions isolate projects and reject cross-origin mutation',async t=>{

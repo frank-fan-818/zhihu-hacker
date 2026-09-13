@@ -45,7 +45,7 @@ Production 与 Preview 两个环境都要勾选。`<域名>` 换成你的实际�
 | `SESSION_STORE_URL` | Upstash Redis 的 REST URL（下一步拿到） |
 | `SESSION_STORE_TOKEN` | Upstash Redis 的 REST Token（下一步拿到） |
 
-**不要**填 `HOST`、`PORT`、`SQLITE_FILE`：前者平台接管，数据库在 Vercel 上会自动走 `/tmp/app.sqlite`。
+**不要**填 `HOST`、`PORT`、`SQLITE_FILE`：前者平台接管，数据库在 Vercel 上强制使用共享 Redis，缺少配置将拒绝启动。
 
 ## 第四步：开 Upstash Redis
 
@@ -75,6 +75,6 @@ https://<域名>/auth/zhihu/callback
 
 ## 已知限制（务必知情）
 
-- **草稿不持久**：SQLite 在 `/tmp`，随实例重置。演示时建议一次跑完，不要中途长时间挂起。
+- **持久化**：草稿、任务和登录状态在共享 Redis；上线前确认禁用 eviction 并配置备份。旧 /tmp 数据不会自动迁移，发布前应导出需要保留的旧稿。
 - **限流是每实例的**：多实例下限流额度会放宽，不替代正式网关限流。
 - 域名一旦登记回调就不能随便换，换域名要同时改 `APP_ORIGIN`、`ZHIHU_OAUTH_REDIRECT_URI` 和知乎登记值三处。

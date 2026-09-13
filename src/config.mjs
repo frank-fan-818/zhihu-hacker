@@ -12,5 +12,6 @@ export function diagnose(env=process.env){
   if(oauth){try{const u=new URL(env.ZHIHU_OAUTH_REDIRECT_URI),origin=new URL(env.APP_ORIGIN);if(u.protocol!=='https:'||u.origin!==origin.origin||origin.href!==origin.origin+'/'||u.pathname!=='/auth/zhihu/callback'||u.search||u.hash||u.username||u.password)throw Error();}catch{oauth=false;issues.push('OAuth 需要同源 HTTPS，APP_ORIGIN 仅含来源，回调路径固定 /auth/zhihu/callback，不带查询参数。');}}
   const store=storeStatus(env);
   if(store.issue)issues.push(store.issue);
+  if(env.VERCEL&&store.kind!=='redis')issues.push('Vercel 缺少共享持久数据库，应用将拒绝启动，不降级到临时磁盘。');
   return {zhihu:Boolean(env.ZHIHU_ACCESS_SECRET),model,oauth,store,issues,verified:false};
 }

@@ -4,6 +4,18 @@ import { Store } from './store.mjs';
 import { diagnose } from './config.mjs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createStore } from './kv.mjs';
+
+if(process.env.VERCEL||process.env.PROJECT_STORE==='redis'){
+  try{
+    const kv=createStore();
+    if(kv.kind!=='redis')throw new Error('共享数据库未配置。');
+    const pong=await kv.eval("return redis.call('PING')");
+    const operations=await kv.eval("return redis.call('HLEN',KEYS[1])",['data:operations']);
+    console.log(JSON.stringify({storage:'redis',reachable:pong==='PONG',operations,readOnly:true}));
+  }catch(e){console.error(`共享数据库诊断失败：${e.code||'UNAVAILABLE'}`);process.exitCode=1;}
+  process.exit(process.exitCode||0);
+}
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const ephemeralRoot = process.env.SQLITE_DIR || (process.env.VERCEL ? '/tmp' : '');
@@ -15,7 +27,7 @@ console.log(`环境：${process.env.VERCEL ? 'Vercel（临时磁盘，重启即�
 
 let store;
 try {
-  store = new Store(file);
+  store = new Store(file, { readOnly: true });
 } catch (e) {
   console.error(`\n打开失败：${e.code || ''} ${e.message}`);
   console.error('迁移失败时服务会拒绝启动，这是有意的——避免带着半套 schema 运行。');

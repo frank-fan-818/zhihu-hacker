@@ -6,7 +6,7 @@
 
 ## 启动
 
-需要 Node.js 24（本次验证为 24.13.0）。使用原生 HTTP、SQLite 和浏览器 JavaScript，无第三方依赖安装步骤。
+需要 Node.js 24（本次验证为 24.13.0）。使用原生 HTTP 和浏览器 JavaScript；本地 SQLite、Vercel 共享 Redis。首次启动先执行 `npm.cmd ci`。
 
 ```powershell
 Set-Location 'D:\Programming Projects\知乎黑客松\cognitive-debugger'
@@ -38,7 +38,7 @@ npm.cmd start
 | `HOST` | 默认 127.0.0.1；当前版本以本地使用为目标 |
 | `APP_ORIGIN` | 可选，服务的精确来源地址；自定义域名需匹配，当前版本没有完成公网部署验收 |
 | `SESSION_STORE_URL` / `SESSION_STORE_TOKEN` | 共享键值存储（Upstash Redis REST）。**Serverless 上必填**：不配置时登录状态只在单实例内有效，回调落到别的实例会报 `OAUTH_STATE`。本地可留空 |
-| `SQLITE_FILE` | 可选，数据库路径。默认 `data/app.sqlite`；Vercel 上默认 `/tmp/app.sqlite` |
+| `SQLITE_FILE` | 可选，数据库路径。仅本地 SQLite 使用，默认 `data/app.sqlite`；Vercel 强制使用 Redis |
 
 模型需支持 `response_format: json_object`；响应须为非流式 JSON。可用状态仅表示配置存在，不代表联网探活成功。
 
@@ -61,10 +61,10 @@ npm.cmd start
 
 ## 存储、任务与保护
 
-- SQLite 持久化项目和操作记录；匿名 Cookie 隔离项目，有效期七天；清除 Cookie 后匿名项目没有恢复入口。OAuth 登录后的项目按账号隔离，重新登录可恢复；当前登录会话在服务端内存，重启需重新登录。
+- 本地 SQLite / Vercel Redis 保存项目和操作。匿名 Cookie 隔离工作副本；登录可关联当前研究记录。共享 Redis 登录会话跨实例有效。清除匿名 Cookie 后没有恢复入口。
 - 同一幂等键重复提交不重复执行；草稿版本变化会拒绝旧建议与迟到结果；取消或删除后不回写数据。
-- 服务重启将未结束操作标为中断，保留原稿，由用户重新发起；当前没有跨进程队列与任务续跑。
-- 本地限制：每会话最多 30 项目、每小时 30 次操作、全实例最多 6 个运行操作。限流计数在内存中，重启清空，不替代官方配额控制。
+- 任务使用 60 秒截止时间，异常中止后查询会返回中断状态；Vercel 用 waitUntil 绑定执行生命周期。没有自动重试付费调用。诊断不会中断任务。
+- 每账号/匿名身份最多 30 项目；服务端预算默认每 IP 每小时 20 次、全站每小时 200 次查询/操作请求。配置 Redis 后预算跨实例共享，可用 IP_HOURLY_LIMIT / GLOBAL_HOURLY_LIMIT 调整；这些是请求上限，不是货币额度。
 - 模型配置后，检查会将草稿发送到指定模型服务；查证将目标原句发送到知乎接口；资料比较会将检索摘要发送到模型服务。
 - 下载包含当前稿和“研究资料”附录；附录是检索记录，包含历史材料，不代表每项材料均支撑最终稿。当前没有逐句引用导出。
 - 没有自动过期清理、跨设备同步、生产级备份、加密存储或公网运维配置。项目删除不可撤销。
@@ -106,10 +106,14 @@ HTTP 路由：`/api/projects` 创建/列举，`/api/projects/:id` 读取/保存/
 
 命令：`npm run diagnose` 仅检查配置；`npm run quota` 主动查实际知乎额度。OAuth 配置、回调和待用户步骤以 SETUP.md 为准。新增 `/api/auth`、`/api/auth/start`、`/api/auth/logout`、`/auth/zhihu/callback`、`/api/questions` 和 `/api/projects/:id/answers`。
 
-## 2026-09-13 部署适配增量
+## 历史记录：2026-09-13 部署适配增量（已被下述生产修复替代）
 
 为部署到 Vercel，新增 `src/kv.mjs`、`api/index.mjs`、`vercel.json`、`.nvmrc`、`test/vercel.test.mjs` 与 `DEPLOY.md`。登录的待处理 state、登录会话与退出代号从进程内存迁到键值存储：未配置 Redis 时用内存实现（本地行为不变），配置 `SESSION_STORE_URL`/`SESSION_STORE_TOKEN` 后走 Upstash REST 接口（无新增 npm 依赖）。数据库在 Vercel 上降级到 `/tmp/app.sqlite`。
 
 这一步解决的是无服务器平台上的登录可靠性：改造前"发起登录"与"接收回调"落在不同实例时必定失败，现在有测试固定该行为。注意 `/tmp` 是每实例、随冷启动重置的，**草稿在 Vercel 上不持久**。
 
 测试总数 40（domain 8 / service 13 / integration 15 / vercel 4），`node --check` 覆盖改动文件。Upstash 适配器用本地假 REST 端点验证 REST 契约、TTL、计数与命名空间，未使用真实凭据。
+
+## 生产审计修复
+
+见 [修复与验收记录](docs/production-remediation-2026-09-13.md)。Vercel 不再使用 /tmp SQLite，缺少共享 Redis 时拒绝启动。新接口适配使用 @vercel/functions；运行 npm ci 安装锁定依赖。测试中的 audit 文件现在断言正确行为。启用 TEST_REDIS_URL 后还会执行真实 Redis 的跨实例、原子写入和登录回归；CI 必跑该组测试。
