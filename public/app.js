@@ -43,17 +43,39 @@ function render(){
     $('#source-grid').innerHTML=project.sources.filter(s=>v.sourceIds.includes(s.id)).map(s=>`<article class="source-card"><span class="badge">${esc(s.provider)}</span><span class="meta"> ${esc(labels[s.relation])}</span><h3>${esc(s.title)}</h3><div class="meta">${esc(s.author||'作者未提供')} · 采集于 ${esc(new Date(s.retrievedAt).toLocaleString())}</div><p class="excerpt">${esc(s.text)}</p>${s.explanation?`<p>${esc(s.explanation)}</p>`:''}<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">打开原文 ↗</a></article>`).join('')||'<p class="fine">没有可展示的真实来源。可以自行补充材料或保留不确定性。</p>';
   }
 }
-async function projects(){const rows=await api('/projects');$('#projects').innerHTML=rows.length?rows.map(p=>`<div class="project-row"><button data-action="open" data-id="${p.id}">${esc(p.title)}</button><span class="meta">${esc(new Date(p.updated).toLocaleDateString())}</span><button class="delete" data-action="delete" data-id="${p.id}" aria-label="删除 ${esc(p.title)}">删除</button></div>`).join(''):'<p class="fine">这里会保存你的研究过程。第一篇，从上面的草稿开始。</p>';}
+// 方案 B 门禁：未登录时可以完整走一遍（贴稿 → 初筛 → 查证 → 改稿），
+// 但那一次的结果不写入账号库；"保留"与"继续使用"需要登录。
+// 这样登录的价值是真实的（跨设备保存），而不是用来解锁按钮。
+const signedIn=()=>Boolean(account);
+function gateVisible(show){$('#login-gate').hidden=!(show&&oauthConfigured&&!signedIn());}
+async function projects(){
+  if(!signedIn()){
+    $('#projects').innerHTML='<p class="fine">用知乎账号登录后，这里会保存你的研究过程，也可以在其他设备继续。</p>';
+    return;
+  }
+  const rows=await api('/projects');$('#projects').innerHTML=rows.length?rows.map(p=>`<div class="project-row"><button data-action="open" data-id="${p.id}">${esc(p.title)}</button><span class="meta">${esc(new Date(p.updated).toLocaleDateString())}</span><button class="delete" data-action="delete" data-id="${p.id}" aria-label="删除 ${esc(p.title)}">删除</button></div>`).join(''):'<p class="fine">这里会保存你的研究过程。第一篇，从上面的草稿开始。</p>';
+}
 async function saveDraft(){
   if(saving){await saving;if(dirty)return saveDraft();return;}
   if(!dirty && project)return;
+  // 方案 B 门禁：未登录时只允许"创建首个项目"——这一次完整体验需要它，
+  // 否则 run() 拿不到 project.id，体验根本走不通。之后的自动保存一律拦下，
+  // 因为"保留与继续"才是登录的价值所在。
+  if(!signedIn() && project){
+    dirty=false;$('#save-status').textContent='本次体验未保存';gateVisible(true);
+    if(!saveDraft.gated){saveDraft.gated=true;notice('这次检查可以直接用。要在其他设备继续，请先用知乎账号登录保存。');}
+    return;
+  }
+  if(signedIn())saveDraft.gated=false;
   const text=draft.value;const expected=project?.revision;const pid=project?.id;
   $('#save-status').textContent='正在保存…';
   saving=(async()=>{
     const p=pid?await api(`/projects/${pid}`,'PATCH',{text,revision:expected}):await api('/projects','POST',{text,question:questionContext});
-    project=p;dirty=draft.value!==text;localStorage.setItem('cognitive-project',p.id);
-    $('#save-status').textContent=dirty?'有未保存的编辑':'已保存 '+new Date(p.updated).toLocaleTimeString();
-    await projects();
+    project=p;dirty=draft.value!==text;
+    // 未登录时不记录本地草稿指针：跨刷新恢复属于登录后的能力
+    if(signedIn())localStorage.setItem('cognitive-project',p.id);else localStorage.removeItem('cognitive-project');
+    $('#save-status').textContent=signedIn()?(dirty?'有未保存的编辑':'已保存 '+new Date(p.updated).toLocaleTimeString()):'本次体验未保存';
+    if(signedIn())await projects();else gateVisible(true);
   })();
   try{await saving;}catch(e){$('#save-status').textContent='保存失败 · 请保留当前内容';throw e;}finally{saving=null;}
 }
@@ -143,21 +165,35 @@ async function init(){
   status=await api('/status');
   $('#connection-status').textContent=`${status.model?'模型服务已配置':'当前为本地规则初筛'} · ${status.zhihu?'知乎检索已配置':'知乎检索未配置'}`;
   render();await projects();
-  const last=localStorage.getItem('cognitive-project');if(last){try{await load(last);}catch{localStorage.removeItem('cognitive-project');}}
+  // 登录返回后，把跳转前暂存的文字放回输入框；有服务端草稿时以草稿为准。
+  const pending=localStorage.getItem('cognitive-pending');
+  if(pending){localStorage.removeItem('cognitive-pending');if(!project&&!draft.value){draft.value=pending;dirty=true;$('#save-status').textContent='尚未保存';count();}}
+  // 未登录时不自动恢复上次草稿：跨刷新保留正是登录的意义所在。
+  // 那一次完整体验在同一次访问里照常可用。
+  const last=signedIn()?localStorage.getItem('cognitive-project'):null;if(last){try{await load(last);}catch{localStorage.removeItem('cognitive-project');}}
   const op=localStorage.getItem('cognitive-operation');if(op){try{await poll(await api(`/operations/${op}`));}catch{operation=null;localStorage.removeItem('cognitive-operation');render();}}
 }
 init().catch(fail);
 
-async function accountStatus(){const a=await api('/auth');account=a.user;oauthConfigured=a.configured;$('#account-label').textContent=account?account.name:'匿名创作';$('#account-action').textContent=account?'退出登录':'知乎登录';$('#account-action').title=a.configured?'':'待开发者配置 OAuth，匿名体验可继续使用';}
+async function accountStatus(){const a=await api('/auth');account=a.user;oauthConfigured=a.configured;$('#account-label').textContent=account?account.name:'匿名创作';$('#account-action').textContent=account?'退出登录':'知乎登录';$('#account-action').title=a.configured?'':'待开发者配置 OAuth，匿名体验可继续使用';gateVisible(Boolean(project?.lastCheck));}
+// 提示条上的登录按钮与顶栏共用同一段逻辑
+$('#login-gate-action').onclick=()=>$('#account-action').click();
+// 登录跳转前把手头这段文字暂存到本机：未登录时不写服务端，
+// 若不暂存，用户点登录再回来，那一次体验的输入就白费了。
+function stashDraft(){try{if(draft.value)localStorage.setItem('cognitive-pending',draft.value);}catch{/* 隐私模式忽略 */}}
+async function startLogin(){
+  if(dirty)await saveDraft();
+  stashDraft();
+  const link=project&&signedIn()&&confirm('登录后将当前这篇草稿关联到知乎账号？取消则只登录，草稿保留在匿名空间。');
+  const r=await api('/auth/start','POST',{projectId:link?project.id:null});location.assign(r.url);
+}
 $('#account-action').onclick=async()=>{
   if(!account&&!oauthConfigured){notice('知乎登录尚未配置，匿名草稿仍可继续使用。');return;}
   if(operation||extraBusy){notice('请先完成当前操作。');return;}
   extraBusy=true;
   try{
-    if(dirty)await saveDraft();
     if(account){await api('/auth/logout','POST');localStorage.removeItem('cognitive-project');localStorage.removeItem('cognitive-operation');location.assign('/');return;}
-    const link=project&&confirm('登录后将当前这篇草稿关联到知乎账号？取消则只登录，草稿保留在匿名空间。');
-    const r=await api('/auth/start','POST',{projectId:link?project.id:null});location.assign(r.url);
+    await startLogin();
   }catch(e){fail(e);}finally{extraBusy=false;}
 };
 $('#find-questions').onclick=async()=>{

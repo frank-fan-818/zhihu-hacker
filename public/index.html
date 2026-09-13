@@ -7,6 +7,10 @@
 <section class="intro"><div><p class="eyebrow">把观点交给证据，把表达留给自己</p><h1>发出去之前，<br>再想清楚<span class="blue">一点。</span></h1></div><div class="intro-aside"><span class="annotation">一处修改，也值得。</span><p>从你的一句话开始。<br>看看依据，补上条件，<br>让表达更接近你真正想说的。</p></div></section>
 <details class="question-entry"><summary>还没写？从一个真实问题开始 ↗</summary><p class="fine">输入你想讨论的主题，主动查询知乎问题。不会读取你的账号画像。</p><label for="topic">讨论主题</label><div class="actions"><input id="topic" maxlength="100" placeholder="例如：远程办公、大学学习"><button id="find-questions" class="quiet">找相关问题</button></div><div id="question-results" aria-live="polite"></div></details>
 <div id="question-context" class="fine" hidden></div><div id="answer-results" aria-live="polite"></div>
+<div id="login-gate" class="login-gate" role="status" hidden>
+  <p><b>这次检查可以直接用。</b>要保留这篇草稿、在其他设备继续，需要先用知乎账号登录。</p>
+  <button id="login-gate-action" class="primary">用知乎账号登录并保存 <span>→</span></button>
+</div>
 <section class="workbench" aria-label="草稿检查工作台">
 <div class="paper"><div class="panel-heading"><span class="index">01</span><h2>你的原稿</h2><span id="save-status" class="meta" aria-live="polite">尚未保存</span></div>
 <label class="sr-only" for="draft">粘贴准备发表的草稿</label><textarea id="draft" maxlength="20000" placeholder="粘贴你准备发表的回答。不必先整理好，我们从一处值得注意的地方开始。" spellcheck="false"></textarea>
