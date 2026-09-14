@@ -12,7 +12,10 @@
     "db:doctor": "node --env-file-if-exists=.env src/db-doctor.mjs",
     "quota": "node --env-file-if-exists=.env src/diagnose.mjs --quota",
     "test": "node --test test/*.test.mjs",
-    "check": "node scripts/check.mjs"
+    "test:serial": "node --test --test-isolation=none test/*.test.mjs",
+    "check": "node scripts/check.mjs",
+    "check:ui": "node scripts/check-ui.mjs",
+    "verify:prompt": "node --env-file-if-exists=.env scripts/verify-check-prompt.mjs"
   },
   "dependencies": {
     "@vercel/functions": "^3.9.7"

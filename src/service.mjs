@@ -1,7 +1,10 @@
 import { AppError, id, hash, bounded, checkDraft, validateFindings, validateSuggestion, applySuggestion } from './domain.mjs';
+import { CHECK_TASK, VERIFY_TASK } from './review-prompt.mjs';
 
 const terminal = status => ['succeeded','partial','failed','cancelled'].includes(status);
-const checkTask = '检查草稿。返回 {"items":[{"quote":"逐字原句","start":UTF16起点整数,"kind":"问题类型","reason":"具体原因"}]}。不要凑问题；否定、引用、讽刺不能仅按绝对化词误判。items 数不超过 limit。';
+// 检查与复核的提示词由 src/review-prompt.mjs 提供（判定标准、严重度档位、中肯门槛都在那里，
+// 并有 test/review-prompt.test.mjs 固定）。这里只保留一个别名，供脚本与测试引用同一份文本。
+export const checkTask = CHECK_TASK;
 export class Service {
   constructor(store,providers,{waitUntil=()=>{}}={}){this.store=store;this.providers=providers;this.controllers=new Map();this.usage=new Map();this.waitUntil=waitUntil;}
   async create(owner,text,question=null) {
@@ -100,15 +103,29 @@ export class Service {
     try {
       let apply;let partial=false;
       if(['quick_check','review_remaining'].includes(op.type)) {
-        await stage(this.providers.status.model?'正在检查论证':'正在进行本地规则初筛');
         const limit=op.type==='quick_check'?1:6;
-        const findings=this.providers.status.model
-          ? validateFindings(await this.providers.model(checkTask,{text:snapshot.text,limit},signal),snapshot.text,limit)
-          : checkDraft(snapshot.text,limit);
+        let engine='local_rules',note=null,findings;
+        if(this.providers.status.model){
+          await stage('正在检查论证');
+          findings=null;
+          try{
+            findings=validateFindings(await this.providers.model(checkTask,{text:snapshot.text,limit},signal),snapshot.text,limit);
+            engine='model';
+          }catch(e){
+            if(signal.aborted)throw e;
+            // 模型配了却用不上（欠费、密钥失效、网关故障）时不再静默退回本地规则：
+            // 让用户看到这次到底是谁看的稿，以及为什么没看成。
+            note=`模型未能完成这次检查（${e.message}），本次结果来自本地规则初筛，只覆盖部分结构与概念错配。`;
+          }
+        } else {
+          await stage('正在进行本地规则初筛');
+          note=null;
+        }
+        if(!findings)findings=checkDraft(snapshot.text,limit);
         findings.forEach(f=>f.baseRevision=snapshot.revision);
         apply=p=>{
           for(const f of findings){const existing=p.findings.find(x=>x.baseRevision===p.revision && x.start===f.start && x.quote===f.quote);if(existing)Object.assign(f,{id:existing.id,status:existing.status});}
-          p.findings=findings;p.lastCheck={engine:this.providers.status.model?'model':'local_rules',at:new Date().toISOString(),revision:p.revision};
+          p.findings=findings;p.lastCheck={engine,at:new Date().toISOString(),revision:p.revision,...(note?{note}:{})};
         };
       } else if(op.type==='verify_claim') {
         const previous=snapshot.verification[args.finding.id];
@@ -126,19 +143,31 @@ export class Service {
           const sources=results.flatMap(r=>r.status==='fulfilled'?r.value:[]);
           const errors=results.filter(r=>r.status==='rejected').map(r=>r.reason instanceof AppError?r.reason.message:'搜索连接中断或超时。');
           const emptyReasons=results.filter(r=>r.status==='fulfilled'&&r.value.emptyReason).map(r=>r.value.emptyReason);
-          partial=errors.length>0;
           const unique=[...new Map(sources.map(s=>[s.url,s])).values()];
           let summary='以下为实际检索摘要，尚未做语义支持核对。请打开来源阅读；检索命中不代表支持原句。';
+          let semantic=true;
           if(unique.length && this.providers.status.model){
             await stage('正在比较材料与原句');
             try{
-              const analysis=await this.providers.model('返回 {"summary":"具体局限与关系解释","relations":[{"sourceId":"输入中的id","type":"supports|challenges|context|unclear","explanation":"基于摘要的解释"}]}。不强行制造正反双方。', {claim:args.finding.quote,sources:unique.map(s=>({id:s.id,text:s.text}))},signal);
+              const analysis=await this.providers.model(VERIFY_TASK, {claim:args.finding.quote,sources:unique.map(s=>({id:s.id,text:s.text}))},signal);
               bounded(analysis.summary,1,1500);
               if(!Array.isArray(analysis.relations))throw new Error('schema');
               for(const r of analysis.relations){const s=unique.find(s=>s.id===r.sourceId);if(!s||!['supports','challenges','context','unclear'].includes(r.type))throw new Error('schema');s.relation=r.type;s.explanation=bounded(r.explanation,1,700);}
               summary=analysis.summary;
-            }catch(e){if(signal.aborted)throw e;partial=true;unique.forEach(s=>{s.relation='unreviewed';delete s.explanation;});errors.push('语义分析未完成；真实检索摘要已保留。');}
+            }catch(e){
+              if(signal.aborted)throw e;
+              unique.forEach(s=>{s.relation='unreviewed';delete s.explanation;});
+              // 把模型失败的原文写进错误里：线上出现过密钥失效导致每次“查依据”都只拿到摘要，
+              // 而面板只显示一句笼统的“未完成”，没人能看出根因是模型不可用。
+              errors.push(`语义分析未完成（${e instanceof AppError?e.message:'模型响应无效'}）；真实检索摘要已保留。`);
+            }
+          } else if(unique.length){
+            // 没有配置模型不是失败，只是这一步做不了：检索本身是成功的，
+            // 所以不该标记为部分失败，否则同一句重复点会重新消耗检索额度、也不写缓存。
+            semantic=false;
           }
+          partial=errors.length>0;
+          if(!semantic) summary+='（当前未配置模型，只做了检索，没有做语义支持核对。）';
           apply=p=>{
             p.sources.push(...unique);
             p.verification[args.finding.id]={baseRevision:p.revision,time:Date.now(),sourceIds:unique.map(s=>s.id),summary:unique.length?summary:'本次检索未获得可展示的相关资料，不能据此判断原句成立。'+(emptyReasons.length?' 平台说明：'+emptyReasons.join('；'):''),errors};

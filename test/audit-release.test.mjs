@@ -158,3 +158,72 @@ test('deleting current project preserves text entered during the delete request'
   assert.equal(app.element('#draft').value,'new input during delete request');
   assert.equal(app.run('dirty'),true);
 });
+
+// 引导式面板的回归约束：首处检查只给一个下一步，定位真的发生，
+// 其余动作不铺在首屏，也不能在用户做决定之前出现。
+const draftText='远程办公这件事，我自己试了半年。\n远程办公一定能提高所有人的工作效率。\n通勤时间变少是一个好处。';
+const finding={id:'f1',quote:'远程办公一定能提高所有人的工作效率。',reason:'结论范围大于材料范围。',start:16,status:'open',baseRevision:1};
+const decisionPanel=findings=>[
+  `project={id:'p1',revision:1,text:${JSON.stringify(draftText)},updated:0,findings:${JSON.stringify(findings)},`,
+  `suggestions:[],history:[],sources:[],verification:{},`,
+  `lastCheck:{engine:'model',revision:1,at:new Date().toISOString()}};`,
+  `choice=null;decided=false;draft.value=project.text;render();`,
+].join('');
+
+test('first check shows one next step, locates the sentence, and hides later choices',async()=>{
+  const app=ui();
+  app.run(decisionPanel([finding]));
+  const panel=app.element('#review-content').innerHTML;
+  assert.match(panel,/查这一句的依据/);
+  assert.equal(/data-action="suggest"|data-action="wording"/.test(panel),false,'未做决定前不应出现改法按钮');
+  const decisive=panel.split('<details')[0];
+  assert.equal(/data-action="copy"|data-action="download"|data-action="compose"/.test(decisive),false,'次级动作不能出现在主决策区');
+  assert.match(panel,/<details class="more"><summary>其他选择/);
+  assert.match(app.element('#draft-highlight').innerHTML,/<mark>远程办公一定能提高所有人的工作效率。<\/mark>/);
+  assert.equal(app.element('#draft-highlight').innerHTML.startsWith('远程办公这件事'),true,'高亮层保留原稿文字以对齐行高');
+});
+
+test('choosing a rewrite shows the before/after difference before anything is generated',async()=>{
+  const app=ui();
+  app.run(decisionPanel([finding]));
+  app.run('choice="rewrite";render();');
+  const panel=app.element('#review-content').innerHTML;
+  assert.match(panel,/class="diffbox"/);
+  assert.match(panel,/<ins class="ins">/);
+  assert.match(panel,/<del class="del">/);
+  assert.match(panel,/未核对事实/);
+  assert.equal(/data-action="apply"/.test(panel),false,'没有候选句时不能出现「采用」');
+});
+
+test('an unverified rewrite offers the evidence route instead of failing later',async()=>{
+  const app=ui();
+  app.run(decisionPanel([finding]));
+  app.run('choice="rewrite";render();');
+  const panel=app.element('#review-content').innerHTML;
+  assert.match(panel,/data-action="suggest"/);
+  assert.match(panel,/data-action="wording"/);
+  assert.match(panel,/先有依据/);
+});
+
+test('a ready suggestion is shown as a comparison with an explicit adopt button',async()=>{
+  const app=ui();
+  app.run(decisionPanel([finding]));
+  app.run(`project.suggestions=[{id:'s1',findingId:'f1',quote:project.findings[0].quote,text:'远程办公是否能提高效率，可能取决于任务类型。',reason:'收窄范围。',wordingOnly:false,baseRevision:1,applied:false}];render();`);
+  const panel=app.element('#review-content').innerHTML;
+  assert.match(panel,/data-action="apply"/);
+  assert.match(panel,/候选句/);
+  assert.match(panel,/class="diffbox"/);
+});
+
+test('an adopted finding reports the finished sentence and drops the dead locate link',async()=>{
+  const app=ui();
+  app.run(decisionPanel([{...finding,status:'addressed'}]));
+  const stillThere=app.element('#review-content').innerHTML;
+  assert.match(stillThere,/这句话改好了/);
+  assert.match(stillThere,/data-action="locate"/,'原句仍在稿中时，定位仍然可用');
+  // 采用之后原句已被替换：不能再把人送到一个不存在的位置。
+  app.run(`draft.value=${JSON.stringify(draftText.replace(finding.quote,'远程办公是否能提高效率，可能取决于任务类型。').replace(/\n+/g,'\n'))};choice=null;decided=true;render();`);
+  const gone=app.element('#review-content').innerHTML;
+  assert.equal(/data-action="locate"/.test(gone),false,'原句已不在稿中，不应提供定位');
+  assert.match(gone,/这句话改好了/);
+});

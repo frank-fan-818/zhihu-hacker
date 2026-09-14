@@ -29,6 +29,15 @@ undici 优先取本仓库依赖，取不到就复用 Vercel CLI 自带的副本�
 | `inspect-db.mjs` | 只读检视数据库：表结构、索引、行数、owner 分组、完整性 | `node scripts/inspect-db.mjs [库文件]` |
 | `verify-doc-links.mjs` | 校验 `docs/` 里的相对路径引用能否解析 | `node scripts/verify-doc-links.mjs` |
 | `scan-docs-secrets.mjs` | 对照本机 `.env` 扫描文档是否含真实密钥与隐私路径 | `node scripts/scan-docs-secrets.mjs` |
+| `panel-preview.mjs` | 把 `public/app.js` 放进最小 DOM 夹具里渲染，打印审稿面板各状态的纯文本与差异标记 | `node scripts/panel-preview.mjs` |
+| `verify-check-prompt.mjs` | 用真实模型跑 `test/fixtures/prompt-samples.json`，量判定准不准（命中/误报/漏报）与意见中不中肯（有无空话、有无方向） | `npm run verify:prompt`（需已配置模型凭据） |
+| `reliability-battery.mjs` | **可靠性电池**：用真实知乎数据压测取数、判定与证据管道；`--offline` 复用已抓语料免费回归 | `node --env-file-if-exists=.env scripts/reliability-battery.mjs [--topics 8 --answers 2 --verify 10] [--offline]` |
+| `reliability-report.mjs` | 把电池结果整理成 `data/reliability/report.md`（不改数据，不联网） | `node scripts/reliability-report.mjs` |
+
+`panel-preview.mjs` 不联网、不写数据、不启动服务：它只回答“用户此刻看到的字是什么”。
+改审稿面板的文案、步骤或分支后跑一次，比截图快，也不依赖浏览器。
+`test/audit-release.test.mjs` 用同一套夹具固定了面板的交互契约（首屏只给一个下一步、
+定位必须真的高亮、候选句必须带差异、已改过的句子不再提供定位）。
 
 数据库诊断另有 `npm run db:doctor`（更完整，含迁移状态与修复提示）。
 

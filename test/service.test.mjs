@@ -42,6 +42,43 @@ test('partial search failure preserves real successful results',async t=>{
   const op=await done(f.store,await f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id}));
   assert.equal(op.status,'partial');const p=f.store.get(f.p.id,'owner');assert.equal(p.sources.length,1);assert.equal(p.verification[item.id].errors.length,1);
 });
+// 线上真实故障：模型密钥失效时，每次“查依据”都只拿到摘要，而错误提示若只写“未完成”，
+// 用户与开发者都看不出根因。这里固定“必须带上模型返回的原因”。
+test('model failure during verification names the real reason',async t=>{
+  const f=await fixture(t,{status:{model:true,zhihu:true},model:async()=>{throw new AppError('MODEL_UNAVAILABLE','模型服务请求失败（HTTP 401）。',502);}});
+  const item=await check(f);
+  const op=await done(f.store,await f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id}));
+  assert.equal(op.status,'partial');
+  const p=f.store.get(f.p.id,'owner');
+  const message=p.verification[item.id].errors.join(' ');
+  assert.match(message,/HTTP 401/);
+  assert.equal(p.sources.every(s=>s.relation==='unreviewed'),true);
+});
+// 只做检索、没配模型不是失败：否则同一句重复点会重新消耗检索额度，也不写缓存。
+test('retrieval without a model is not treated as a failure',async t=>{
+  const f=await fixture(t);
+  const item=await check(f);
+  const op=await done(f.store,await f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id}));
+  assert.equal(op.status,'succeeded');
+  const first=f.store.get(f.p.id,'owner');
+  assert.deepEqual(first.verification[item.id].errors,[]);
+  assert.match(first.verification[item.id].summary,/未配置模型/);
+  const again=await done(f.store,await f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-02',revision:1,findingId:item.id}));
+  assert.equal(again.cached,true);
+  assert.equal(f.calls.length,2);
+});
+// 反过来：以失败结束的结果不写缓存，否则一次瞬时故障会锁住 30 分钟。
+// 代价是重复点击会重新检索——这是明确的取舍，不能让测试以为“失败也该缓存”。
+test('partial results are never served from a 30-minute cache',async t=>{
+  const f=await fixture(t,{status:{model:true,zhihu:true},model:async()=>{throw new AppError('MODEL_UNAVAILABLE','模型服务请求失败（HTTP 401）。',502);}});
+  const item=await check(f);
+  const first=await done(f.store,await f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id}));
+  assert.equal(first.status,'partial');
+  const second=await done(f.store,await f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-02',revision:1,findingId:item.id}));
+  assert.equal(second.cached,undefined);
+  assert.equal(second.status,'partial');
+  assert.equal(f.calls.length,4);
+});
 test('missing credentials produces no invented evidence',async t=>{
   const f=await fixture(t,{status:{model:false,zhihu:false}});const item=await check(f);
   const op=await done(f.store,await f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id}));
@@ -67,6 +104,29 @@ test('deleting active project cannot resurrect data',async t=>{
   await f.service.start('owner',f.p.id,{type:'verify_claim',key:'verify-key-01',revision:1,findingId:item.id});
   await new Promise(r=>setTimeout(r,5));await f.service.remove('owner',f.p.id);release();await new Promise(r=>setTimeout(r,15));
   assert.throws(()=>f.store.get(f.p.id,'owner'));assert.equal(f.store.list('owner').length,0);
+});
+// 模型配了却跑不成（密钥失效、网关故障）时，检查不能整体失败，也不能假装“没有问题”：
+// 退回本地规则，并把这次是谁看的稿、为什么没看成，写进 lastCheck 让面板如实显示。
+test('model failure falls back to local rules and records why',async t=>{
+  const f=await fixture(t,{status:{model:true,zhihu:false},model:async()=>{throw new AppError('MODEL_UNAVAILABLE','模型服务请求失败（HTTP 401）。',502);}});
+  const op=await done(f.store,await f.service.start('owner',f.p.id,{type:'quick_check',key:'degraded-key-1',revision:1}));
+  assert.equal(op.status,'succeeded');
+  const after=f.store.get(f.p.id,'owner');
+  assert.equal(after.lastCheck.engine,'local_rules');
+  assert.match(after.lastCheck.note,/HTTP 401/);
+  assert.equal(after.findings.length,1);
+  assert.equal(after.findings[0].engine,'local_rules');
+});
+// 模型成功时（这里用夹具模拟）应保留 model 引擎，且不留下任何降级说明。
+test('model success keeps the model engine and writes no note',async t=>{
+  const f=await fixture(t,{status:{model:true,zhihu:false},model:async()=>({items:[{quote:'远程办公一定能提高所有人的工作效率。',start:text.indexOf('远程办公一定'),kind:'以偏概全',reason:'结论写成“所有人”，但文中依据只到个人半年的体验，读者会追问样本覆盖了哪些任务类型。',severity:'中等',impact:'影响可信度',direction:'补充条件'}]})});
+  await done(f.store,await f.service.start('owner',f.p.id,{type:'quick_check',key:'model-key-1',revision:1}));
+  const after=f.store.get(f.p.id,'owner');
+  assert.equal(after.lastCheck.engine,'model');
+  assert.equal(after.lastCheck.note,undefined);
+  assert.equal(after.findings[0].engine,'model');
+  assert.equal(after.findings[0].severity,'中等');
+  assert.equal(after.findings[0].direction,'补充条件');
 });
 test('wording-only suggestion applies and safely undoes without search',async t=>{
   const f=await fixture(t);const item=await check(f);

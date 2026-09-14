@@ -5,7 +5,7 @@
 <header><a class="brand" href="/" aria-label="认知调试器首页"><span class="brand-mark">知<span>·</span></span><span>认知调试器<small>THE SECOND THOUGHT</small></span></a><div class="header-right"><span id="account-label" class="meta">匿名创作</span><button id="account-action" class="quiet">知乎登录</button><button id="new-project" class="quiet">新建草稿 <span>↗</span></button></div></header>
 <main>
 <section class="intro"><div><p class="eyebrow">把观点交给证据，把表达留给自己</p><h1>发出去之前，<br>再想清楚<span class="blue">一点。</span></h1></div><div class="intro-aside"><span class="annotation">一处修改，也值得。</span><p>从你的一句话开始。<br>看看依据，补上条件，<br>让表达更接近你真正想说的。</p></div></section>
-<details class="question-entry"><summary>还没写？从一个真实问题开始 ↗</summary><p class="fine">输入你想讨论的主题，主动查询知乎问题。不会读取你的账号画像。</p><label for="topic">讨论主题</label><div class="actions"><input id="topic" maxlength="100" placeholder="例如：远程办公、大学学习"><button id="find-questions" class="quiet">找相关问题</button></div><div id="question-results" aria-live="polite"></div></details>
+<details class="question-entry"><summary>还没写？从一个真实问题开始 ↗</summary><p class="fine">输入你想讨论的主题，主动查询知乎问题。不会读取你的账号画像。平台的推荐对措辞敏感：同一个主题换个说法可能就查得到，所以留了一个可选的补充词。</p><label for="topic">讨论主题</label><div class="actions"><input id="topic" maxlength="100" placeholder="例如：远程办公、大学学习"><input id="topic-keyword" maxlength="20" placeholder="补充关键词（可选）"><button id="find-questions" class="quiet">找相关问题</button></div><div id="question-results" aria-live="polite"></div><details class="link-entry"><summary>已经有问题了？粘贴知乎问题链接</summary><p class="fine">把问题页地址粘进来，就用它作为这篇草稿的讨论上下文；标题可以不填。回答摘要不会自动变成证据，也不会改动你的正文。</p><label for="question-link">问题链接</label><div class="actions"><input id="question-link" maxlength="500" placeholder="https://www.zhihu.com/question/1234567890" spellcheck="false"><input id="question-title" maxlength="120" placeholder="问题标题（可选）"><button id="use-question-link" class="quiet">用它起草</button></div><div id="link-result" class="fine" role="status" aria-live="polite"></div></details></details>
 <div id="question-context" class="fine" hidden></div><div id="answer-results" aria-live="polite"></div>
 <div id="login-gate" class="login-gate" role="status" hidden>
   <p><b>这次检查可以直接用。</b>要保留这篇草稿、在其他设备继续，需要先用知乎账号登录。</p>
@@ -13,7 +13,7 @@
 </div>
 <section class="workbench" aria-label="草稿检查工作台">
 <div class="paper"><div class="panel-heading"><span class="index">01</span><h2>你的原稿</h2><span id="save-status" class="meta" aria-live="polite">尚未保存</span></div>
-<label class="sr-only" for="draft">粘贴准备发表的草稿</label><textarea id="draft" maxlength="20000" placeholder="粘贴你准备发表的回答。不必先整理好，我们从一处值得注意的地方开始。" spellcheck="false"></textarea>
+<label class="sr-only" for="draft">粘贴准备发表的草稿</label><div class="draft-well"><div id="draft-highlight" class="draft-highlight" aria-hidden="true"></div><textarea id="draft" maxlength="20000" placeholder="粘贴你准备发表的回答。不必先整理好，我们从一处值得注意的地方开始。" spellcheck="false"></textarea></div>
 <div class="paper-bottom"><span id="count" class="meta">0 / 10,000 字符</span><button id="example" class="text-button">试一段示例草稿 ↗</button></div>
 <div class="paper-actions"><button id="check" class="primary">检查这段话 <span>→</span></button><button id="save" class="quiet">保存草稿</button></div>
 <p class="privacy" id="privacy">草稿工作副本保存在服务端；登录可将研究记录关联到账号。配置模型后，检查内容会发送至所配置的模型服务；只有主动查看依据、查找问题或查看回答时才调用对应知乎接口。</p>

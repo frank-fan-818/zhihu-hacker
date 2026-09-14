@@ -6,7 +6,7 @@ import { randomBytes } from 'node:crypto';
 import { Store } from './store.mjs';
 import { Service } from './service.mjs';
 import { createProviders } from './providers.mjs';
-import { AppError, hash } from './domain.mjs';
+import { AppError, hash, questionLink } from './domain.mjs';
 import { OAuth } from './oauth.mjs';
 import { questionUrl } from './providers.mjs';
 import { createStore } from './kv.mjs';
@@ -16,6 +16,8 @@ import { createBudget } from './budget.mjs';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const publicProject=p=>{const {owner,...safe}=p;return safe;};
 const publicOp=op=>{const {owner,signature,key,...safe}=op;return safe;};
+// 环境变量里的正整数，非法或缺失时退回默认值。用于可调限额，避免 NaN 把限制变成「永远放行」。
+const positiveInt=(value,fallback)=>Number.isSafeInteger(Number(value))&&Number(value)>0?Number(value):fallback;
 // SQLite is a local development store only. Vercel always selects shared Redis.
 const defaultFile=process.env.SQLITE_DIR?join(process.env.SQLITE_DIR,'app.sqlite'):join(root,'data','app.sqlite');
 export function createApp({file,providers=createProviders(),oauth=new OAuth(),store:providedStore,kv=createStore(),waitUntil=()=>{}}={}) {
@@ -23,9 +25,17 @@ export function createApp({file,providers=createProviders(),oauth=new OAuth(),st
   const sharedProjects=Boolean(process.env.VERCEL)||process.env.PROJECT_STORE==='redis';
   const store=providedStore||(file?new Store(file):sharedProjects?new RedisStore(kv):new Store(process.env.SQLITE_FILE||defaultFile));
   const service=new Service(store,providers,{waitUntil});const budget=createBudget(kv,process.env);
-  const questionCalls=new Map();
   const answerBusy=new Set();
-  const consumeQuestionBudget=owner=>{const recent=(questionCalls.get(owner)||[]).filter(t=>Date.now()-t<3600000);if(recent.length>=20)throw new AppError('RATE_LIMIT','本小时问题与回答查询较多，请稍后再试。',429);questionCalls.set(owner,[...recent,Date.now()]);};
+  // 主题搜索/回答分页的额外限额，按身份计算。它和 budget 的 IP 限额是两回事，
+  // 所以用不同的错误码：界面据此提示「稍后再试」还是「改贴问题链接」，而不是笼统一句“稍后再试”。
+  // 实测里这个限制很容易撞到：反复用不同说法找一个冷门主题，十几分钟就能用完。
+  const questionCalls=new Map();
+  const QUESTION_HOURLY_LIMIT=positiveInt(process.env.QUESTION_HOURLY_LIMIT,20);
+  const consumeQuestionBudget=owner=>{
+    const recent=(questionCalls.get(owner)||[]).filter(t=>Date.now()-t<3600000);
+    if(recent.length>=QUESTION_HOURLY_LIMIT)throw new AppError('QUESTION_LIMIT',`本小时的主题搜索与回答查询已达 ${QUESTION_HOURLY_LIMIT} 次上限。可以直接粘贴问题链接继续，或稍后再试。`,429);
+    questionCalls.set(owner,[...recent,Date.now()]);
+  };
   const server=http.createServer(async(req,res)=>{
     res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','no-referrer');
     res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
@@ -90,7 +100,17 @@ export function createApp({file,providers=createProviders(),oauth=new OAuth(),st
       if(url.pathname==='/api/questions'&&req.method==='POST'){
         await budget.consume(owner,ip);
         consumeQuestionBudget(owner);
-        send(200,await providers.questions(body.query,new AbortController().signal));return;
+        const items=await providers.questions(body.query,new AbortController().signal);
+        // 空结果必须说清楚是「平台没召回」还是「我们没查成」：前者照实返回 emptyReason，
+        // 后者在 providers 里已经抛成具体错误。界面不再用一句通用话术盖住两种不同情况。
+        send(200,{items,emptyReason:items.length?null:items.emptyReason??null,query:String(body.query??'').trim().slice(0,100)});return;
+      }
+      // 粘贴链接入口：链接本身就能确定问题，所以标题是可选的补充，不是必填项。
+      if(url.pathname==='/api/questions/link'&&req.method==='POST'){
+        await budget.consume(owner,ip);
+        const link=questionLink(body.link);
+        const title=String(body.title??'').replace(/\s+/g,' ').trim().slice(0,300);
+        send(200,{url:link.url,id:link.id,title:title||link.title||''});return;
       }
       if(path[1]==='status'&&req.method==='GET'){send(200,{...providers.status,storage:store.kind||'sqlite',mode:providers.status.model?'model':'local_rules'});return;}
       if(path[1]==='projects'){
