@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { join, dirname, resolve } from 'node:path';
 import { randomBytes } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import { Store } from './store.mjs';
 import { Service } from './service.mjs';
 import { createProviders } from './providers.mjs';
@@ -12,6 +13,7 @@ import { questionUrl } from './providers.mjs';
 import { createStore } from './kv.mjs';
 import { RedisStore } from './redis-store.mjs';
 import { createBudget } from './budget.mjs';
+import { exportDocument } from './export.mjs';
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const publicProject=p=>{const {owner,...safe}=p;return safe;};
@@ -23,10 +25,13 @@ export function createApp({file,providers=createProviders(),oauth=new OAuth(),st
   const sharedProjects=Boolean(process.env.VERCEL)||process.env.PROJECT_STORE==='redis';
   const store=providedStore||(file?new Store(file):sharedProjects?new RedisStore(kv):new Store(process.env.SQLITE_FILE||defaultFile));
   const service=new Service(store,providers,{waitUntil});const budget=createBudget(kv,process.env);
+  try{store.cleanupOperations?.();}catch{/* cleanup is best effort and must not block startup */}
   const questionCalls=new Map();
   const answerBusy=new Set();
   const consumeQuestionBudget=owner=>{const recent=(questionCalls.get(owner)||[]).filter(t=>Date.now()-t<3600000);if(recent.length>=20)throw new AppError('RATE_LIMIT','本小时问题与回答查询较多，请稍后再试。',429);questionCalls.set(owner,[...recent,Date.now()]);};
   const server=http.createServer(async(req,res)=>{
+    const requestId=randomUUID();
+    res.setHeader('X-Request-Id',requestId);
     res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','no-referrer');
     res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
     res.setHeader('Cache-Control','no-store');
@@ -106,6 +111,11 @@ export function createApp({file,providers=createProviders(),oauth=new OAuth(),st
           if(req.method==='GET'){send(200,publicProject(await store.get(project,owner)));return;}
           if(req.method==='PATCH'){send(200,publicProject(await service.edit(owner,project,body.text,body.revision)));return;}
           if(req.method==='DELETE'){await service.remove(owner,project);send(200,{deleted:true});return;}
+        }else if(path[3]==='export'&&['GET','POST'].includes(req.method)){
+          const format=String(req.method==='POST'?body.format:url.searchParams.get('format')||'markdown').toLowerCase();
+          if(!['markdown','html','json'].includes(format))throw new AppError('INVALID_INPUT','导出格式只支持 markdown、html 或 json。');
+          const document=exportDocument(await store.get(project,owner),format);
+          res.writeHead(200,{'Content-Type':document.contentType,'Content-Disposition':`attachment; filename="cognitive-draft.${document.extension}"`});res.end(document.body);return;
         }else if(req.method==='POST'){
           if(path[3]==='answers'){
             const p=await store.get(project,owner);if(!p.question)throw new AppError('INVALID_INPUT','当前草稿未关联知乎问题。');
@@ -128,11 +138,26 @@ export function createApp({file,providers=createProviders(),oauth=new OAuth(),st
         }
       }
       if(path[1]==='operations'&&path[2]){
+        if(path[3]==='events'&&req.method==='GET'){
+          const opId=path[2];
+          res.writeHead(200,{'Content-Type':'text/event-stream; charset=utf-8','Cache-Control':'no-cache','Connection':'keep-alive','X-Accel-Buffering':'no'});
+          let closed=false;req.on('close',()=>{closed=true;});
+          let previous='';
+          for(let i=0;i<240&&!closed;i++){
+            const current=publicOp(await store.getOp(opId,owner));
+            const payload=JSON.stringify(current);
+            if(payload!==previous){res.write(`event: operation\ndata: ${payload}\n\n`);previous=payload;}
+            if(!['queued','running'].includes(current.status))break;
+            await new Promise(r=>setTimeout(r,500));
+          }
+          if(!closed)res.end();
+          return;
+        }
         if(req.method==='GET'){send(200,publicOp(await store.getOp(path[2],owner)));return;}
         if(path[3]==='cancel'&&req.method==='POST'){send(200,publicOp(await service.cancel(owner,path[2])));return;}
       }
       throw new AppError('NOT_FOUND','接口不存在。',404);
-    }catch(e){if(!res.headersSent)send(e instanceof AppError?e.status:500,{error:{code:e instanceof AppError?e.code:'SERVER_ERROR',message:e instanceof AppError?e.message:'服务暂时无法完成请求，请重试。'}});else res.end();}
+    }catch(e){if(!res.headersSent)send(e instanceof AppError?e.status:500,{error:{code:e instanceof AppError?e.code:'SERVER_ERROR',message:e instanceof AppError?e.message:'服务暂时无法完成请求，请重试。',retryable:e instanceof AppError?e.status>=500||e.status===429:false,requestId}});else res.end();}
   });
   return {server,store,service,oauth};
 }

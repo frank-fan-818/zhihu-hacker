@@ -5,6 +5,7 @@ import { Service } from '../src/service.mjs';
 import { AppError } from '../src/domain.mjs';
 import { createProviders } from '../src/providers.mjs';
 import { createApp } from '../src/server.mjs';
+import { exportDocument } from '../src/export.mjs';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -128,4 +129,46 @@ test('provider keeps secret on server and normalizes snippets using fixture tran
   const p=createProviders({ZHIHU_ACCESS_SECRET:'test-only'},async(url,opts)=>{seen={url,opts};return new Response(JSON.stringify({Code:0,Data:{Items:[{Title:'测试',ContentText:'<em>摘要</em>',Url:'https://example.org/a'},{ContentText:'坏链接',Url:'javascript:alert(1)'}]}}));});
   const result=await p.search('zhihu_search','测试查询',new AbortController().signal);
   assert.equal(seen.url.hostname,'developer.zhihu.com');assert.equal(seen.url.searchParams.get('Count'),'5');assert.equal(seen.opts.headers.Authorization,'Bearer test-only');assert.equal(result.length,1);assert.equal(result[0].text,'摘要');assert.equal(JSON.stringify(result).includes('test-only'),false);
+});
+
+test('provider retries one transient transport failure without exposing credentials',async()=>{
+  let attempts=0;
+  const p=createProviders({ZHIHU_ACCESS_SECRET:'test-only',PROVIDER_RETRIES:'1'},async()=>{
+    attempts++;
+    if(attempts===1)throw new TypeError('temporary network failure');
+    return new Response(JSON.stringify({Code:0,Data:{Items:[]}}));
+  });
+  const result=await p.search('zhihu_search','重试测试',new AbortController().signal);
+  assert.equal(result.length,0);assert.equal(attempts,2);
+});
+
+test('operation cleanup removes only old terminal records',()=>{
+  const store=new Store(':memory:');
+  try{
+    store.save({id:'cleanup-project',owner:'o',text:'一段用于清理测试的草稿内容，长度足够。'});
+    const old=new Date(Date.now()-9*86400000).toISOString();
+    store.saveOp({id:'old-op',project:'cleanup-project',owner:'o',key:'old',status:'succeeded',created:old,finishedAt:old});
+    store.saveOp({id:'new-op',project:'cleanup-project',owner:'o',key:'new',status:'succeeded',created:new Date().toISOString(),finishedAt:new Date().toISOString()});
+    store.saveOp({id:'active-op',project:'cleanup-project',owner:'o',key:'active',status:'running',created:old,deadline:Date.now()+60000});
+    assert.equal(store.cleanupOperations(),1);
+    assert.throws(()=>store.getOp('old-op','o'));
+    assert.equal(store.getOp('new-op','o').status,'succeeded');
+    assert.equal(store.getOp('active-op','o').status,'running');
+  }finally{store.close();}
+});
+
+test('transient provider failure records an attempt and retries the operation',async t=>{
+  let calls=0;
+  const f=await fixture(t,{status:{model:true,zhihu:false},model:async()=>{calls++;if(calls===1)throw new AppError('MODEL_UNAVAILABLE','模型暂时不可用。',502);return {items:[]};}});
+  const op=await done(f.store,await f.service.start('owner',f.p.id,{type:'quick_check',key:'retry-key-01',revision:1}));
+  assert.equal(op.status,'succeeded');assert.equal(op.attempt,1);assert.equal(calls,2);
+});
+
+test('export maps each finding to numbered source references and safe formats',()=>{
+  const project={schemaVersion:1,id:'p',title:'测试稿',text:'原稿内容',original:'原稿内容',revision:1,version:1,
+    findings:[{id:'f',quote:'原稿',reason:'需要依据',status:'open'}],verification:{f:{sourceIds:['s']}},
+    sources:[{id:'s',provider:'知乎',title:'来源',url:'https://example.org/a',text:'摘要',evidenceType:'search_snippet',retrievedAt:'2026-01-01T00:00:00.000Z'}]};
+  const md=exportDocument(project,'markdown');assert.match(md.body,/依据：\[1\]/);assert.match(md.body,/\[1\] 来源/);
+  const json=JSON.parse(exportDocument(project,'json').body);assert.equal(json.sources[0].number,1);assert.equal(json.findings[0].refs[0],1);
+  const html=exportDocument(project,'html');assert.match(html.body,/<!doctype html>/);assert.match(html.body,/https:\/\/example\.org\/a/);
 });

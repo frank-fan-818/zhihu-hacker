@@ -1,6 +1,6 @@
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let project=null, selected=null, operation=null, dirty=false, saving=null, timer, error='', status={};
+let project=null, selected=null, operation=null, dirty=false, saving=null, timer, error='', status={},showHistory=false;
 const draft=$('#draft');
 let questionContext=null,questionChoices=[],account=null,oauthConfigured=false,extraBusy=false;
 
@@ -11,6 +11,14 @@ async function api(path,method='GET',body){
 function notice(message){$('#notice').textContent=message;$('#notice').hidden=false;clearTimeout(notice.timer);notice.timer=setTimeout(()=>$('#notice').hidden=true,6500);}
 function count(){const length=[...draft.value].length;$('#count').textContent=`${length.toLocaleString()} / 10,000 字符`;$('#check').disabled=Boolean(operation)||length<20||length>10000;}
 function button(action,text,primary=false,extra=''){return `<button class="${primary?'primary':'quiet'}" data-action="${action}" ${extra}>${text}</button>`;}
+async function downloadExport(format='markdown',preview=false){
+  const response=await fetch(`/api/projects/${project.id}/export?format=${encodeURIComponent(format)}`);
+  if(!response.ok){let data={};try{data=await response.json();}catch{}throw new Error(data.error?.message||'导出没有完成。');}
+  const blob=await response.blob(),url=URL.createObjectURL(blob);
+  if(preview){const win=window.open(url,'_blank','noopener,noreferrer');if(!win)notice('浏览器阻止了预览窗口，请允许弹出窗口后重试。');}
+  else{const a=document.createElement('a');a.href=url;a.download=`我的修订稿.${format==='markdown'?'md':format}`;a.click();}
+  setTimeout(()=>URL.revokeObjectURL(url),10000);
+}
 function render(){
   count();
   const q=project?.question||questionContext;
@@ -41,7 +49,7 @@ function render(){
         ?(f.start===-1?button('defer','暂时保留'):'')+button('verify','查看依据 ↗',true)+button('wording','仅调整表述')+button('defer','暂时保留')
         :button('verify','查看依据 ↗',true)+button('suggest','帮我改准确')+button('wording','仅调整表述')+button('defer','暂时保留'))
       :'';
-    review.innerHTML=`${errorHtml}${completed?'<span class="badge">已保存你的修改</span><p class="reason">这一次修改，由你决定。可以继续检查全文，也可以带着当前稿结束。</p>':''}${context}${stale?'<p class="error">原稿已更新，以上检查属于旧版本。请重新检查后再查证或修改。</p>':''}<div class="actions">${findingActions}</div><div class="actions">${button('full','继续检查全文')}${hasAnswers?button('compare','对比回答'):''}${button('compose','整理修订稿')}${button('copy','复制当前稿')}${button('download','下载 Markdown')}${completed?button('undo','撤销上次修改'):''}</div>`;
+    review.innerHTML=`${errorHtml}${completed?'<span class="badge">已保存你的修改</span><p class="reason">这一次修改，由你决定。可以继续检查全文，也可以带着当前稿结束。</p>':''}${context}${stale?'<p class="error">原稿已更新，以上检查属于旧版本。请重新检查后再查证或修改。</p>':''}<div class="actions">${findingActions}</div><div class="actions">${button('full','继续检查全文')}${hasAnswers?button('compare','对比回答'):''}${button('compose','整理修订稿')}${button('copy','复制当前稿')}${button('download','下载带引用 Markdown')}${button('preview','预览 HTML')}${project.history.length?button('history',showHistory?'收起版本记录':'查看版本记录'):''}${completed?button('undo','撤销上次修改'):''}</div>`;
     if(latest && latest.baseRevision===project.revision && !latest.applied && (latest.full||latest.findingId===selected)){
       review.insertAdjacentHTML('beforeend',`<div class="suggestion"><label>修改前</label><blockquote>${esc(latest.quote)}</blockquote><label>候选修改 · ${latest.wordingOnly?'仅调整表述，未核对事实':'请核对依据与个人意图'}</label><blockquote class="new-text">${esc(latest.text)}</blockquote><p class="reason">${esc(latest.reason)}</p><div class="actions">${button('apply','采用这处修改',true,`data-id="${latest.id}"`)}${button('edit','自己编辑')}</div></div>`);
     }
@@ -95,9 +103,25 @@ async function load(id){
 }
 async function poll(op){
   operation=op;localStorage.setItem('cognitive-operation',op.id);render();
-  while(['queued','running'].includes(operation.status)){
-    await new Promise(resolve=>setTimeout(resolve,650));
-    try{operation=await api(`/operations/${op.id}`);}catch(e){operation=null;throw new Error('任务状态连接中断。原稿保留，刷新页面可恢复查询。');}render();
+  // SSE reduces status polling while retaining polling as a fallback for older proxies.
+  try {
+    if (window.EventSource) {
+      await new Promise((resolve, reject) => {
+        const events = new EventSource(`/api/operations/${op.id}/events`);
+        const timeout = setTimeout(() => { events.close(); reject(new Error('SSE timeout')); }, 70000);
+        const finish = () => { clearTimeout(timeout); events.close(); resolve(); };
+        events.addEventListener('operation', event => { operation=JSON.parse(event.data); render(); if(!['queued','running'].includes(operation.status)) finish(); });
+        events.onerror = () => { events.close(); reject(new Error('SSE unavailable')); };
+      });
+    } else throw new Error('SSE unavailable');
+  } catch {
+    while(['queued','running'].includes(operation.status)){
+      await new Promise(resolve=>setTimeout(resolve,650));
+      try{operation=await api(`/operations/${op.id}`);}catch(e){operation=null;throw new Error('任务状态连接中断。原稿保留，刷新页面可恢复查询。');}render();
+    }
+    if(showHistory && project.history.length){
+      review.insertAdjacentHTML('beforeend',`<details class="history-panel" open><summary>版本记录（最近 ${project.history.length} 次）</summary>${project.history.slice().reverse().map(h=>`<article class="history-entry"><div class="meta">第 ${h.revision} 版 · ${esc(new Date(h.appliedAt).toLocaleString())}</div><blockquote>${esc(h.text)}</blockquote><p class="fine">${esc(h.reason||'已保存的修改')}</p></article>`).join('')}</details>`);
+    }
   }
   const result=operation;operation=null;localStorage.removeItem('cognitive-operation');
   if(project?.id===op.project){project=await api(`/projects/${op.project}`);}
@@ -191,11 +215,11 @@ document.addEventListener('click',async e=>{
     if(action==='defer'){await saveDraft();project=await api(`/projects/${project.id}/defer`,'POST',{findingId:selected,revision:project.revision});render();}
     if(action==='edit')draft.focus();
     if(action==='copy')await copy();
+    if(action==='history'){showHistory=!showHistory;render();}
     if(action==='download'){
-      const refs=project.sources.map(s=>`- ${s.title} — ${s.url}`).join('\n');
-      const content=`${draft.value}\n\n## 研究资料（检索摘要，非逐句核验声明）\n\n${refs||'尚未检索外部资料。'}\n`;
-      const url=URL.createObjectURL(new Blob([content],{type:'text/markdown;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='我的修订稿.md';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+      await downloadExport('markdown');
     }
+    if(action==='preview')await downloadExport('html',true);
   }catch(e){fail(e);}finally{if(exclusive)extraBusy=false;}
 });
 async function init(){

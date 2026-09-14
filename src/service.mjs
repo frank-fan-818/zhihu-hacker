@@ -6,7 +6,7 @@ export class Service {
   constructor(store,providers,{waitUntil=()=>{}}={}){this.store=store;this.providers=providers;this.controllers=new Map();this.usage=new Map();this.waitUntil=waitUntil;}
   async create(owner,text,question=null) {
     bounded(text,20,10000,'草稿');
-    return this.store.create({id:id(),owner,text,original:text,title:text.trim().slice(0,32),revision:1,
+    return this.store.create({schemaVersion:1,id:id(),owner,text,original:text,title:text.trim().slice(0,32),revision:1,
       ...(question?{question}:{}),findings:[],sources:[],verification:{},suggestions:[],history:[],created:new Date().toISOString()});
   }
   // 乐观并发控制：应用层先读后写存在检查-使用间隙，两个并发请求可能都通过
@@ -54,7 +54,7 @@ export class Service {
   }
   async cancel(owner,opId) {
     const op=await this.store.getOp(opId,owner);
-    if(!terminal(op.status)){op.status='cancelled';await this.store.updateOp(op);this.controllers.get(opId)?.abort();}
+    if(!terminal(op.status)){op.status='cancelled';op.finishedAt=new Date().toISOString();await this.store.updateOp(op);this.controllers.get(opId)?.abort();}
     return this.store.getOp(opId,owner);
   }
   async remove(owner,project) {
@@ -79,7 +79,7 @@ export class Service {
       throw new AppError('STALE_FINDING','这条检查针对旧稿，请重新检查当前原稿。',409);
     if(type==='suggest_revision' && !wordingOnly && !p.verification[findingId]?.sourceIds?.length)
       throw new AppError('EVIDENCE_REQUIRED','先查看依据，或明确选择“仅调整表述”。',409);
-    const op={id:id(),project,owner,key,type,signature,baseRevision:p.revision,status:'queued',stage:'准备中',created:new Date().toISOString(),deadline:Date.now()+60000,calls:[]};
+    const op={id:id(),project,owner,key,type,signature,baseRevision:p.revision,status:'queued',stage:'准备中',created:new Date().toISOString(),deadline:Date.now()+60000,attempt:0,maxAttempts:2,calls:[]};
     const admitted=await this.store.createOp(op);
     if(admitted.id!==op.id)return admitted;
     this.usage.set(owner,[...recent,Date.now()]);
@@ -141,7 +141,7 @@ export class Service {
           }
           apply=p=>{
             p.sources.push(...unique);
-            p.verification[args.finding.id]={baseRevision:p.revision,time:Date.now(),sourceIds:unique.map(s=>s.id),summary:unique.length?summary:'本次检索未获得可展示的相关资料，不能据此判断原句成立。'+(emptyReasons.length?' 平台说明：'+emptyReasons.join('；'):''),errors};
+            p.verification[args.finding.id]={baseRevision:p.revision,time:Date.now(),checkedAt:new Date().toISOString(),evidenceType:'search_snippet',sourceIds:unique.map(s=>s.id),summary:unique.length?summary:'本次检索未获得可展示的相关资料，不能据此判断原句成立。'+(emptyReasons.length?' 平台说明：'+emptyReasons.join('；'):''),errors};
           };
         }
       } else if(op.type==='suggest_revision') {
@@ -183,7 +183,7 @@ export class Service {
         const suggestion={...data,id:id(),baseRevision:snapshot.revision,start:0,end:snapshot.text.length,quote:snapshot.text,full:true};
         apply=p=>p.suggestions.push(suggestion);
       }
-      op.status=partial?'partial':'succeeded';op.stage='已完成';
+      op.status=partial?'partial':'succeeded';op.stage='已完成';op.finishedAt=new Date().toISOString();
       let committed=false;
       for(let attempt=0;attempt<5;attempt++){
         const p=await checkpoint();const expectedVersion=p.version??0;apply(p);
@@ -194,11 +194,21 @@ export class Service {
       try{
         const current=await this.store.getOp(op.id,op.owner);
         if(!terminal(current.status)){
+          const retryable=!signal.aborted && e instanceof AppError && [429,502,503].includes(e.status) && (op.attempt??0)<(op.maxAttempts??0) && Date.now()<op.deadline;
+          if(retryable){
+            op.attempt=(op.attempt??0)+1;op.status='queued';op.stage=`${e.message}，准备第 ${op.attempt} 次重试`;op.nextRetryAt=new Date(Date.now()+250*op.attempt).toISOString();
+            await this.store.updateOp(op);
+            await new Promise(resolve=>setTimeout(resolve,250*op.attempt));
+            return await this.run(op,snapshot,args,signal);
+          }
           op.status=signal.aborted?'cancelled':'failed';
-          op.error={code:e instanceof AppError?e.code:'OPERATION_FAILED',message:e instanceof AppError?e.message:'操作中断或服务响应无效。已有原稿已保留。'};
+          op.finishedAt=new Date().toISOString();
+          op.error={code:e instanceof AppError?e.code:'OPERATION_FAILED',message:e instanceof AppError?e.message:'操作中断或服务响应无效。已有原稿已保留。',attempts:op.attempt??0};
           await this.store.updateOp(op);
         }
       }catch{/* deleted projects must never be resurrected */}
-    }finally{this.controllers.delete(op.id);}
+    }finally{
+      try{if(terminal((await this.store.getOp(op.id,op.owner)).status))this.controllers.delete(op.id);}catch{this.controllers.delete(op.id);}
+    }
   }
 }

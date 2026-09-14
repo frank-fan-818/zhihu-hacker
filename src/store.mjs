@@ -142,6 +142,16 @@ export class Store {
     return Number(result.changes) > 0;
   }
 
+  cleanupOperations({ before = Date.now() - 7 * 86400000, limit = 500 } = {}) {
+    const ids = this.db.prepare("SELECT id FROM operations WHERE status IN ('succeeded','partial','failed','cancelled') AND COALESCE(json_extract(data,'$.finishedAt'), json_extract(data,'$.created')) < ? ORDER BY id LIMIT ?")
+      .all(new Date(before).toISOString(), limit).map(row => row.id);
+    if (!ids.length) return 0;
+    const remove = this.db.prepare('DELETE FROM operations WHERE id=?');
+    this.db.exec('BEGIN IMMEDIATE');
+    try { for (const id of ids) remove.run(id); this.db.exec('COMMIT'); return ids.length; }
+    catch (error) { this.db.exec('ROLLBACK'); throw error; }
+  }
+
   // Commit both the derived document and operation terminal state under one lock.
   // A version-only conflict may be merged/retried; deleted, cancelled or edited
   // input must never be retried against the old model result.
