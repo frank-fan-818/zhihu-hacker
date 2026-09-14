@@ -77,7 +77,16 @@ npm.cmd start
 ```powershell
 npm.cmd test
 npm.cmd run check
+npm.cmd run check:ui
 ```
+
+`scripts/check-ui.mjs`（`npm run check:ui`）是不依赖浏览器的界面完整性检查：`app.js` 引用的 id 是否都存在于 `index.html`、是否给运行期才生成的按钮做了加载时绑定、CSS 变量是否有定义、源码编码是否完好。它挡的是本机无法用真实浏览器验收的那一类确定性错误。
+
+`npm test` 用 Node 自带 runner 的默认隔离（每个测试文件一个子进程）。在禁止创建子进程的受限环境里它会以 `spawn EPERM` 全量失败——那说明 runner 起不来，不代表用例挂了；这种情况用同一条命令的单进程模式 `npm.cmd run test:serial`。
+
+2026-09-14：全量 111 项测试，102 通过 / 0 失败 / 9 跳过（真实 Redis 组需 `TEST_REDIS_URL`；另有一项在禁止创建子进程的环境里只跑无子进程的那一半断言，并写明原因）。本轮新增覆盖：链接归一化的各种复制形态（回答页后缀、手机端域名、追踪参数、裸编号）、非知乎域名与非法输入被拒且不猜数字、空召回保留平台 `EmptyReason`、`/api/questions` 区分空召回与调用失败、`/api/question-url` 把任意写法归一后交给 provider、只贴一个链接也能起稿并开始检查、两个入口共用同一份额度（`QUESTION_LIMIT`）。
+
+同一轮用真实凭据做了接口级端到端验收（本地服务 + 开放平台只读接口，29 项断言全通过），并在推送后核对线上部署：新构建里 `#topic-keyword`、`emptyReason`、`QUESTION_LIMIT` 已生效，同时保留队友的 `#question-url-input`、`compare_answers` 与导出入口，页面上只有一组链接入口。**没有做真实浏览器验收**，375px 溢出与视觉一致性仍需人工在浏览器里确认。
 
 2026-09-13：21 项自动测试通过，包括初筛零搜索、检索去重/缓存、部分失败、凭据缺失、取消、旧版本拒绝、删除不复活、采用/撤销、持久化、会话隔离和接口参数契约。外部接口测试使用明确的 fixture transport，没有调用真实知乎或模型服务。
 

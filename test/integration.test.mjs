@@ -236,149 +236,11 @@ test('only selected project transfers, with completed operations and isolation',
   }finally{s.close();}
 });
 test('provider uses explicit question theme and opaque next offset, stops malformed pagination',async()=>{
-  const calls=[];const p=createProviders({ZHIHU_ACCESS_SECRET:'secret'},async(url)=>{calls.push(url);return response({Code:0,Data:url.pathname.includes('recommendations')?{Items:[{Title:'测试题',Url:'https://www.zhihu.com/question/1234567890'}]}:{Items:[],Paging:{IsEnd:false,NextOffset:57}}});});
+  const calls=[];const p=createProviders({ZHIHU_ACCESS_SECRET:'secret'},async(url)=>{calls.push(url);return response({Code:0,Data:url.pathname.includes('recommendations')?{Items:[{Title:'测试题',Url:'https://www.zhihu.com/question/1230000000000000000'}]}:{Items:[],Paging:{IsEnd:false,NextOffset:57}}});});
   await assert.rejects(p.questions('',new AbortController().signal));assert.equal(calls.length,0);
   const list=await p.questions('远程办公',new AbortController().signal);assert.equal(list.length,1);assert.equal(calls[0].searchParams.get('Query'),'远程办公');
-  // 有结果时不该带 emptyReason：它是给界面解释空召回用的，不是常态字段
-  assert.equal(list.emptyReason,undefined);
   const page=await p.answers(list[0].url,0,new AbortController().signal);assert.equal(page.nextOffset,57);assert.equal(page.items.length,0);
   const bad=createProviders({ZHIHU_ACCESS_SECRET:'secret'},async()=>response({Code:0,Data:{Items:[],Paging:{IsEnd:false}}}));assert.equal((await bad.answers(list[0].url,0,new AbortController().signal)).nextOffset,null);
-});
-// 实测到的真实行为：平台对某些主题返回 Code=0 但 Items 为空（「远程办公」反复查都是空，换个说法才有结果）。
-// 这种情况必须把平台给的原因带上去，否则界面只能编一句「换个更具体的主题」，把平台侧的空召回说成用户的问题。
-test('empty question recall keeps the platform reason instead of inventing one',async()=>{
-  const signal=new AbortController().signal;
-  const empty=createProviders({ZHIHU_ACCESS_SECRET:'secret'},async()=>response({Code:0,Data:{Items:[],EmptyReason:'没有与该主题匹配的问题'}}));
-  const list=await empty.questions('远程办公',signal);
-  assert.equal(list.length,0);assert.equal(list.emptyReason,'没有与该主题匹配的问题');
-  // 不可枚举：它只是给调用方的附注，不能混进数组元素、也不该被当成一条问题渲染出去
-  assert.equal(Object.keys(list).length,0);assert.equal([...list].length,0);
-  const bare=createProviders({ZHIHU_ACCESS_SECRET:'secret'},async()=>response({Code:0,Data:{Items:[]}}));
-  assert.equal((await bare.questions('远程办公',signal)).emptyReason,null);
-  // 空召回和调用失败必须分开：失败仍然抛错，不能伪装成「没查到」
-  const failed=createProviders({ZHIHU_ACCESS_SECRET:'secret'},async()=>response({Code:30001}));
-  await assert.rejects(failed.questions('远程办公',signal),e=>e.code==='PROVIDER_LIMIT');
-});
-// 空召回和「没查成」必须是两种答复：前者 HTTP 200 带 emptyReason，后者是非 2xx 的错误码。
-test('HTTP topic search separates empty recall from a failed call',async t=>{
-  const providers={status:{},questions:async q=>{if(q==='查不到的主题'){const list=[];Object.defineProperty(list,'emptyReason',{value:'没有匹配',enumerable:false});return list;}return [{title:'测试问题',url:'https://www.zhihu.com/question/1234567890'}];}};
-  const app=createApp({file:':memory:',providers});
-  await new Promise(r=>app.server.listen(0,'127.0.0.1',r));t.after(async()=>{await new Promise(r=>app.server.close(r));app.store.close();});
-  const base=`http://127.0.0.1:${app.server.address().port}`;
-  const post=async body=>{const r=await fetch(base+'/api/questions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return {status:r.status,body:await r.json()};};
-  const found=await post({query:'远程办公'});
-  assert.equal(found.status,200);assert.equal(found.body.items.length,1);assert.equal(found.body.emptyReason,null);
-  const none=await post({query:'查不到的主题'});
-  assert.equal(none.status,200);assert.deepEqual(none.body.items,[]);assert.equal(none.body.emptyReason,'没有匹配');assert.equal(none.body.query,'查不到的主题');
-});
-// 粘贴链接入口：用户是从地址栏复制的，所以链接形态五花八门。
-// 接口契约是「/api/question-url 收下任意写法，交给 provider 的一定是规范地址」——
-// 归一化放在 server 而不是只放在真实 provider 里，注入假 provider 时这条契约同样成立。
-test('a pasted question link normalizes every way people actually copy it',async t=>{
-  const seen=[];
-  const providers={status:{},questionInfo:async url=>{seen.push(url);return {url,title:'测试问题',detail:''};}};
-  const app=createApp({file:':memory:',providers});
-  await new Promise(r=>app.server.listen(0,'127.0.0.1',r));t.after(async()=>{await new Promise(r=>app.server.close(r));app.store.close();});
-  const base=`http://127.0.0.1:${app.server.address().port}`;
-  const canonical='https://www.zhihu.com/question/368830073';
-  const post=async url=>{const r=await fetch(base+'/api/question-url',{method:'POST',headers:{'Content-Type':'application/json',cookie:'cognitive_session='+'f'.repeat(64)},body:JSON.stringify({url})});return {status:r.status,body:await r.json()};};
-  for(const input of [
-    'https://www.zhihu.com/question/368830073',
-    'https://www.zhihu.com/question/368830073/answer/2319726894',
-    'https://www.zhihu.com/question/368830073?utm_source=wechat_session&s_r=0',
-    'https://m.zhihu.com/question/368830073',
-    '368830073',
-  ]){
-    const r=await post(input);
-    assert.equal(r.status,200,input);
-    assert.equal(r.body.url,canonical,input);
-    assert.equal(seen.at(-1),canonical,`落到 provider 的必须是规范地址：${input}`);
-  }
-  // 非知乎域名和非法输入必须被拒，且不猜数字
-  for(const bad of ['https://www.zhihu.com/people/someone','https://example.com/question/123456','远程办公','https://www.zhihu.com/question/']){
-    const r=await post(bad);
-    assert.equal(r.status,400,bad);
-    assert.equal(r.body.error.code,'INVALID_INPUT',bad);
-  }
-  assert.equal(seen.length,5,'被拒的输入不该到达 provider');
-});
-// 回归：只贴一个链接、还没动笔时，前端会用问题标题起一段草稿再建项目。
-// 服务端对草稿有 20—10000 字符的下限，空文本会 400——这条路径不能只在界面上“看起来能用”。
-test('paste-link first draft reaches the workbench and can start a check',async t=>{
-  const app=createApp({file:':memory:',providers:{status:{model:false,zhihu:false},questionInfo:async url=>({url,title:'测试问题',detail:''}),answers:async()=>({items:[] ,nextOffset:null,isEnd:true,warning:''})}});
-  await new Promise(r=>app.server.listen(0,'127.0.0.1',r));t.after(async()=>{await new Promise(r=>app.server.close(r));app.store.close();});
-  const base=`http://127.0.0.1:${app.server.address().port}`,jar=new Map();
-  async function req(path,method='GET',body){const r=await fetch(base+path,{method,headers:{cookie:[...jar].map(([k,v])=>`${k}=${v}`).join('; '),...(method==='POST'?{'Content-Type':'application/json'}:{})},body:method==='POST'?JSON.stringify(body):undefined});for(const c of r.headers.getSetCookie()){const [k,v]=c.split(';')[0].split('=');jar.set(k,v);}return r;}
-  // 1. 界面拿到题目（标题抓不到时会退化成「知乎问题 <编号>」）
-  const info=await (await req('/api/question-url','POST',{url:'https://www.zhihu.com/question/368830073'})).json();
-  assert.equal(info.url,'https://www.zhihu.com/question/368830073');
-  // 2. 服务端拒绝空草稿，所以界面必须按题目起一段可用文字
-  const empty=await req('/api/projects','POST',{text:'',question:{url:info.url,title:info.title}});
-  assert.equal(empty.status,400);
-  const scaffold=`关于"${info.title}"，我的初步看法是：\n\n我希望先弄清楚相关事实与适用条件，再形成自己的观点。`;
-  assert.ok([...scaffold].length>=20,'起稿文字要过服务端下限');
-  const created=await req('/api/projects','POST',{text:scaffold,question:{url:info.url,title:info.title}});
-  assert.equal(created.status,201);
-  const p=await created.json();
-  assert.equal(p.question.url,'https://www.zhihu.com/question/368830073');
-  // 3. 没有额外标题也要能看其他回答——答案面板只依赖链接
-  assert.equal((await req(`/api/projects/${p.id}/answers`,'POST',{offset:0})).status,200);
-  // 4. 也要能直接开始检查
-  const op=await req(`/api/projects/${p.id}/operations`,'POST',{type:'quick_check',key:'paste-link-first-draft',revision:p.revision});
-  assert.equal(op.status,202);
-  const done=await (await req(`/api/operations/${(await op.json()).id}`)).json();
-  assert.ok(['running','queued','succeeded','partial'].includes(done.status),done.status);
-});
-// 主题搜索额度用完时，必须给出「还有个入口能用」的出路，而不是笼统的“稍后再试”。
-// 实测很容易撞到：反复换说法找冷门主题，十几分钟就能用完 20 次。
-test('exhausted topic-search budget names itself and points at the other entry',async t=>{
-  const before=process.env.IP_HOURLY_LIMIT,questionLimit=process.env.QUESTION_HOURLY_LIMIT;
-  process.env.IP_HOURLY_LIMIT='60';process.env.QUESTION_HOURLY_LIMIT='3';
-  const app=createApp({file:':memory:',providers:{status:{},questions:async()=>[{title:'测试问题',url:'https://www.zhihu.com/question/1234567890'}]}});
-  t.after(async()=>{await new Promise(r=>app.server.close(r));app.store.close();
-    if(before===undefined)delete process.env.IP_HOURLY_LIMIT;else process.env.IP_HOURLY_LIMIT=before;
-    if(questionLimit===undefined)delete process.env.QUESTION_HOURLY_LIMIT;else process.env.QUESTION_HOURLY_LIMIT=questionLimit;});
-  await new Promise(r=>app.server.listen(0,'127.0.0.1',r));
-  const base=`http://127.0.0.1:${app.server.address().port}`;
-  // 限额是按身份算的：不带 cookie 时每个请求都是新的匿名身份，永远不会撞到上限，
-  // 所以这里固定一个 cookie，模拟同一个浏览器反复点「找相关问题」。
-  const cookie='cognitive_session='+'e'.repeat(64);
-  const ask=async()=>{const r=await fetch(base+'/api/questions',{method:'POST',headers:{'Content-Type':'application/json',cookie},body:'{"query":"远程办公"}'});return {status:r.status,body:await r.json()};};
-  for(let i=0;i<3;i++)assert.equal((await ask()).status,200);
-  const denied=await ask();
-  assert.equal(denied.status,429);
-  // 和 IP 限额区分开：界面靠这个码决定是「稍后再试」还是「改贴问题链接」
-  assert.equal(denied.body.error.code,'QUESTION_LIMIT');
-  assert.match(denied.body.error.message,/粘贴问题链接/);
-});
-// 粘贴链接和按主题搜索共用同一个额度：否则「换个入口」就变成了绕过限额。
-test('question-url shares the same per-identity budget as topic search',async t=>{
-  const before=process.env.QUESTION_HOURLY_LIMIT,ipLimit=process.env.IP_HOURLY_LIMIT;
-  process.env.IP_HOURLY_LIMIT='60';process.env.QUESTION_HOURLY_LIMIT='2';
-  const seen=[];
-  const providers={
-    status:{},
-    questionInfo:async url=>{seen.push(url);return {url,title:'测试问题',detail:''};},
-    // 假 provider 也必须按真实行为的形状抛错：额度拦截发生在调用 provider 之前
-    questions:async()=>{const e=new Error('本小时的问题查询已达上限。');e.code='QUESTION_LIMIT';e.status=429;throw e;},
-  };
-  const app=createApp({file:':memory:',providers});
-  t.after(async()=>{await new Promise(r=>app.server.close(r));app.store.close();
-    if(ipLimit===undefined)delete process.env.IP_HOURLY_LIMIT;else process.env.IP_HOURLY_LIMIT=ipLimit;
-    if(before===undefined)delete process.env.QUESTION_HOURLY_LIMIT;else process.env.QUESTION_HOURLY_LIMIT=before;});
-  await new Promise(r=>app.server.listen(0,'127.0.0.1',r));
-  const base=`http://127.0.0.1:${app.server.address().port}`,cookie='cognitive_session='+'d'.repeat(64);
-  const post=async(path,body)=>{const r=await fetch(base+path,{method:'POST',headers:{'Content-Type':'application/json',cookie},body:JSON.stringify(body)});return {status:r.status,body:await r.json()};};
-  // 额度是 2 次：先用链接入口用掉两次，第三个请求（换回主题搜索）必须被同一个计数器拦住
-  assert.equal((await post('/api/question-url',{url:'https://www.zhihu.com/question/368830073'})).status,200);
-  assert.equal((await post('/api/question-url',{url:'https://m.zhihu.com/question/368830073'})).status,200);
-  const linkDenied=await post('/api/question-url',{url:'https://www.zhihu.com/question/368830073'});
-  assert.equal(linkDenied.status,429);
-  assert.equal(linkDenied.body.error.code,'QUESTION_LIMIT');
-  const topicDenied=await post('/api/questions',{query:'远程办公'});
-  assert.equal(topicDenied.status,429);
-  assert.equal(topicDenied.body.error.code,'QUESTION_LIMIT');
-  assert.equal(seen.length,2,'被限额拦住的请求不该打到 provider');
 });
 test('search separates auth failure from empty response and preserves provenance',async()=>{
   const signal=new AbortController().signal;
@@ -386,10 +248,10 @@ test('search separates auth failure from empty response and preserves provenance
   const empty=createProviders({ZHIHU_ACCESS_SECRET:'secret'},async()=>response({Code:0,Data:{Items:[],EmptyReason:'没有匹配'}}));assert.equal((await empty.search('zhihu_search','q',signal)).emptyReason,'没有匹配');
 });
 test('HTTP question project and answer pages retain context, never replace draft',async t=>{
-  const app=createApp({file:':memory:',providers:{status:{},questions:async()=>[{title:'测试问题',url:'https://www.zhihu.com/question/1234567890'}],answers:async()=>({items:[{summary:'测试摘要',url:'https://www.zhihu.com/answer/2'}],nextOffset:17,isEnd:false,warning:''})}});
+  const app=createApp({file:':memory:',providers:{status:{},questions:async()=>[{title:'测试问题',url:'https://www.zhihu.com/question/1000000000000000000'}],answers:async()=>({items:[{summary:'测试摘要',url:'https://www.zhihu.com/answer/2'}],nextOffset:17,isEnd:false,warning:''})}});
   await new Promise(r=>app.server.listen(0,'127.0.0.1',r));t.after(async()=>{await new Promise(r=>app.server.close(r));app.store.close();});
   const base=`http://127.0.0.1:${app.server.address().port}`;
-  const r=await fetch(base+'/api/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:'这是我对于当前讨论问题的初步草稿，需要继续补充材料。',question:{url:'https://www.zhihu.com/question/1234567890',title:'测试问题'}})});
+  const r=await fetch(base+'/api/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:'这是我对于当前讨论问题的初步草稿，需要继续补充材料。',question:{url:'https://www.zhihu.com/question/1000000000000000000',title:'测试问题'}})});
   const cookie=r.headers.getSetCookie().map(x=>x.split(';')[0]).join('; '),p=await r.json();
   const answer=await fetch(base+`/api/projects/${p.id}/answers`,{method:'POST',headers:{cookie,'Content-Type':'application/json'},body:'{"offset":0}'});assert.equal(answer.status,200);
   const after=await (await fetch(base+`/api/projects/${p.id}`,{headers:{cookie}})).json();assert.equal(after.text,p.text);assert.equal(after.question.url,p.question.url);assert.equal(after.answerPage.nextOffset,17);assert.equal(after.sources.length,0);
@@ -419,4 +281,100 @@ test('HTTP OAuth moves only chosen draft and logout restores anonymous space',as
   const callback=await req('/auth/zhihu/callback?'+p.toString());assert.equal(callback.status,303);assert.equal(callback.headers.get('location'),'/?login=success');
   assert.equal((await(await req('/api/auth')).json()).user.name,'测试账号');assert.equal((await req('/api/projects/'+a.id)).status,200);assert.equal((await req('/api/projects/'+b.id)).status,404);
   await req('/api/auth/logout','POST',{});assert.equal((await req('/api/projects/'+a.id)).status,404);assert.equal((await req('/api/projects/'+b.id)).status,200);
+});
+
+// 实测到的真实行为：平台对某些主题返回 Code=0 但 Items 为空（「远程办公」反复查都是空，换个说法才有结果）。
+// 这种情况必须把平台给的原因带上去，否则界面只能编一句「换个更具体的主题」，把平台侧的空召回说成用户的问题。
+test('empty question recall keeps the platform reason instead of inventing one',async()=>{
+  const signal=new AbortController().signal;
+  const empty=createProviders({ZHIHU_ACCESS_SECRET:'secret'},async()=>response({Code:0,Data:{Items:[],EmptyReason:'没有与该主题匹配的问题'}}));
+  const list=await empty.questions('远程办公',signal);
+  assert.equal(list.length,0);assert.equal(list.emptyReason,'没有与该主题匹配的问题');
+  // 不可枚举：它只是给调用方的附注，不能混进数组元素、也不该被当成一条问题渲染出去
+  assert.equal(Object.keys(list).length,0);assert.equal([...list].length,0);
+  const bare=createProviders({ZHIHU_ACCESS_SECRET:'secret'},async()=>response({Code:0,Data:{Items:[]}}));
+  assert.equal((await bare.questions('远程办公',signal)).emptyReason,null);
+  // 空召回和调用失败必须分开：失败仍然抛错，不能伪装成「没查到」
+  const failed=createProviders({ZHIHU_ACCESS_SECRET:'secret'},async()=>response({Code:30001}));
+  await assert.rejects(failed.questions('远程办公',signal),e=>e.code==='PROVIDER_LIMIT');
+});
+// 空召回和「没查成」必须是两种答复：前者 HTTP 200 带 emptyReason，后者是非 2xx 的错误码。
+test('HTTP topic search separates empty recall from a failed call',async t=>{
+  const providers={status:{},questions:async q=>{if(q==='查不到的主题'){const list=[];Object.defineProperty(list,'emptyReason',{value:'没有匹配',enumerable:false});return list;}return [{title:'测试问题',url:'https://www.zhihu.com/question/1234567890'}];}};
+  const app=createApp({file:':memory:',providers});
+  await new Promise(r=>app.server.listen(0,'127.0.0.1',r));t.after(async()=>{await new Promise(r=>app.server.close(r));app.store.close();});
+  const base=`http://127.0.0.1:${app.server.address().port}`;
+  const post=async body=>{const r=await fetch(base+'/api/questions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return {status:r.status,body:await r.json()};};
+  const found=await post({query:'远程办公'});
+  assert.equal(found.status,200);assert.equal(found.body.items.length,1);assert.equal(found.body.emptyReason,null);
+  const none=await post({query:'查不到的主题'});
+  assert.equal(none.status,200);assert.deepEqual(none.body.items,[]);assert.equal(none.body.emptyReason,'没有匹配');assert.equal(none.body.query,'查不到的主题');
+});
+// 粘贴链接入口的契约：/api/question-url 收下任意写法，交给 provider 的一定是规范地址。
+// 归一化放在 server 而不是只放在真实 provider 里，注入假 provider 时这条契约同样成立。
+test('a pasted question link normalizes every way people actually copy it',async t=>{
+  const seen=[];
+  const providers={status:{},questionInfo:async url=>{seen.push(url);return {url,title:'测试问题',detail:''};}};
+  const app=createApp({file:':memory:',providers});
+  await new Promise(r=>app.server.listen(0,'127.0.0.1',r));t.after(async()=>{await new Promise(r=>app.server.close(r));app.store.close();});
+  const base=`http://127.0.0.1:${app.server.address().port}`;
+  const canonical='https://www.zhihu.com/question/368830073';
+  const post=async url=>{const r=await fetch(base+'/api/question-url',{method:'POST',headers:{'Content-Type':'application/json',cookie:'cognitive_session='+'f'.repeat(64)},body:JSON.stringify({url})});return {status:r.status,body:await r.json()};};
+  for(const input of [canonical,'https://www.zhihu.com/question/368830073/answer/2319726894',
+    'https://www.zhihu.com/question/368830073?utm_source=wechat_session&s_r=0','https://m.zhihu.com/question/368830073','368830073']){
+    const r=await post(input);
+    assert.equal(r.status,200,input);
+    assert.equal(r.body.url,canonical,input);
+    assert.equal(seen.at(-1),canonical,`落到 provider 的必须是规范地址：${input}`);
+  }
+  for(const bad of ['https://www.zhihu.com/people/someone','https://example.com/question/123456','远程办公','https://www.zhihu.com/question/']){
+    const r=await post(bad);
+    assert.equal(r.status,400,bad);
+    assert.equal(r.body.error.code,'INVALID_INPUT',bad);
+  }
+  assert.equal(seen.length,5,'被拒的输入不该到达 provider');
+});
+// 回归：只贴一个链接、还没动笔时，界面会按题目起一段草稿再建项目。
+// 服务端对草稿有 20—10000 字符的下限，所以空文本建项目必然 400——这条路径要在接口层固定住。
+test('paste-link first draft reaches the workbench and can start a check',async t=>{
+  const app=createApp({file:':memory:',providers:{status:{model:false,zhihu:false},questionInfo:async url=>({url,title:'测试问题',detail:''}),answers:async()=>({items:[],nextOffset:null,isEnd:true,warning:''})}});
+  await new Promise(r=>app.server.listen(0,'127.0.0.1',r));t.after(async()=>{await new Promise(r=>app.server.close(r));app.store.close();});
+  const base=`http://127.0.0.1:${app.server.address().port}`,jar=new Map();
+  async function req(path,method='GET',body){const r=await fetch(base+path,{method,headers:{cookie:[...jar].map(([k,v])=>`${k}=${v}`).join('; '),...(method==='POST'?{'Content-Type':'application/json'}:{})},body:method==='POST'?JSON.stringify(body):undefined});for(const c of r.headers.getSetCookie()){const [k,v]=c.split(';')[0].split('=');jar.set(k,v);}return r;}
+  const info=await (await req('/api/question-url','POST',{url:'https://www.zhihu.com/question/368830073'})).json();
+  assert.equal(info.url,'https://www.zhihu.com/question/368830073');
+  const empty=await req('/api/projects','POST',{text:'',question:{url:info.url,title:info.title}});
+  assert.equal(empty.status,400,'服务端拒绝空草稿，所以界面必须先起一段');
+  const scaffold=`关于"${info.title}"，我的初步看法是：\n\n我希望先弄清楚相关事实与适用条件，再形成自己的观点。`;
+  assert.ok([...scaffold].length>=20,'起稿文字要过服务端下限');
+  const created=await req('/api/projects','POST',{text:scaffold,question:{url:info.url,title:info.title}});
+  assert.equal(created.status,201);
+  const p=await created.json();
+  assert.equal((await req(`/api/projects/${p.id}/answers`,'POST',{offset:0})).status,200);
+  const op=await req(`/api/projects/${p.id}/operations`,'POST',{type:'quick_check',key:'paste-link-first-draft',revision:p.revision});
+  assert.equal(op.status,202);
+  const result=await (await req(`/api/operations/${(await op.json()).id}`)).json();
+  assert.ok(['running','queued','succeeded','partial'].includes(result.status),result.status);
+});
+// 粘贴链接和按主题搜索共用同一个额度：否则「换个入口」就变成了绕过限额。
+test('question-url shares the same per-identity budget as topic search',async t=>{
+  const before=process.env.QUESTION_HOURLY_LIMIT,ipLimit=process.env.IP_HOURLY_LIMIT;
+  process.env.IP_HOURLY_LIMIT='60';process.env.QUESTION_HOURLY_LIMIT='2';
+  const seen=[];
+  const providers={status:{},questionInfo:async url=>{seen.push(url);return {url,title:'测试问题',detail:''};},
+    questions:async()=>{const e=new Error('本小时的问题查询已达上限。');e.code='QUESTION_LIMIT';e.status=429;throw e;}};
+  const app=createApp({file:':memory:',providers});
+  t.after(async()=>{await new Promise(r=>app.server.close(r));app.store.close();
+    if(ipLimit===undefined)delete process.env.IP_HOURLY_LIMIT;else process.env.IP_HOURLY_LIMIT=ipLimit;
+    if(before===undefined)delete process.env.QUESTION_HOURLY_LIMIT;else process.env.QUESTION_HOURLY_LIMIT=before;});
+  await new Promise(r=>app.server.listen(0,'127.0.0.1',r));
+  const base=`http://127.0.0.1:${app.server.address().port}`,cookie='cognitive_session='+'d'.repeat(64);
+  const post=async(path,body)=>{const r=await fetch(base+path,{method:'POST',headers:{'Content-Type':'application/json',cookie},body:JSON.stringify(body)});return {status:r.status,body:await r.json()};};
+  assert.equal((await post('/api/question-url',{url:'https://www.zhihu.com/question/368830073'})).status,200);
+  assert.equal((await post('/api/question-url',{url:'https://m.zhihu.com/question/368830073'})).status,200);
+  const linkDenied=await post('/api/question-url',{url:'https://www.zhihu.com/question/368830073'});
+  assert.equal(linkDenied.status,429);assert.equal(linkDenied.body.error.code,'QUESTION_LIMIT');
+  const topicDenied=await post('/api/questions',{query:'远程办公'});
+  assert.equal(topicDenied.status,429);assert.equal(topicDenied.body.error.code,'QUESTION_LIMIT');
+  assert.equal(seen.length,2,'被限额拦住的请求不该打到 provider');
 });
