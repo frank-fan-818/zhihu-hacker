@@ -3,21 +3,21 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { join, dirname, resolve } from 'node:path';
 import { randomBytes } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import { Store } from './store.mjs';
 import { Service } from './service.mjs';
 import { createProviders } from './providers.mjs';
-import { AppError, hash, questionLink } from './domain.mjs';
+import { AppError, hash } from './domain.mjs';
 import { OAuth } from './oauth.mjs';
 import { questionUrl } from './providers.mjs';
 import { createStore } from './kv.mjs';
 import { RedisStore } from './redis-store.mjs';
 import { createBudget } from './budget.mjs';
+import { exportDocument } from './export.mjs';
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const publicProject=p=>{const {owner,...safe}=p;return safe;};
 const publicOp=op=>{const {owner,signature,key,...safe}=op;return safe;};
-// 环境变量里的正整数，非法或缺失时退回默认值。用于可调限额，避免 NaN 把限制变成「永远放行」。
-const positiveInt=(value,fallback)=>Number.isSafeInteger(Number(value))&&Number(value)>0?Number(value):fallback;
 // SQLite is a local development store only. Vercel always selects shared Redis.
 const defaultFile=process.env.SQLITE_DIR?join(process.env.SQLITE_DIR,'app.sqlite'):join(root,'data','app.sqlite');
 export function createApp({file,providers=createProviders(),oauth=new OAuth(),store:providedStore,kv=createStore(),waitUntil=()=>{}}={}) {
@@ -25,18 +25,13 @@ export function createApp({file,providers=createProviders(),oauth=new OAuth(),st
   const sharedProjects=Boolean(process.env.VERCEL)||process.env.PROJECT_STORE==='redis';
   const store=providedStore||(file?new Store(file):sharedProjects?new RedisStore(kv):new Store(process.env.SQLITE_FILE||defaultFile));
   const service=new Service(store,providers,{waitUntil});const budget=createBudget(kv,process.env);
-  const answerBusy=new Set();
-  // 主题搜索/回答分页的额外限额，按身份计算。它和 budget 的 IP 限额是两回事，
-  // 所以用不同的错误码：界面据此提示「稍后再试」还是「改贴问题链接」，而不是笼统一句“稍后再试”。
-  // 实测里这个限制很容易撞到：反复用不同说法找一个冷门主题，十几分钟就能用完。
+  try{store.cleanupOperations?.();}catch{/* cleanup is best effort and must not block startup */}
   const questionCalls=new Map();
-  const QUESTION_HOURLY_LIMIT=positiveInt(process.env.QUESTION_HOURLY_LIMIT,20);
-  const consumeQuestionBudget=owner=>{
-    const recent=(questionCalls.get(owner)||[]).filter(t=>Date.now()-t<3600000);
-    if(recent.length>=QUESTION_HOURLY_LIMIT)throw new AppError('QUESTION_LIMIT',`本小时的主题搜索与回答查询已达 ${QUESTION_HOURLY_LIMIT} 次上限。可以直接粘贴问题链接继续，或稍后再试。`,429);
-    questionCalls.set(owner,[...recent,Date.now()]);
-  };
+  const answerBusy=new Set();
+  const consumeQuestionBudget=owner=>{const recent=(questionCalls.get(owner)||[]).filter(t=>Date.now()-t<3600000);if(recent.length>=20)throw new AppError('RATE_LIMIT','本小时问题与回答查询较多，请稍后再试。',429);questionCalls.set(owner,[...recent,Date.now()]);};
   const server=http.createServer(async(req,res)=>{
+    const requestId=randomUUID();
+    res.setHeader('X-Request-Id',requestId);
     res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','no-referrer');
     res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
     res.setHeader('Cache-Control','no-store');
@@ -100,17 +95,11 @@ export function createApp({file,providers=createProviders(),oauth=new OAuth(),st
       if(url.pathname==='/api/questions'&&req.method==='POST'){
         await budget.consume(owner,ip);
         consumeQuestionBudget(owner);
-        const items=await providers.questions(body.query,new AbortController().signal);
-        // 空结果必须说清楚是「平台没召回」还是「我们没查成」：前者照实返回 emptyReason，
-        // 后者在 providers 里已经抛成具体错误。界面不再用一句通用话术盖住两种不同情况。
-        send(200,{items,emptyReason:items.length?null:items.emptyReason??null,query:String(body.query??'').trim().slice(0,100)});return;
+        send(200,await providers.questions(body.query,new AbortController().signal));return;
       }
-      // 粘贴链接入口：链接本身就能确定问题，所以标题是可选的补充，不是必填项。
-      if(url.pathname==='/api/questions/link'&&req.method==='POST'){
-        await budget.consume(owner,ip);
-        const link=questionLink(body.link);
-        const title=String(body.title??'').replace(/\s+/g,' ').trim().slice(0,300);
-        send(200,{url:link.url,id:link.id,title:title||link.title||''});return;
+      if(url.pathname==='/api/question-url'&&req.method==='POST'){
+        consumeQuestionBudget(owner);
+        send(200,await providers.questionInfo(body.url,new AbortController().signal));return;
       }
       if(path[1]==='status'&&req.method==='GET'){send(200,{...providers.status,storage:store.kind||'sqlite',mode:providers.status.model?'model':'local_rules'});return;}
       if(path[1]==='projects'){
@@ -122,6 +111,11 @@ export function createApp({file,providers=createProviders(),oauth=new OAuth(),st
           if(req.method==='GET'){send(200,publicProject(await store.get(project,owner)));return;}
           if(req.method==='PATCH'){send(200,publicProject(await service.edit(owner,project,body.text,body.revision)));return;}
           if(req.method==='DELETE'){await service.remove(owner,project);send(200,{deleted:true});return;}
+        }else if(path[3]==='export'&&['GET','POST'].includes(req.method)){
+          const format=String(req.method==='POST'?body.format:url.searchParams.get('format')||'markdown').toLowerCase();
+          if(!['markdown','html','json'].includes(format))throw new AppError('INVALID_INPUT','导出格式只支持 markdown、html 或 json。');
+          const document=exportDocument(await store.get(project,owner),format);
+          res.writeHead(200,{'Content-Type':document.contentType,'Content-Disposition':`attachment; filename="cognitive-draft.${document.extension}"`});res.end(document.body);return;
         }else if(req.method==='POST'){
           if(path[3]==='answers'){
             const p=await store.get(project,owner);if(!p.question)throw new AppError('INVALID_INPUT','当前草稿未关联知乎问题。');
@@ -132,7 +126,9 @@ export function createApp({file,providers=createProviders(),oauth=new OAuth(),st
             await budget.consume(owner,ip);consumeQuestionBudget(owner);answerBusy.add(project);
             try{const revision=p.revision;const result=await providers.answers(p.question.url,offset,new AbortController().signal);
             const latest=await store.get(project,owner);if(latest.revision!==revision)throw new AppError('STALE_RESULT','原稿已变化，未覆盖当前内容。',409);
-            latest.answerPage={...result,at:Date.now()};if(!await store.saveIfRevision(latest,revision,{preserveRevision:true}))throw new AppError('REVISION_CONFLICT','原稿已变化，请重试。',409);send(200,result);return;
+            latest.answerPage={...result,at:Date.now()};
+            latest.answers=offset===0?result.items:[...(latest.answers||[]),...result.items];
+            if(!await store.saveIfRevision(latest,revision,{preserveRevision:true}))throw new AppError('REVISION_CONFLICT','原稿已变化，请重试。',409);send(200,result);return;
             }finally{answerBusy.delete(project);}
           }
           if(path[3]==='operations'){await store.get(project,owner);await budget.consume(owner,ip);send(202,publicOp(await service.start(owner,project,body)));return;}
@@ -142,11 +138,26 @@ export function createApp({file,providers=createProviders(),oauth=new OAuth(),st
         }
       }
       if(path[1]==='operations'&&path[2]){
+        if(path[3]==='events'&&req.method==='GET'){
+          const opId=path[2];
+          res.writeHead(200,{'Content-Type':'text/event-stream; charset=utf-8','Cache-Control':'no-cache','Connection':'keep-alive','X-Accel-Buffering':'no'});
+          let closed=false;req.on('close',()=>{closed=true;});
+          let previous='';
+          for(let i=0;i<240&&!closed;i++){
+            const current=publicOp(await store.getOp(opId,owner));
+            const payload=JSON.stringify(current);
+            if(payload!==previous){res.write(`event: operation\ndata: ${payload}\n\n`);previous=payload;}
+            if(!['queued','running'].includes(current.status))break;
+            await new Promise(r=>setTimeout(r,500));
+          }
+          if(!closed)res.end();
+          return;
+        }
         if(req.method==='GET'){send(200,publicOp(await store.getOp(path[2],owner)));return;}
         if(path[3]==='cancel'&&req.method==='POST'){send(200,publicOp(await service.cancel(owner,path[2])));return;}
       }
       throw new AppError('NOT_FOUND','接口不存在。',404);
-    }catch(e){if(!res.headersSent)send(e instanceof AppError?e.status:500,{error:{code:e instanceof AppError?e.code:'SERVER_ERROR',message:e instanceof AppError?e.message:'服务暂时无法完成请求，请重试。'}});else res.end();}
+    }catch(e){if(!res.headersSent)send(e instanceof AppError?e.status:500,{error:{code:e instanceof AppError?e.code:'SERVER_ERROR',message:e instanceof AppError?e.message:'服务暂时无法完成请求，请重试。',retryable:e instanceof AppError?e.status>=500||e.status===429:false,requestId}});else res.end();}
   });
   return {server,store,service,oauth};
 }

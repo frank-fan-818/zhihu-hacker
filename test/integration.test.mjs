@@ -344,6 +344,19 @@ test('HTTP question project and answer pages retain context, never replace draft
   const answer=await fetch(base+`/api/projects/${p.id}/answers`,{method:'POST',headers:{cookie,'Content-Type':'application/json'},body:'{"offset":0}'});assert.equal(answer.status,200);
   const after=await (await fetch(base+`/api/projects/${p.id}`,{headers:{cookie}})).json();assert.equal(after.text,p.text);assert.equal(after.question.url,p.question.url);assert.equal(after.answerPage.nextOffset,17);assert.equal(after.sources.length,0);
 });
+
+test('operation events stream emits a terminal state and request id',async t=>{
+  const app=createApp({file:':memory:',providers:{status:{model:false,zhihu:false}}});
+  await new Promise(r=>app.server.listen(0,'127.0.0.1',r));
+  t.after(async()=>{await new Promise(r=>app.server.close(r));app.store.close();});
+  const base=`http://127.0.0.1:${app.server.address().port}`;
+  const created=await fetch(base+'/api/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:'这是一段足够长的草稿，用于测试操作事件流是否能完整返回终态。'})});
+  const cookie=created.headers.get('set-cookie').split(';')[0],p=await created.json();
+  const started=await fetch(base+`/api/projects/${p.id}/operations`,{method:'POST',headers:{cookie,'Content-Type':'application/json'},body:JSON.stringify({type:'quick_check',key:'sse-test-1',revision:1})});
+  const op=await started.json();assert.equal(started.status,202);assert.ok(started.headers.get('x-request-id'));
+  const events=await fetch(base+`/api/operations/${op.id}/events`,{headers:{cookie}});assert.equal(events.status,200);assert.match(events.headers.get('content-type'),/text\/event-stream/);
+  const body=await events.text();assert.match(body,/event: operation/);assert.match(body,/"status":"succeeded"/);
+});
 test('HTTP OAuth moves only chosen draft and logout restores anonymous space',async t=>{
   const oauth=new OAuth(env,async url=>response(url.endsWith('/access_token')?{access_token:'fixture-token',expires_in:60}:{hash_id:'fixture-user',fullname:'测试账号'}));
   const app=createApp({file:':memory:',providers:{status:{}},oauth});await new Promise(r=>app.server.listen(0,'127.0.0.1',r));

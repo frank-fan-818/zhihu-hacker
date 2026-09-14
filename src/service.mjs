@@ -1,15 +1,12 @@
 import { AppError, id, hash, bounded, checkDraft, validateFindings, validateSuggestion, applySuggestion } from './domain.mjs';
-import { CHECK_TASK, VERIFY_TASK } from './review-prompt.mjs';
 
 const terminal = status => ['succeeded','partial','failed','cancelled'].includes(status);
-// 检查与复核的提示词由 src/review-prompt.mjs 提供（判定标准、严重度档位、中肯门槛都在那里，
-// 并有 test/review-prompt.test.mjs 固定）。这里只保留一个别名，供脚本与测试引用同一份文本。
-export const checkTask = CHECK_TASK;
+const checkTask = '检查草稿。返回 {"items":[{"quote":"逐字原句","start":UTF16起点整数,"kind":"问题类型","reason":"具体原因"}]}。不要凑问题；否定、引用、讽刺不能仅按绝对化词误判。items 数不超过 limit。';
 export class Service {
   constructor(store,providers,{waitUntil=()=>{}}={}){this.store=store;this.providers=providers;this.controllers=new Map();this.usage=new Map();this.waitUntil=waitUntil;}
   async create(owner,text,question=null) {
     bounded(text,20,10000,'草稿');
-    return this.store.create({id:id(),owner,text,original:text,title:text.trim().slice(0,32),revision:1,
+    return this.store.create({schemaVersion:1,id:id(),owner,text,original:text,title:text.trim().slice(0,32),revision:1,
       ...(question?{question}:{}),findings:[],sources:[],verification:{},suggestions:[],history:[],created:new Date().toISOString()});
   }
   // 乐观并发控制：应用层先读后写存在检查-使用间隙，两个并发请求可能都通过
@@ -57,7 +54,7 @@ export class Service {
   }
   async cancel(owner,opId) {
     const op=await this.store.getOp(opId,owner);
-    if(!terminal(op.status)){op.status='cancelled';await this.store.updateOp(op);this.controllers.get(opId)?.abort();}
+    if(!terminal(op.status)){op.status='cancelled';op.finishedAt=new Date().toISOString();await this.store.updateOp(op);this.controllers.get(opId)?.abort();}
     return this.store.getOp(opId,owner);
   }
   async remove(owner,project) {
@@ -68,7 +65,7 @@ export class Service {
   async start(owner,project,args) {
     const p=await this.store.get(project,owner);
     const {type,key,findingId,wordingOnly=false}=args;
-    if(!['quick_check','review_remaining','verify_claim','suggest_revision','generate_draft'].includes(type))throw new AppError('INVALID_INPUT','未知操作。');
+    if(!['quick_check','review_remaining','verify_claim','suggest_revision','generate_draft','compare_answers'].includes(type))throw new AppError('INVALID_INPUT','未知操作。');
     bounded(key,8,100,'操作标识');
     const signature=hash(JSON.stringify({type,findingId,wordingOnly,revision:args.revision}));
     const previous=await this.store.byKey(project,key,owner);
@@ -82,7 +79,7 @@ export class Service {
       throw new AppError('STALE_FINDING','这条检查针对旧稿，请重新检查当前原稿。',409);
     if(type==='suggest_revision' && !wordingOnly && !p.verification[findingId]?.sourceIds?.length)
       throw new AppError('EVIDENCE_REQUIRED','先查看依据，或明确选择“仅调整表述”。',409);
-    const op={id:id(),project,owner,key,type,signature,baseRevision:p.revision,status:'queued',stage:'准备中',created:new Date().toISOString(),deadline:Date.now()+60000,calls:[]};
+    const op={id:id(),project,owner,key,type,signature,baseRevision:p.revision,status:'queued',stage:'准备中',created:new Date().toISOString(),deadline:Date.now()+60000,attempt:0,maxAttempts:2,calls:[]};
     const admitted=await this.store.createOp(op);
     if(admitted.id!==op.id)return admitted;
     this.usage.set(owner,[...recent,Date.now()]);
@@ -103,29 +100,15 @@ export class Service {
     try {
       let apply;let partial=false;
       if(['quick_check','review_remaining'].includes(op.type)) {
+        await stage(this.providers.status.model?'正在检查论证':'正在进行本地规则初筛');
         const limit=op.type==='quick_check'?1:6;
-        let engine='local_rules',note=null,findings;
-        if(this.providers.status.model){
-          await stage('正在检查论证');
-          findings=null;
-          try{
-            findings=validateFindings(await this.providers.model(checkTask,{text:snapshot.text,limit},signal),snapshot.text,limit);
-            engine='model';
-          }catch(e){
-            if(signal.aborted)throw e;
-            // 模型配了却用不上（欠费、密钥失效、网关故障）时不再静默退回本地规则：
-            // 让用户看到这次到底是谁看的稿，以及为什么没看成。
-            note=`模型未能完成这次检查（${e.message}），本次结果来自本地规则初筛，只覆盖部分结构与概念错配。`;
-          }
-        } else {
-          await stage('正在进行本地规则初筛');
-          note=null;
-        }
-        if(!findings)findings=checkDraft(snapshot.text,limit);
+        const findings=this.providers.status.model
+          ? validateFindings(await this.providers.model(checkTask,{text:snapshot.text,limit},signal),snapshot.text,limit)
+          : checkDraft(snapshot.text,limit);
         findings.forEach(f=>f.baseRevision=snapshot.revision);
         apply=p=>{
           for(const f of findings){const existing=p.findings.find(x=>x.baseRevision===p.revision && x.start===f.start && x.quote===f.quote);if(existing)Object.assign(f,{id:existing.id,status:existing.status});}
-          p.findings=findings;p.lastCheck={engine,at:new Date().toISOString(),revision:p.revision,...(note?{note}:{})};
+          p.findings=findings;p.lastCheck={engine:this.providers.status.model?'model':'local_rules',at:new Date().toISOString(),revision:p.revision,phase:'draft_check'};
         };
       } else if(op.type==='verify_claim') {
         const previous=snapshot.verification[args.finding.id];
@@ -143,34 +126,22 @@ export class Service {
           const sources=results.flatMap(r=>r.status==='fulfilled'?r.value:[]);
           const errors=results.filter(r=>r.status==='rejected').map(r=>r.reason instanceof AppError?r.reason.message:'搜索连接中断或超时。');
           const emptyReasons=results.filter(r=>r.status==='fulfilled'&&r.value.emptyReason).map(r=>r.value.emptyReason);
+          partial=errors.length>0;
           const unique=[...new Map(sources.map(s=>[s.url,s])).values()];
           let summary='以下为实际检索摘要，尚未做语义支持核对。请打开来源阅读；检索命中不代表支持原句。';
-          let semantic=true;
           if(unique.length && this.providers.status.model){
             await stage('正在比较材料与原句');
             try{
-              const analysis=await this.providers.model(VERIFY_TASK, {claim:args.finding.quote,sources:unique.map(s=>({id:s.id,text:s.text}))},signal);
+              const analysis=await this.providers.model('返回 {"summary":"具体局限与关系解释","relations":[{"sourceId":"输入中的id","type":"supports|challenges|context|unclear","explanation":"基于摘要的解释"}]}。不强行制造正反双方。', {claim:args.finding.quote,sources:unique.map(s=>({id:s.id,text:s.text}))},signal);
               bounded(analysis.summary,1,1500);
               if(!Array.isArray(analysis.relations))throw new Error('schema');
               for(const r of analysis.relations){const s=unique.find(s=>s.id===r.sourceId);if(!s||!['supports','challenges','context','unclear'].includes(r.type))throw new Error('schema');s.relation=r.type;s.explanation=bounded(r.explanation,1,700);}
               summary=analysis.summary;
-            }catch(e){
-              if(signal.aborted)throw e;
-              unique.forEach(s=>{s.relation='unreviewed';delete s.explanation;});
-              // 把模型失败的原文写进错误里：线上出现过密钥失效导致每次“查依据”都只拿到摘要，
-              // 而面板只显示一句笼统的“未完成”，没人能看出根因是模型不可用。
-              errors.push(`语义分析未完成（${e instanceof AppError?e.message:'模型响应无效'}）；真实检索摘要已保留。`);
-            }
-          } else if(unique.length){
-            // 没有配置模型不是失败，只是这一步做不了：检索本身是成功的，
-            // 所以不该标记为部分失败，否则同一句重复点会重新消耗检索额度、也不写缓存。
-            semantic=false;
+            }catch(e){if(signal.aborted)throw e;partial=true;unique.forEach(s=>{s.relation='unreviewed';delete s.explanation;});errors.push('语义分析未完成；真实检索摘要已保留。');}
           }
-          partial=errors.length>0;
-          if(!semantic) summary+='（当前未配置模型，只做了检索，没有做语义支持核对。）';
           apply=p=>{
             p.sources.push(...unique);
-            p.verification[args.finding.id]={baseRevision:p.revision,time:Date.now(),sourceIds:unique.map(s=>s.id),summary:unique.length?summary:'本次检索未获得可展示的相关资料，不能据此判断原句成立。'+(emptyReasons.length?' 平台说明：'+emptyReasons.join('；'):''),errors};
+            p.verification[args.finding.id]={baseRevision:p.revision,time:Date.now(),checkedAt:new Date().toISOString(),evidenceType:'search_snippet',sourceIds:unique.map(s=>s.id),summary:unique.length?summary:'本次检索未获得可展示的相关资料，不能据此判断原句成立。'+(emptyReasons.length?' 平台说明：'+emptyReasons.join('；'):''),errors};
           };
         }
       } else if(op.type==='suggest_revision') {
@@ -186,13 +157,33 @@ export class Service {
         }
         const suggestion={...data,id:id(),findingId:args.finding.id,baseRevision:snapshot.revision,start:args.finding.start,end:args.finding.end,quote:args.finding.quote,wordingOnly:args.wordingOnly};
         apply=p=>{p.suggestions.push(suggestion);};
+      } else if(op.type==='compare_answers') {
+        if(!this.providers.status.model)throw new AppError('MODEL_NOT_CONFIGURED','对比回答需要模型服务。请配置后再试。',503);
+        const answers=snapshot.answers||[];
+        if(!answers.length)throw new AppError('INVALID_INPUT','请先加载该问题的回答，再进行对比。',400);
+        stage('正在对比草稿与现有回答');
+        const analysis=await this.providers.model(
+          '你是回答分析师。用户草稿是针对一个知乎问题的回答。以下是该问题其他回答的摘要和用户草稿。找出：1.草稿中独特于其他回答的观点（unique_point）；2.其他回答提到但草稿未涉及的内容（answer_gap）；3.草稿与其他回答一致可互相印证的观点（reinforcement）。返回 {"items":[{"quote":"草稿中的原句","start":UTF16起点整数或-1,"kind":"unique_point|answer_gap|reinforcement","reason":"具体说明"}]}。quote必须是草稿中逐字出现的原文；start为-1时表示该观点是草稿中缺失的内容，quote用简短描述代替。items不超过6。',
+          {draft:snapshot.text,answers:answers.map(a=>a.summary.slice(0,2000))},signal);
+        if(!analysis||!Array.isArray(analysis?.items)||analysis.items.length>6)throw new AppError('INVALID_MODEL_OUTPUT','对比结果格式无效。',502);
+        const findings=analysis.items.map(item=>{
+          if(item.start===-1||item.start===undefined){
+            return{id:id(),quote:String(item.quote||'').slice(0,500),start:-1,end:-1,kind:String(item.kind||'answer_gap').slice(0,60),
+              reason:bounded(item.reason,1,700),phase:'answer_compare',engine:'model',status:'open'};
+          }
+          try{return{id:id(),...anchor(snapshot.text,String(item.quote),Number(item.start)),kind:bounded(item.kind,1,60),
+            reason:bounded(item.reason,1,700),phase:'answer_compare',engine:'model',status:'open'};}
+          catch{return{id:id(),quote:String(item.quote||'').slice(0,500),start:-1,end:-1,kind:bounded(item.kind,1,60),
+            reason:bounded(item.reason,1,700),phase:'answer_compare',engine:'model',status:'open'};}
+        });
+        apply=p=>{p.findings=findings;p.lastCheck={engine:'model',at:new Date().toISOString(),revision:p.revision,phase:'answer_compare'};};
       } else {
         await stage('正在整理候选全文');
         const data=validateSuggestion(await this.providers.model('返回 {"text":"候选全文","reason":"修改说明","sourceIds":[]}。保留用户当前稿的主张与语气，不恢复已经删掉的断言，不增加新事实。只整理输入，引用来源仅从给定ID选择，不写URL。', {text:snapshot.text,sources:snapshot.sources},signal),snapshot.sources);
         const suggestion={...data,id:id(),baseRevision:snapshot.revision,start:0,end:snapshot.text.length,quote:snapshot.text,full:true};
         apply=p=>p.suggestions.push(suggestion);
       }
-      op.status=partial?'partial':'succeeded';op.stage='已完成';
+      op.status=partial?'partial':'succeeded';op.stage='已完成';op.finishedAt=new Date().toISOString();
       let committed=false;
       for(let attempt=0;attempt<5;attempt++){
         const p=await checkpoint();const expectedVersion=p.version??0;apply(p);
@@ -203,11 +194,21 @@ export class Service {
       try{
         const current=await this.store.getOp(op.id,op.owner);
         if(!terminal(current.status)){
+          const retryable=!signal.aborted && e instanceof AppError && [429,502,503].includes(e.status) && (op.attempt??0)<(op.maxAttempts??0) && Date.now()<op.deadline;
+          if(retryable){
+            op.attempt=(op.attempt??0)+1;op.status='queued';op.stage=`${e.message}，准备第 ${op.attempt} 次重试`;op.nextRetryAt=new Date(Date.now()+250*op.attempt).toISOString();
+            await this.store.updateOp(op);
+            await new Promise(resolve=>setTimeout(resolve,250*op.attempt));
+            return await this.run(op,snapshot,args,signal);
+          }
           op.status=signal.aborted?'cancelled':'failed';
-          op.error={code:e instanceof AppError?e.code:'OPERATION_FAILED',message:e instanceof AppError?e.message:'操作中断或服务响应无效。已有原稿已保留。'};
+          op.finishedAt=new Date().toISOString();
+          op.error={code:e instanceof AppError?e.code:'OPERATION_FAILED',message:e instanceof AppError?e.message:'操作中断或服务响应无效。已有原稿已保留。',attempts:op.attempt??0};
           await this.store.updateOp(op);
         }
       }catch{/* deleted projects must never be resurrected */}
-    }finally{this.controllers.delete(op.id);}
+    }finally{
+      try{if(terminal((await this.store.getOp(op.id,op.owner)).status))this.controllers.delete(op.id);}catch{this.controllers.delete(op.id);}
+    }
   }
 }
