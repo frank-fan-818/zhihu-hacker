@@ -30,8 +30,9 @@ for (const m of js.matchAll(/\$\('#([a-zA-Z0-9_-]+)'\)\s*\??\.\s*addEventListene
 const defined = new Set([...css.matchAll(/--([a-z-]+)\s*:/g)].map(m => m[1]));
 for (const m of css.matchAll(/var\(--([a-z-]+)\)/g)) if (!defined.has(m[1])) problems.push(`style.css 使用了未定义的变量 --${m[1]}`);
 
-// 4. 两个问题入口与工作台的关联点必须同时在 HTML 里（避免改了一处忘另一处）
-for (const id of ['topic', 'find-questions', 'question-link', 'use-question-link', 'question-results', 'draft', 'check'])
+// 4. 两个问题入口与工作台的关联点必须同时在 HTML 里（避免改了一处忘另一处）。
+// 链接入口用的是整合后的那一套 id：粘贴链接 + 加载问题，而不是另起第二个输入框。
+for (const id of ['question-url-input', 'load-question-url', 'topic', 'topic-keyword', 'find-questions', 'question-results', 'url-results', 'draft', 'check'])
   if (!htmlIds.has(id)) problems.push(`首页缺少必需元素 #${id}`);
 
 // 5. 编码哨兵
