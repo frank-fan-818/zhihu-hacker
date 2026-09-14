@@ -1,0 +1,75 @@
+[
+  {
+    "id": "category-mismatch-pasta",
+    "text": "我认为这个意大利面就该拌42号混凝土，而不是三角铁和足球",
+    "expect": "report",
+    "note": "本轮真实漏报的原句：跨范畴混搭，且没有任何绝对化词可依赖。"
+  },
+  {
+    "id": "causal-gap-correlation",
+    "text": "自从换了新 Logo，我们的用户投诉率明显下降，所以新 Logo 解决了体验问题。",
+    "expect": "report",
+    "allowKinds": ["因果缺失或倒置", "数量或事实无出处"],
+    "note": "先后或相关被写成因果。模型可能先报前置事实无出处，再报因果缺口，两者都算命中。"
+  },
+  {
+    "id": "scope-absolute",
+    "text": "远程办公一定能提高所有人的工作效率。",
+    "expect": "report"
+  },
+  {
+    "id": "data-without-source",
+    "text": "据研究，87% 的程序员都讨厌写文档。",
+    "expect": "report",
+    "note": "具体比例没有出处。"
+  },
+  {
+    "id": "conflicts-with-consensus",
+    "text": "熬夜对记忆力有好处，所以备考期间应该少睡觉。",
+    "expect": "report",
+    "note": "与领域共识冲突且未给依据。"
+  },
+  {
+    "id": "concrete-as-means",
+    "text": "为这个方案加一张沙发就能提高转化率。",
+    "expect": "report",
+    "allowKinds": ["抽象与具体混用", "因果缺失或倒置"],
+    "note": "拿具体物件当手段去产生抽象结果；报成“因果缺失”同样成立，不强行要求某一类。"
+  },
+  {
+    "id": "question-exempt",
+    "text": "远程办公是否能提高所有人的工作效率？",
+    "expect": "quiet",
+    "note": "疑问句不构成主张，绝不能报。"
+  },
+  {
+    "id": "negation-exempt",
+    "text": "不能说远程办公一定能提高所有人的工作效率。",
+    "expect": "quiet",
+    "note": "作者明确不主张，关键词“一定”不构成免检或必检理由。"
+  },
+  {
+    "id": "quote-exempt",
+    "text": "有人说“远程办公一定更好”，我对此并不赞同。",
+    "expect": "quiet",
+    "note": "引号内是转述，且作者当句已表态反对；要求转述注明出处属于过度要求，上一轮模型在这里误报。"
+  },
+  {
+    "id": "hedged-exempt",
+    "text": "我不确定远程办公是否适合我们的团队，还需要更多数据。",
+    "expect": "quiet",
+    "note": "作者自己已标明不确定。"
+  },
+  {
+    "id": "stated-analogy-exempt",
+    "text": "打个比方，重构就像给老房子换水电，这会增加前期的沟通成本。",
+    "expect": "quiet",
+    "note": "明示为比方且没有拿它当论据。"
+  },
+  {
+    "id": "comparative-exempt",
+    "text": "为了控制预算，我们决定换一个更便宜的云服务商。",
+    "expect": "quiet",
+    "note": "比较级本身是限定，不等于“换了就一定更省”。上一轮模型在这里误报，靠这条固定住。"
+  }
+]

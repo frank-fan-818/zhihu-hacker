@@ -1,0 +1,66 @@
+[
+  {
+    "id": "category-mismatch-pasta",
+    "text": "我认为这个意大利面就该拌42号混凝土，而不是三角铁和足球",
+    "expect": "report",
+    "note": "本轮真实漏报：整句没有绝对化词，旧规则必然返回空。"
+  },
+  {
+    "id": "category-mismatch-algorithm",
+    "text": "这个推荐算法应该拌42号混凝土，上线后一定让所有人都满意。",
+    "expect": "report",
+    "note": "同时含错配与绝对化断言，任一条成立即应报告。"
+  },
+  {
+    "id": "concrete-as-means",
+    "text": "为这个方案加一张沙发就能提高转化率。",
+    "expect": "report",
+    "note": "具体物件被当成手段去产生抽象结果，多半是打比方写成了因果。"
+  },
+  {
+    "id": "unit-mismatch-abstract",
+    "text": "这个观点的分量有2公斤。",
+    "expect": "report",
+    "note": "用重量单位去量抽象对象。"
+  },
+  {
+    "id": "scope-absolute",
+    "text": "远程办公一定能提高所有人的工作效率。",
+    "expect": "report",
+    "note": "范围强断言，本地规则与模型都应报告。"
+  },
+  {
+    "id": "unit-ok-physical",
+    "text": "这条网线大约有3米长。",
+    "expect": "quiet",
+    "note": "正常物理度量，报出来就是误报。"
+  },
+  {
+    "id": "unit-ok-weight",
+    "text": "这袋米重2公斤，够吃一周。",
+    "expect": "quiet"
+  },
+  {
+    "id": "negation-exempt",
+    "text": "不能说远程办公一定能提高所有人的工作效率。",
+    "expect": "quiet",
+    "note": "作者自己在收窄，不是强断言。"
+  },
+  {
+    "id": "quote-exempt",
+    "text": "有人说“远程办公一定更好”，我对此并不赞同。",
+    "expect": "quiet",
+    "note": "引号里是转述。"
+  },
+  {
+    "id": "question-exempt",
+    "text": "远程办公是否能提高所有人的工作效率？",
+    "expect": "quiet",
+    "note": "疑问句不是主张。"
+  },
+  {
+    "id": "plain-prose-exempt",
+    "text": "为了控制预算，我们决定换一个更便宜的云服务商。",
+    "expect": "quiet"
+  }
+]
