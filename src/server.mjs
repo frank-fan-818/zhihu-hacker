@@ -18,6 +18,8 @@ import { exportDocument } from './export.mjs';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const publicProject=p=>{const {owner,...safe}=p;return safe;};
 const publicOp=op=>{const {owner,signature,key,...safe}=op;return safe;};
+// 环境变量里的正整数，非法或缺失时退回默认值。用于可调限额，避免 NaN 把限制变成「永远放行」。
+const positiveInt=(value,fallback)=>Number.isSafeInteger(Number(value))&&Number(value)>0?Number(value):fallback;
 // SQLite is a local development store only. Vercel always selects shared Redis.
 const defaultFile=process.env.SQLITE_DIR?join(process.env.SQLITE_DIR,'app.sqlite'):join(root,'data','app.sqlite');
 export function createApp({file,providers=createProviders(),oauth=new OAuth(),store:providedStore,kv=createStore(),waitUntil=()=>{}}={}) {
@@ -28,7 +30,15 @@ export function createApp({file,providers=createProviders(),oauth=new OAuth(),st
   try{store.cleanupOperations?.();}catch{/* cleanup is best effort and must not block startup */}
   const questionCalls=new Map();
   const answerBusy=new Set();
-  const consumeQuestionBudget=owner=>{const recent=(questionCalls.get(owner)||[]).filter(t=>Date.now()-t<3600000);if(recent.length>=20)throw new AppError('RATE_LIMIT','本小时问题与回答查询较多，请稍后再试。',429);questionCalls.set(owner,[...recent,Date.now()]);};
+  // 主题搜索/回答分页/问题详情的额外限额，按身份计算。它和 budget 的 IP 限额是两回事，
+  // 所以用不同的错误码：界面据此给不同出路（贴链接 vs 稍后再试），而不是笼统一句“稍后再试”。
+  // 实测这个限制很容易撞到：反复用不同说法找一个冷门主题，十几分钟就能用完。
+  const QUESTION_HOURLY_LIMIT=positiveInt(process.env.QUESTION_HOURLY_LIMIT,20);
+  const consumeQuestionBudget=owner=>{
+    const recent=(questionCalls.get(owner)||[]).filter(t=>Date.now()-t<3600000);
+    if(recent.length>=QUESTION_HOURLY_LIMIT)throw new AppError('QUESTION_LIMIT',`本小时的问题查询已达 ${QUESTION_HOURLY_LIMIT} 次上限。粘贴问题链接通常能直接定位到具体问题，或稍后再试。`,429);
+    questionCalls.set(owner,[...recent,Date.now()]);
+  };
   const server=http.createServer(async(req,res)=>{
     const requestId=randomUUID();
     res.setHeader('X-Request-Id',requestId);
@@ -95,11 +105,18 @@ export function createApp({file,providers=createProviders(),oauth=new OAuth(),st
       if(url.pathname==='/api/questions'&&req.method==='POST'){
         await budget.consume(owner,ip);
         consumeQuestionBudget(owner);
-        send(200,await providers.questions(body.query,new AbortController().signal));return;
+        const items=await providers.questions(body.query,new AbortController().signal);
+        // 空结果必须说清是「平台没召回」还是「我们没查成」：前者照实返回 emptyReason 与本次查询串，
+        // 后者在 providers 里已经抛成具体错误。界面不再用一句通用话术盖住两种不同情况。
+        send(200,{items,emptyReason:items.length?null:items.emptyReason??null,query:String(body.query??'').trim().slice(0,100)});return;
       }
       if(url.pathname==='/api/question-url'&&req.method==='POST'){
         consumeQuestionBudget(owner);
-        send(200,await providers.questionInfo(body.url,new AbortController().signal));return;
+        // 归一化放在这里而不是只放在 provider 里：这是接口契约（不管注入哪个 provider 都成立），
+        // 而且 providers.questionInfo 还会拿它去抓页面，拿到回答页地址会抓错页。
+        const target=questionUrl(body.url);
+        const info=await providers.questionInfo(target,new AbortController().signal);
+        send(200,{url:questionUrl(info?.url??target),title:String(info?.title??'').slice(0,300),detail:String(info?.detail??'').slice(0,2000)});return;
       }
       if(path[1]==='status'&&req.method==='GET'){send(200,{...providers.status,storage:store.kind||'sqlite',mode:providers.status.model?'model':'local_rules'});return;}
       if(path[1]==='projects'){

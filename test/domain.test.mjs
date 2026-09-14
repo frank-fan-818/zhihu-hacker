@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { checkDraft, anchor, applySuggestion, validateFindings, validateSuggestion, AppError, questionLink } from '../src/domain.mjs';
+import { questionUrl } from '../src/providers.mjs';
 
 test('local check locates a strong assertion without claiming verification', () => {
   const text = '我正在考虑新的工作方式。远程办公一定能提高所有人的工作效率。团队应该认真讨论。';
@@ -104,4 +105,19 @@ test('a bare question number is accepted, an unknown host is not', () => {
 });
 test('a pasted answer link is reported as the question it belongs to, not the answer', () => {
   assert.equal(questionLink('https://www.zhihu.com/question/368830073/answer/999').url, 'https://www.zhihu.com/question/368830073');
+});
+// providers.questionUrl 是服务端接收链接的唯一入口（/api/question-url 与创建项目都用它）。
+// 它必须和 questionLink 同一口径，否则界面归一化过的地址反而会在服务端被拒。
+test('server-side questionUrl accepts the same forms as the shared parser', () => {
+  const id = '368830073';
+  const expected = `https://www.zhihu.com/question/${id}`;
+  for (const input of [
+    expected,
+    `https://www.zhihu.com/question/${id}/answer/2319726894`,
+    `https://m.zhihu.com/question/${id}`,
+    `https://www.zhihu.com/question/${id}?utm_source=wechat_session`,
+    id,
+  ]) assert.equal(questionUrl(input), expected, input);
+  for (const bad of ['https://www.zhihu.com/people/someone', 'https://example.com/question/123456', '远程办公'])
+    assert.throws(() => questionUrl(bad), /有效的知乎问题链接/, bad);
 });

@@ -1,4 +1,4 @@
-import { AppError, id, hash, safeUrl } from './domain.mjs';
+import { AppError, id, hash, safeUrl, questionLink } from './domain.mjs';
 import { diagnose } from './config.mjs';
 
 export function checkBusiness(body){
@@ -6,7 +6,10 @@ export function checkBusiness(body){
   if(body?.Code!==0){const [code,message]=codes[body?.Code]||['PROVIDER_ERROR','知乎服务未返回有效结果。'];throw new AppError(code,message,502);}
   return body.Data;
 }
-export function questionUrl(value){try{const u=new URL(value);if(u.protocol==='https:'&&u.hostname==='www.zhihu.com'&&!u.username&&!u.password){const m=u.pathname.match(/^\/question\/(\d+)(?:\/|$)/);if(m)return`${u.origin}/question/${m[1]}`;}}catch{}throw new AppError('INVALID_INPUT','请选择有效的知乎问题链接。');}
+// 这里原本只认 https://www.zhihu.com/question/<数字>。但用户是从地址栏复制的：
+// 常见的是带追踪参数、落在 /answer/123 回答页、或 m.zhihu.com 手机域名。
+// 现在统一交给 domain 的 questionLink 归一化，只认知乎域名，拒绝时不猜数字。
+export function questionUrl(value){try{return questionLink(value).url;}catch{throw new AppError('INVALID_INPUT','请选择有效的知乎问题链接。');}}
 
 export function createProviders(env = process.env, fetcher = fetch) {
   const configured = Boolean(env.MODEL_BASE_URL && env.MODEL_NAME && env.MODEL_API_KEY);
@@ -65,7 +68,12 @@ export function createProviders(env = process.env, fetcher = fetch) {
       if(typeof query!=='string'||query.trim().length<2||query.length>100)throw new AppError('INVALID_INPUT','请输入 2—100 字符的主题。');
       const d=await data('/api/v1/user/question_recommendations',{Query:query.trim(),Count:5},signal);
       if(!Array.isArray(d?.Items))throw new AppError('INVALID_RESPONSE','问题列表格式无效。',502);
-      return d.Items.slice(0,5).flatMap(x=>{try{return [{title:String(x.Title||'未提供标题').slice(0,300),url:questionUrl(x.Url)}];}catch{return [];}});
+      const list=d.Items.slice(0,5).flatMap(x=>{try{return [{title:String(x.Title||'未提供标题').slice(0,300),url:questionUrl(x.Url)}];}catch{return [];}});
+      // 实测：平台对某些主题会返回 Code=0 但 Items 为空（同一主题反复查都是空，换个说法就有结果）。
+      // 这不是错误，但也不能让界面把「平台没召回」说成「你的主题不好」。把平台的 EmptyReason 带上去，
+      // 定义成不可枚举属性，这样它不会混进数组元素，也不影响 list.length / map / flatMap。
+      if(!list.length)Object.defineProperty(list,'emptyReason',{value:typeof d.EmptyReason==='string'?d.EmptyReason.slice(0,500):null,enumerable:false});
+      return list;
     },
     async answers(url,offset,signal){
       if(!Number.isSafeInteger(offset)||offset<0)throw new AppError('INVALID_INPUT','分页位置无效。');
@@ -76,6 +84,8 @@ export function createProviders(env = process.env, fetcher = fetch) {
     },
     model,
     async questionInfo(url,signal){
+      // 用户粘贴的可能是回答页链接、手机端域名或带追踪参数的地址：先归一成问题地址，
+      // 否则抓页面和后面加载回答都会落到一个不是问题页的 URL 上。
       const validated=questionUrl(url);
       let title='',detail='';
       try{

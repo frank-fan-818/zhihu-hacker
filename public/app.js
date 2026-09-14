@@ -3,6 +3,20 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 let project=null, selected=null, operation=null, dirty=false, saving=null, timer, error='', status={},showHistory=false;
 const draft=$('#draft');
 let questionContext=null,questionChoices=[],account=null,oauthConfigured=false,extraBusy=false;
+// 本机先解析一遍链接：格式不对就不必发请求。服务端仍用同一套规则再校验一次
+//（src/domain.mjs 的 questionLink），这里只是把错误提前到输入框旁边。
+function localQuestionLink(value){
+  const raw=String(value??'').trim().replace(/[\u200b-\u200d\ufeff\s]+/g,'');
+  if(!raw)return null;
+  if(/^\d+$/.test(raw))return raw.length>=5&&raw.length<=20?`https://www.zhihu.com/question/${raw}`:null;
+  let url;try{url=new URL(/^https?:\/\//i.test(raw)?raw:`https://${raw}`);}catch{return null;}
+  if(!['https:','http:'].includes(url.protocol)||url.username||url.password)return null;
+  const host=url.hostname.toLowerCase().replace(/^www\./,'');
+  const path=url.pathname.split('/').filter(Boolean),at=path.indexOf('question');
+  const digits=(at>=0?path[at+1]:'').replace(/\D/g,'');
+  if(['zhihu.com','m.zhihu.com'].includes(host)&&digits.length>=5&&digits.length<=20)return `https://www.zhihu.com/question/${digits}`;
+  return null;
+}
 
 async function api(path,method='GET',body){
   const r=await fetch(`/api${path}`,{method,headers:method==='GET'?{}:{'Content-Type':'application/json'},body:method==='GET'?undefined:JSON.stringify(body||{})});
@@ -263,9 +277,32 @@ $('#account-action').onclick=async()=>{
 };
 $('#find-questions').onclick=async()=>{
   if(extraBusy||operation)return;extraBusy=true;$('#find-questions').disabled=true;
+  const base=$('#topic').value.trim(),keyword=$('#topic-keyword').value.trim();
+  // 实测：平台对某些主题（例如「远程办公」）会稳定返回空，而同一个主题加一个词就有结果。
+  // 所以补充词直接拼进查询串，不假装平台在做语义扩写，界面上也写清这次实际查了什么。
+  const query=[base,keyword].filter(Boolean).join(' ');
+  questionChoices=[];
   $('#question-results').textContent='正在查找真实问题…';
-  try{questionChoices=await api('/questions','POST',{query:$('#topic').value});$('#question-results').innerHTML=questionChoices.map((q,i)=>`<div class="project-row"><a href="${esc(q.url)}" target="_blank" rel="noopener noreferrer">${esc(q.title)}</a><button class="quiet" data-question-index="${i}">围绕这题写</button></div>`).join('')||'<p>没有找到相关问题，可以换一个更具体的主题。</p>';}
-  catch(e){$('#question-results').textContent=e.message;}finally{extraBusy=false;$('#find-questions').disabled=false;}
+  try{
+    if(base.length<2||base.length>100)throw new Error('请输入 2—100 字符的主题。');
+    const r=await api('/questions','POST',{query:keyword?query.slice(0,100):base});
+    questionChoices=r.items||[];
+    if(!questionChoices.length){
+      const asked=r.query||query;
+      const reason=r.emptyReason?`<p class="error">知乎返回：${esc(r.emptyReason)}</p>`:'';
+      $('#question-results').innerHTML=`<p>这次在知乎没有查到与「${esc(asked)}」相关的问题，不代表这个主题没有讨论。</p>${reason}<p class="fine">平台的推荐对措辞很敏感：同一主题换个说法、或补一个关键词常有结果。它只做推荐，不判断观点对错。</p><div class="actions">${button('retry-topic','补一个关键词再找')}</div>`;
+    }else{
+      $('#question-results').innerHTML=questionChoices.map((q,i)=>`<div class="project-row"><a href="${esc(q.url)}" target="_blank" rel="noopener noreferrer">${esc(q.title)}</a><button class="quiet" data-question-index="${i}">围绕这题写</button></div>`).join('')+`<p class="fine">共 ${questionChoices.length} 条来自知乎的真实问题。点标题去知乎看原讨论，点「围绕这题写」把它变成你的草稿。</p>`;
+    }
+  }catch(e){
+    // 主题搜索额度用完时，最有用的一句话是「换个入口」——粘贴问题链接不受这个限额影响。
+    if(e.code==='QUESTION_LIMIT'){
+      $('#question-results').innerHTML=`<p class="error" role="alert">${esc(e.message)}</p><div class="actions">${button('use-link-entry','改贴问题链接')}</div>`;
+    }else{
+      $('#question-results').innerHTML=`<p class="error" role="alert">${esc(e.message)}</p>`;
+    }
+  }
+  finally{extraBusy=false;$('#find-questions').disabled=false;}
 };
 $('#load-question-url').onclick=async()=>{
   if(extraBusy||operation)return;extraBusy=true;$('#load-question-url').disabled=true;
@@ -273,7 +310,14 @@ $('#load-question-url').onclick=async()=>{
   try{
     const url=$('#question-url-input').value.trim();
     if(!url){$('#url-results').textContent='请粘贴知乎问题链接。';return;}
-    const info=await api('/question-url','POST',{url});
+    // 本机先按同一套规则解析一遍：格式不对就不必发请求，错误也显示在输入框旁边。
+    // 归一化后的地址再交给服务端，这样「回答页链接 / 手机端域名 / 带参数」都能落到同一个问题。
+    const normalized=localQuestionLink(url);
+    if(!normalized){
+      $('#url-results').innerHTML='<p class="error" role="alert">没有识别出知乎问题编号。形如 https://www.zhihu.com/question/1234567890 的链接（回答页、手机端域名、带追踪参数都可以），或直接填问题编号。</p>';
+      return;
+    }
+    const info=await api('/question-url','POST',{url:normalized});
     if(draft.value&&!confirm('为这个问题新建草稿？当前已有草稿会先保存。'))return;
     if(dirty)await saveDraft();
     project=null;questionContext=info;selected=null;error='';$('#answer-results').innerHTML='';
@@ -281,6 +325,7 @@ $('#load-question-url').onclick=async()=>{
 
 我希望先弄清楚相关事实与适用条件，再形成自己的观点。`;
     dirty=true;await saveDraft();render();draft.focus();
+    $('#url-results').textContent=`已关联：${info.title}`;
     // 自动加载第一页回答
     if(project?.id){
       try{
@@ -293,6 +338,11 @@ $('#load-question-url').onclick=async()=>{
   }catch(e){$('#url-results').textContent=e.message;}finally{extraBusy=false;$('#load-question-url').disabled=false;}
 };
 document.addEventListener('click',async e=>{
+  // 主题搜索额度用完时的出路：把光标送到链接输入框。这条路不消耗主题搜索额度。
+  const retry=e.target.closest('[data-action="retry-topic"]');
+  if(retry){$('#topic-keyword').focus();$('#topic-keyword').placeholder='补一个关键词，例如：效率、管理、工具';notice('主题本身可能太宽或太窄；补一个具体词，再点「找相关问题」。');return;}
+  const toLink=e.target.closest('[data-action="use-link-entry"]');
+  if(toLink){$('#question-url-input').focus();notice('粘贴问题链接可以直接定位到具体问题，不受主题搜索额度限制。');return;}
   const pick=e.target.closest('[data-question-index]'),answer=e.target.closest('[data-answer-offset]'),start=e.target.closest('[data-action="answers"]');
   if(!pick&&!answer&&!start)return;if(extraBusy||operation){notice('请先完成当前操作。');return;}
   extraBusy=true;

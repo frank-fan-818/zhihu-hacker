@@ -197,8 +197,8 @@ export function questionLink(value) {
   if (url.protocol !== 'https:' && url.protocol !== 'http:') throw new AppError('INVALID_INPUT', '只接受 http 或 https 链接。');
   if (url.username || url.password) throw new AppError('INVALID_INPUT', NOT_A_QUESTION);
   const host = url.hostname.toLowerCase().replace(/^www\./, '');
-  const typedNumber = /^\d+$/.test(url.hostname);
-  if (!['zhihu.com','m.zhihu.com'].includes(host) && !typedNumber) throw new AppError('INVALID_INPUT', NOT_A_QUESTION);
+  const typeIn = /^\d+$/.test(url.hostname);
+  if (!['zhihu.com', 'm.zhihu.com'].includes(host) && !typeIn) throw new AppError('INVALID_INPUT', NOT_A_QUESTION);
   const path = url.pathname.split('/').filter(Boolean);
   const at = path.indexOf('question');
   const id = at >= 0 ? questionId(path[at + 1]) : (host === 'zhihu.com' || host === 'm.zhihu.com' ? questionId(url.searchParams.get('q') ?? '') : null);
